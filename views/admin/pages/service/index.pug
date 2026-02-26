@@ -1,0 +1,104 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+include ../../mixins/pagination.pug
+
+block main
+  +alert(3000)
+  main.flex-1.p-10
+    header.flex.justify-between.items-center.mb-10
+      div
+        h2.text-3xl.font-bold.serif-font.italic Danh sách dịch vụ Makeup
+        p.text-neutral-400.text-sm Quản lý các gói dịch vụ và bảng giá tại Susannie Studio.
+      .flex.gap-4
+        .relative
+          button.w-12.h-12.rounded-full.bg-white.border.border-neutral-100.flex.items-center.justify-center.text-neutral-500.transition-all(class='hover:text-black')
+            i.fa-solid.fa-bell
+          span.absolute.top-0.right-0.w-3.h-3.border-2.border-white.rounded-full(class='bg-[#D2B48C]')
+        
+        a.px-6.py-3.bg-black.rounded-full.font-bold.text-sm.uppercase.tracking-widest.flex.items-center.gap-2(href=`/${prefixAdmin}/service/create` class='text-[#D2B48C] hover:scale-105 transition-transform')
+          i.fa-solid.fa-plus
+          | Thêm dịch vụ
+
+    //- Thống kê nhanh
+    .grid.grid-cols-1.gap-6.mb-10(class='md:grid-cols-3')
+      .card.p-6.border-l-4(class='border-[#D2B48C]')
+        p.text-neutral-400.uppercase.font-black.tracking-widest(class='text-[10px]') Tổng dịch vụ
+        h3.text-2xl.font-bold.mt-1 #{totalService} Gói
+      .card.p-6
+        p.text-neutral-400.uppercase.font-black.tracking-widest(class='text-[10px]') Dịch vụ phổ biến nhất
+        h3.text-xl.font-bold.mt-1.serif-font.italic(class='text-[#D2B48C]') Makeup Cô Dâu Luxe
+      .card.p-6
+        p.text-neutral-400.uppercase.font-black.tracking-widest(class='text-[10px]') Trạng thái hệ thống
+        h3.text-lg.font-bold.mt-1.text-green-500.flex.items-center.gap-2
+          span.w-2.h-2.bg-green-500.rounded-full.animate-pulse
+          |  Đang hoạt động
+
+    //- Bảng danh sách
+    .card.overflow-hidden
+      .p-8.border-b.border-neutral-100.flex.justify-between.items-center
+        .flex.items-center.gap-4
+          h3.text-xl.font-bold.serif-font.italic Tất cả dịch vụ
+          .relative
+            input.pl-10.pr-4.py-2.bg-neutral-100.border-none.rounded-full.text-xs.outline-none.w-64(type='text' placeholder='Tìm kiếm dịch vụ...' class='focus:ring-1 focus:ring-[#D2B48C]')
+            i.fa-solid.fa-magnifying-glass.absolute.left-4.text-neutral-400(class='top-1/2 -translate-y-1/2 text-[10px]')
+        .flex.gap-2
+          button.px-4.py-2.border.border-neutral-200.rounded-lg.font-bold.uppercase.tracking-widest(class='text-[10px] hover:bg-neutral-50') Bộ lọc
+
+      .overflow-x-auto
+        table.w-full.text-left
+          thead.bg-neutral-50.uppercase.font-black.text-neutral-400.tracking-widest(class='text-[10px]')
+            tr
+              th.px-8.py-4 Hình ảnh
+              th.px-8.py-4 Tên dịch vụ
+              th.px-8.py-4 Thời lượng
+              th.px-8.py-4 Giá tiền
+              th.px-8.py-4 Nhân viên
+              th.px-8.py-4.text-right Thao tác
+          tbody.divide-y.divide-neutral-50
+            each item in services
+              //- SỬA TẠI ĐÂY: Thêm onclick và cursor-pointer
+              tr.transition-all.group(
+                class='hover:bg-neutral-50/50 cursor-pointer'
+                onclick=`window.location.href='/${prefixAdmin}/service/detail/${item.id}'`
+              )
+                td.px-8.py-5
+                  img.w-16.h-16.object-cover.rounded-2xl.border.border-neutral-100.shadow-sm.transition-transform(src= item.images class='group-hover:scale-105')
+                td.px-8.py-5
+                  p.text-sm.font-bold.text-neutral-800 #{item.title}
+                  p.text-neutral-400.mt-1.uppercase.tracking-tighter(class='text-[10px]') Tên: #{item.name}
+                td.px-8.py-5
+                  .flex.items-center.gap-2.text-xs.text-neutral-500
+                    i.fa-regular.fa-clock
+                    | #{item.duration} phút
+                td.px-8.py-5.font-bold.text-sm(class='text-[#D2B48C]')
+                  | #{item.price.toLocaleString()}đ
+                td.px-8.py-5
+                  span.status-pill.bg-green-100.text-green-700 #{item.artist_fullName}
+                
+                td.px-8.py-5.text-right
+                  //- SỬA TẠI ĐÂY: Dùng stopPropagation để không bị nhảy trang khi nhấn nút
+                  .flex.justify-end.gap-2(onclick="event.stopPropagation();")
+                    a.w-8.h-8.rounded-lg.flex.items-center.justify-center.text-neutral-400.transition-all(
+                      href=`/${prefixAdmin}/service/edit/${item.id}`
+                      class='hover:bg-[#D2B48C]/10 hover:text-[#D2B48C]' 
+                      title='Chỉnh sửa'
+                    )
+                      i.fa-solid.fa-pen-to-square.text-xs
+                    //- Trong vòng lặp danh sách
+                    button.w-8.h-8.rounded-lg.flex.items-center.justify-center.text-neutral-400.transition-all(
+                      class='hover:bg-red-50 hover:text-red-500' 
+                      title='Xóa' 
+                      button-delete 
+                      data-id=item.id
+                    )
+                      i.fa-solid.fa-trash-can.text-xs
+
+
+                    //- Đặt Form này ở cuối file (ngoài vòng lặp)
+                    form(
+                      id="form-delete-item"
+                      method="POST"
+                      action=""
+                      data-path=`/${prefixAdmin}/service/delete`
+                    )
+      +pagination(pagination)

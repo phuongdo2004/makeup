@@ -1,0 +1,199 @@
+
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+  :root {
+    --color-beige: #F5F5DC;
+    --color-dark-beige: #D2B48C;
+    --color-deep-black: #121212;
+  }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8f8f8; color: var(--color-deep-black); margin: 0; display: flex; }
+  .serif-font { font-family: 'Playfair Display', serif; }
+  .sidebar { background-color: var(--color-deep-black); }
+  .nav-item { transition: all 0.3s ease; border-right: 4px solid transparent; }
+  .nav-item:hover, .nav-item.active { 
+    background-color: rgba(210, 180, 140, 0.1); 
+    color: var(--color-dark-beige); 
+    border-right: 4px solid var(--color-dark-beige); 
+  }
+  .card { background: white; border-radius: 20px; border: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease; }
+  .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+  .status-pill { padding: 4px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+
+  /* them moi service  */
+
+     .form-card { background: white; border-radius: 30px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
+      input, textarea, select { 
+        border: 1px solid #f0f0f0 !important; 
+        background-color: #fafafa !important;
+        transition: all 0.2s;
+      }
+      input:focus, textarea:focus { 
+        border-color: var(--color-dark-beige) !important; 
+        background-color: #fff !important; 
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(210, 180, 140, 0.1);
+      }
+
+  /* them moi service  */
+  /* toast start */
+:root {
+    --gold-primary: #d4af37;
+    --dark-bg: #1a1a1a;
+    --success-color: #2ecc71;
+    --warning-color: #f1c40f;
+    --delete-color: #e74c3c;
+}
+
+#toast-container {
+
+position: fixed;
+    /* Không cho container chặn click */
+    pointer-events: none;
+
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.toast {
+/* Cho phép click vào bản thân cái toast (nút x, link...) */
+    pointer-events: auto; 
+    margin-bottom: 1rem;
+    /* Các style cũ của bạn... */
+    transition: opacity 0.3s ease, transform 0.3s ease;
+
+    width: 350px;
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    /* Trạng thái mặc định: Ẩn */
+    transform: translateX(120%);
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.35);
+    opacity: 0;
+}
+
+.toast.active {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* Các loại màu sắc */
+.toast-success { border-left: 5px solid var(--success-color); }
+.toast-warning { border-left: 5px solid var(--warning-color); }
+.toast-delete  { border-left: 5px solid var(--delete-color); }
+
+.toast-icon {
+    font-size: 24px;
+    margin-right: 15px;
+}
+.toast-success .toast-icon { color: var(--success-color); }
+.toast-warning .toast-icon { color: var(--warning-color); }
+.toast-delete .toast-icon  { color: var(--delete-color); }
+
+.toast-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.toast-title {
+    font-weight: 700;
+    color: var(--dark-bg);
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.toast-message {
+    color: #666;
+    font-size: 14px;
+    margin-top: 3px;
+}
+
+.toast-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #ccc;
+    transition: 0.3s;
+}
+
+.toast-close:hover { color: var(--dark-bg); }
+
+/* Thanh Progress bar chạy ngược */
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: #eee;
+}
+
+.toast-progress::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: inherit;
+}
+
+.toast-success .toast-progress { background: var(--success-color); }
+.toast-warning .toast-progress { background: var(--warning-color); }
+.toast-delete .toast-progress  { background: var(--delete-color); }
+
+.toast.active .toast-progress {
+    animation: progress 4s linear forwards;
+}
+
+@keyframes progress {
+    100% { width: 0%; }
+}
+
+  /* toast end */
+  /* preview image start */
+  /* Đảm bảo vùng chứa preview có hiển thị khi có class .has-image */
+[upload-image].has-image .group-\[\.has-image\]\:grid {
+    display: grid !important;
+}
+
+/* Đảm bảo ảnh không bị méo và đều nhau */
+[upload-image-container] div {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    position: relative;
+    border-radius: 0.75rem;
+}
+
+/* Hiệu ứng cho input để không chặn các nút bấm sau khi đã chọn ảnh */
+[upload-image].has-image [upload-image-input] {
+    height: 50px; /* Thu nhỏ vùng click của input lại sau khi đã có ảnh */
+    bottom: auto;
+}
+  /* preview image end */
+  /* paginatoin */
+  /* Card container cho bảng và các khối thống kê */
+.card {
+  @apply bg-white border border-neutral-100 rounded-[32px] shadow-sm;
+}
+
+/* Hiệu ứng cho các nút phân trang */
+.pagination-item {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+/* Style cho các nhãn trạng thái (Status Pills) nếu bạn chưa có */
+.status-pill {
+  @apply px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider;
+}

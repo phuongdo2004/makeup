@@ -1,0 +1,47 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+block main
+  +alert(3000)
+  section.login-banner.py-24.text-center
+    h2.text-5xl.font-bold.serif-font.italic.mb-4.drop-shadow-lg(class='md:text-6xl text-[#D2B48C]') Đăng nhập
+    p.text-xs.uppercase.font-medium(class='text-white/80 md:text-sm tracking-[0.4em]')
+      | Trang chủ / 
+      span(class='text-[#D2B48C]') Đăng nhập
+
+  main.container.mx-auto.px-6.-mt-16.mb-20.relative.z-10
+    .max-w-lg.mx-auto.bg-white.shadow-2xl.p-10.border(class='rounded-[40px] md:p-14 border-black/5')
+      //- Loại bỏ space-y để tự kiểm soát khoảng cách từng phần
+      form(action='/user/login' method='POST')
+        .mb-5
+          label.uppercase.font-black.tracking-widest.text-neutral-400.block.mb-2.ml-1(class='text-[11px]') Tài khoản Email
+          input.w-full.px-6.py-4.rounded-2xl.text-sm.font-medium.border.border-neutral-100(type='email' name = 'email' placeholder='Nhập email của bạn' class='focus:border-[#D2B48C] outline-none transition-all' required)
+        
+        .mb-4
+          label.uppercase.font-black.tracking-widest.text-neutral-400.block.mb-2.ml-1(class='text-[11px]') Mật khẩu
+          input.w-full.px-6.py-4.rounded-2xl.text-sm.font-medium.border.border-neutral-100(type='password' name = 'password' placeholder='Nhập mật khẩu của bạn' class='focus:border-[#D2B48C] outline-none transition-all' required)
+        
+        .flex.items-center.justify-between.text-xs.font-bold.mb-6
+          label.flex.items-center.gap-2.cursor-pointer.text-neutral-600
+            input.w-4.h-4.rounded.border-gray-300.text-black(type='checkbox' class='focus:ring-black')
+            | Ghi nhớ đăng nhập
+          a.transition-colors(href='#' class='text-[#D2B48C] hover:text-black') Quên mật khẩu?
+
+        //- CỤM NÚT BẤM SÁT NHAU
+        button.w-full.py-5.rounded-2xl.font-black.text-sm.uppercase.shadow-xl.transition-all(type='submit' class='tracking-[0.2em] bg-black text-[#D2B48C] hover:bg-[#D2B48C] hover:text-black shadow-[#D2B48C]/10')
+          | Đăng nhập
+
+        //- Phần "hoặc" dùng mt-2 để sát nút trên
+        .relative.flex.items-center.justify-center.mt-2
+          .flex-grow.border-t.border-neutral-100
+          span.flex-shrink.mx-4.text-neutral-400.font-black.uppercase(class='text-[10px] tracking-[0.3em]') hoặc
+          .flex-grow.border-t.border-neutral-100
+
+        //- Nút Google dùng mt-2 để sát phần "hoặc"
+        button.w-full.border-2.border-neutral-100.py-3.rounded-2xl.font-bold.text-xs.flex.items-center.justify-center.gap-3.transition-all.uppercase.tracking-widest(type='button' class='hover:bg-neutral-50 mt-2')
+          img(src='https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg' width='18' alt='Google')
+          span.text-neutral-700 Đăng nhập bằng Google
+
+        .text-center.mt-6
+          p.text-xs.font-bold.text-neutral-600
+            | Bạn chưa có tài khoản? 
+            a.ml-1.transition-colors(href='/user/register' class='text-[#D2B48C] hover:text-black') Đăng ký ngay

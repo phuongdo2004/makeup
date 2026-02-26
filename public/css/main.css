@@ -1,0 +1,414 @@
+
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --color-beige: #F5F5DC;
+            --color-dark-beige: #D2B48C;
+            --color-deep-black: #121212;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--color-beige); 
+            color: var(--color-deep-black);
+        }
+        
+        .serif-font { font-family: 'Playfair Display', serif; }
+
+        .hub-card { 
+            transition: all 0.3s ease; 
+            border: 1px solid rgba(0,0,0,0.05);
+            background-color: white;
+        }
+        .hub-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        
+        .price-tag { background-color: #2D3436; color: var(--color-beige); padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 11px; }
+        
+        .meta-tag { font-size: 10px; font-weight: 700; padding: 6px 12px; border-radius: 8px; display: flex; align-items: center; gap: 6px; background: #f0f0f0; }
+
+        footer { background-color: var(--color-deep-black); color: var(--color-beige); }
+
+
+
+    @keyframes slide-infinite {
+    /* Ảnh 1: Hiển thị từ 0% đến 25% thời gian */
+    0%, 25% { transform: translateX(0); }
+    
+    /* Trượt sang Ảnh 2: Hiển thị từ 33% đến 58% */
+    33%, 58% { transform: translateX(-25%); }
+    
+    /* Trượt sang Ảnh 3: Hiển thị từ 66% đến 91% */
+    66%, 91% { transform: translateX(-50%); }
+    
+    /* Trượt nhanh sang Ảnh 1 (bản copy) ở mức -75% và kết thúc 
+       để trình duyệt reset về 0% ngay lập tức mà không bị khựng */
+    100% { transform: translateX(-75%); }
+}
+
+.slider-wrapper { 
+    display: flex; 
+    width: 400%; /* Giữ nguyên vì có 4 item */
+    height: 100%; 
+    /* Thay đổi cubic-bezier để mượt hơn hoặc dùng 'ease-in-out' */
+    animation: slide-infinite 12s infinite ease-in-out; 
+}
+
+    .slide-item { 
+        width: 25%; /* 100% / 4 ảnh */
+        height: 100%; 
+        background-size: cover; 
+        background-position: center; 
+    }
+/* login */
+   .login-banner {
+            background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&q=80&w=2000');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .input-field {
+            border: 1px solid rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            background: #fff;
+        }
+
+        .input-field:focus {
+            border-color: var(--color-dark-beige);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(210, 180, 140, 0.2);
+        }
+
+        .btn-primary {
+            background-color: var(--color-deep-black);
+            color: var(--color-dark-beige);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-dark-beige);
+            color: var(--color-deep-black);
+        }
+    /* register */
+       .register-banner {
+            background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&q=80&w=2000');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .input-field {
+            border: 1px solid rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            background: #fff;
+        }
+
+        .input-field:focus {
+            border-color: var(--color-dark-beige);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(210, 180, 140, 0.2);
+        }
+
+        .btn-primary {
+            background-color: var(--color-deep-black);
+            color: var(--color-dark-beige);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-dark-beige);
+            color: var(--color-deep-black);
+        }
+        /* list service */
+        /* Banner Hero */
+        .page-banner {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&q=80&w=2000');
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Card Dịch vụ */
+        .service-card {
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .filter-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23121212'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+        /* detail service */
+             .serif-font { font-family: 'Playfair Display', serif; }
+
+        .info-card { background: white; border-radius: 24px; border: 1px solid rgba(0,0,0,0.05); }
+        .tag-custom { background: var(--color-beige); color: var(--color-deep-black); border: 1px solid var(--color-dark-beige); padding: 6px 16px; border-radius: 99px; font-weight: 700; font-size: 12px; }
+        .price-box { background: #121212; color: #D2B48C; padding: 10px 20px; border-radius: 12px; font-weight: 800; }
+        .image-frame { border: 2px solid var(--color-dark-beige); border-radius: 32px; padding: 15px; background: white; }
+
+        .service-banner {
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&q=80&w=2000');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .map-wrapper iframe { filter: none !important; }
+
+        /* Modal Custom Styles */
+        .modal-overlay { background: rgba(0, 0, 0, 0.8); display: none; backdrop-filter: blur(4px); }
+        .date-card { border: 1px solid #eee; transition: all 0.2s; cursor: pointer; min-width: 70px; text-align: center; }
+        .date-card.active { border-color: var(--color-dark-beige); background: var(--color-deep-black); color: var(--color-dark-beige); }
+        .date-card.active span { color: var(--color-dark-beige) !important; }
+        
+        /* Hide scrollbar */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+         /* toast start */
+:root {
+    --gold-primary: #d4af37;
+    --dark-bg: #1a1a1a;
+    --success-color: #2ecc71;
+    --warning-color: #f1c40f;
+    --delete-color: #e74c3c;
+}
+
+#toast-container {
+
+position: fixed;
+    /* Không cho container chặn click */
+    pointer-events: none;
+
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.toast {
+/* Cho phép click vào bản thân cái toast (nút x, link...) */
+    pointer-events: auto; 
+    margin-bottom: 1rem;
+    /* Các style cũ của bạn... */
+    transition: opacity 0.3s ease, transform 0.3s ease;
+
+    width: 350px;
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    /* Trạng thái mặc định: Ẩn */
+    transform: translateX(120%);
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.35);
+    opacity: 0;
+}
+
+.toast.active {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* Các loại màu sắc */
+.toast-success { border-left: 5px solid var(--success-color); }
+.toast-warning { border-left: 5px solid var(--warning-color); }
+.toast-delete  { border-left: 5px solid var(--delete-color); }
+
+.toast-icon {
+    font-size: 24px;
+    margin-right: 15px;
+}
+.toast-success .toast-icon { color: var(--success-color); }
+.toast-warning .toast-icon { color: var(--warning-color); }
+.toast-delete .toast-icon  { color: var(--delete-color); }
+
+.toast-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.toast-title {
+    font-weight: 700;
+    color: var(--dark-bg);
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.toast-message {
+    color: #666;
+    font-size: 14px;
+    margin-top: 3px;
+}
+
+.toast-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #ccc;
+    transition: 0.3s;
+}
+
+.toast-close:hover { color: var(--dark-bg); }
+
+/* Thanh Progress bar chạy ngược */
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: #eee;
+}
+
+.toast-progress::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: inherit;
+}
+
+.toast-success .toast-progress { background: var(--success-color); }
+.toast-warning .toast-progress { background: var(--warning-color); }
+.toast-delete .toast-progress  { background: var(--delete-color); }
+
+.toast.active .toast-progress {
+    animation: progress 4s linear forwards;
+}
+
+@keyframes progress {
+    100% { width: 0%; }
+}
+
+  /* toast end */
+  /* .time-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    font-size: 0.8rem; /* Chỉnh chữ nhỏ lại một chút để vừa khung */
+  
+  .date-card.active, .time-card.active {
+    border-color: #D2B48C !important;
+    background-color: #F5F5DC !important;
+    color: black !important;
+     display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    font-size: 0.8rem;
+  }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  @keyframes heartBeat {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+.animate-heart {
+  animation: heartBeat 0.3s ease-in-out;
+}
+/* customer */
+ /* Style cho Card giống hệt ảnh mẫu */
+        .profile-card {
+            background: white;
+            border-radius: 32px; /* Bo góc cực lớn */
+            border: none;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.02);
+        }
+
+        /* Input mềm mại */
+        .form-input-custom {
+            background-color: #FBFBFB;
+            border: 1px solid #F2F2F2;
+            border-radius: 16px;
+            padding: 14px 20px;
+            width: 100%;
+            font-size: 14px;
+            color: #444;
+            transition: all 0.3s ease;
+        }
+
+        .form-input-custom:focus {
+            outline: none;
+            border-color: #D2B48C;
+            background-color: #fff;
+        }
+
+        /* Label viết hoa, nhỏ, đậm */
+        .label-custom {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #A0A0A0;
+            letter-spacing: 0.8px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* Nút Chỉnh sửa màu đen bo tròn */
+        .btn-black {
+            background-color: #000;
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.2s;
+        }
+
+        .btn-black:hover {
+            transform: translateY(-2px);
+            background-color: #222;
+        }
+
+        /* Viền ảnh đại diện màu xanh nhạt theo ảnh mẫu */
+        .avatar-wrapper img {
+            border: 10px solid #E0F2FE; /* Sky-100 */
+        }
+
+.mySwiper {
+    width: 100%;
+    /* Cố định chiều cao khung hình để ảnh dọc có không gian hiển thị */
+    height: 500px; 
+    background-color: #1a1a1a; /* Màu nền cho phần trống */
+  }
+
+  @media (min-width: 768px) {
+    .mySwiper {
+      height: 650px; /* Tăng chiều cao trên máy tính */
+    }
+  }
+
+  .swiper-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .swiper-slide img {
+    /* Đảm bảo ảnh luôn nằm gọn trong khung bất kể dọc hay ngang */
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; 
+  }

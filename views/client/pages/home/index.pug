@@ -1,0 +1,167 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+//- include ../../mixins/alert.pug
+block main
+    +alert(3000)
+    section(class="relative h-[80vh] flex items-center overflow-hidden")
+      .absolute.inset-0.z-0
+        .slider-wrapper
+          .slide-item(style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&q=80&w=2000');")
+          .slide-item(style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&q=80&w=2000');")
+          .slide-item(style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&q=80&w=2000');")
+          .slide-item(style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&q=80&w=2000');")
+      .container.mx-auto.px-6.relative.z-10.text-center
+        p(class="text-[#D2B48C] uppercase tracking-[0.5em] text-xs mb-4") Professional Makeup Artist
+        h2(class="text-6xl md:text-9xl font-medium serif-font italic text-white mb-8")
+          | Elegance in Every 
+          br
+          span(class="not-italic text-[#D2B48C]") Stroke
+        .h-px.w-24.mx-auto.mb-8(class="bg-[#D2B48C]")
+
+    section.py-24.bg-black.text-white
+      .container.mx-auto.px-6.flex.flex-col.items-center.gap-16(class="lg:flex-row")
+        .relative(class="lg:w-1/2")
+          .absolute.-top-4.-left-4.w-full.h-full(class="border border-[#D2B48C] rounded-2xl")
+          img.rounded-2xl.relative.z-10.grayscale.transition-all.duration-700.w-full.object-cover(src='https://images.unsplash.com/photo-1522337094846-8a818192de1f?q=80&w=1000&auto=format&fit=crop' class='hover:grayscale-0 h-[500px]')
+
+        .relative(class="lg:w-1/2")
+          h3(class="text-4xl serif-font italic mb-6 text-[#D2B48C]") Hành trình 10 năm kiến tạo vẻ đẽp
+          p(class="text-white/70 leading-relaxed mb-8 italic")
+            | Susannie không chỉ là một Makeup Artist, chúng tôi là người kể câu chuyện của bạn thông qua cọ vẽ. Với 10 năm kinh nghiệm trong lĩnh vực Bridal và High-end Makeup.
+          .grid.grid-cols-2.gap-8(class="border-t border-white/10 pt-8")
+            div
+              p(class="text-3xl font-bold text-[#D2B48C]") 1.500+
+              p(class="text-[10px] uppercase tracking-widest text-white/50") Khách hàng hài lòng
+            div
+              p(class="text-3xl font-bold text-[#D2B48C]") Global
+              p(class="text-[10px] uppercase tracking-widest text-white/50") Chứng chỉ quốc tế
+
+    section.py-24.px-6
+      .container.mx-auto
+        .flex.flex-col.justify-between.items-end.mb-12.gap-4(class="md:flex-row")
+          div
+            h3.text-4xl.serif-font.italic.text-black Dịch vụ nổi bật
+            p.text-sm.text-neutral-500.mt-2 Được chọn lọc dựa trên phong cách yêu thích của khách hàng
+          //- .flex.gap-2
+          //-   span(class="px-4 py-2 bg-black text-[#D2B48C] rounded-lg text-xs font-bold shadow-md") 1
+          //-   span(class="px-4 py-2 bg-white text-black rounded-lg text-xs font-bold border border-black/10 hover:bg-neutral-50 cursor-pointer") 2
+
+        .grid.gap-8(class="grid-cols-1 md:grid-cols-2 lg:grid-cols-3")
+          each service in services
+            .service-card.bg-white.rounded-3xl.overflow-hidden.flex.flex-col.h-full
+              .relative.h-72.overflow-hidden
+                //- Nút Trái tim yêu thích (Mới thêm)
+                button.absolute.top-4.left-4.z-20.w-10.h-10.flex.items-center.justify-center.rounded-full.backdrop-blur-md.transition-all.group(
+                  class='bg-black/20 hover:bg-white text-white hover:text-red-500 shadow-lg'
+                  data-id=service.id
+                  onclick='toggleFavorite(this)'
+                )
+                  //- Kiểm tra nếu id này nằm trong danh sách yêu thích của customer thì để fa-solid đỏ luôn
+                  if customer && customer.favorites && customer.favorites.includes(service.id)
+
+                    i.fa-solid.fa-heart.text-lg.text-red-500
+                  else
+                    i.fa-regular.fa-heart.text-lg
+                img.w-full.h-full.object-cover(src=service.images)
+              .p-8.flex.flex-col.flex-grow
+                h3.text-xl.font-bold.text-black.uppercase.mb-2 #{service.name}
+                p.text-xs.text-neutral-400.mb-6.flex.items-center.italic
+                  i.fa-solid.fa-location-dot.mr-2(class='text-[#D2B48C]')
+                  |  #{service.address}
+                .flex.justify-between.items-center.py-4.border-y.border-neutral-50.mb-6
+                  //- Nhóm bên trái: Icon + Thời lượng (Đã bọc lại để không bị vỡ layout)
+                  .flex.items-center.gap-2
+                    i.fa-regular.fa-clock.text-neutral-400(class='text-[14px]')
+                    span.font-bold.uppercase.tracking-tighter.text-neutral-500(class='text-[11px]')
+                      | #{service.duration} phút
+                  
+                  //- Nhóm bên phải: Giữ nguyên thiết kế giá của bạn
+                  span.bg-black.px-3.py-1.rounded-md.font-bold.text-sm(class='text-[#D2B48C]') 
+                    | #{(service.price * 1).toLocaleString()} đ
+                //- .flex.gap-3.mb-8
+                //-   span.bg-neutral-100.font-bold.px-3.py-2.rounded-lg.flex.items-center.gap-2(class='text-[11px]')
+                //-     i.fa-solid.fa-calendar-check(class='text-[#D2B48C]')
+                //-     |  210 l&#x1B0;&#x1EE3;t
+                //-   span.bg-neutral-100.font-bold.px-3.py-2.rounded-lg.flex.items-center.gap-2(class='text-[11px]')
+                //-     i.fa-solid.fa-award(class='text-[#D2B48C]')
+                //-     |  10 n&abreve;m
+                a(href=`/service/detail/${service.id}` class="w-full inline-block text-center py-4 bg-black text-[#D2B48C] rounded-xl text-[11px] font-bold uppercase tracking-widest hover:bg-[#D2B48C] hover:text-black transition-all")
+                  | Xem chi tiết & Đặt lịch
+
+    section.py-24.bg-white
+      .container.mx-auto.px-6.text-center
+        p(class="text-[#D2B48C] text-xs font-bold uppercase tracking-widest mb-2") Đánh Giá
+        h3.text-4xl.serif-font.italic.text-black.mb-4 Khách Hàng Nói Gì Về Chúng Tôi?
+        p.text-neutral-500.max-w-2xl.mx-auto.mb-16.text-sm Những phản hồi thực tế từ các khách hàng đã trải nghiệm dịch vụ tại hệ thống của chúng tôi.
+        
+        .grid.gap-8.text-left(class="grid-cols-1 md:grid-cols-3")
+          each val in [{name: 'Nguyễn Văn A', text: 'Dịch vụ đặt dịch vụ cực kỳ nhanh chóng và tiện lợi. Makeup chất lượng, đội ngũ hỗ trợ nhiệt tình. Tôi rất hài lòng!', img: 'a1'}, {name: 'Trần Thị B', text: 'Hệ thống đặt dịch vụ dễ sử dụng, nhiều khung giờ trống để lựa chọn. Tôi đã giới thiệu cho bạn bè cùng sử dụng.', img: 'a2'}, {name: 'Lê Văn C', text: 'Makeup đẹp, chu đáo, đặt dịch vụ nhanh chóng mà không cần phải gọi điện nhiều lần. Rất đáng để trải nghiệm!', img: 'a3'}]
+            .p-8.border.border-neutral-100.rounded-3xl.relative.shadow-sm(class="bg-[#FAF9F6]")
+              .absolute.left-8.p-2.rounded-lg(class="-top-4 bg-black text-[#D2B48C]")
+                i.fa-solid.fa-quote-left
+              .flex.items-center.gap-4.mb-6
+                img.w-12.h-12.rounded-full.object-cover(src=`https://i.pravatar.cc/150?u=${val.img}`)
+                div
+                  h5.font-bold.text-sm= val.name
+                  p(class="text-[10px] text-neutral-400 uppercase tracking-tighter") Khách hàng thân thiết
+              p(class="text-xs text-neutral-600 leading-relaxed mb-6 italic") "#{val.text}"
+              .flex.text-yellow-500(class="text-[10px] gap-1")
+                each star in [1,2,3,4,5]
+                  i.fa-solid.fa-star
+    script.
+      async function toggleFavorite(btn) {
+        const serviceId = btn.getAttribute('data-id');
+        const icon = btn.querySelector('i');
+        
+        // 1. Optimistic UI: Đổi màu ngay để tạo cảm giác mượt mà
+        const isAdding = icon.classList.contains('fa-regular');
+        const updateUI = (adding) => {
+          if (adding) {
+            icon.classList.replace('fa-regular', 'fa-solid');
+            icon.classList.add('text-red-500');
+            btn.classList.add('bg-white');
+            btn.classList.remove('bg-black/20', 'text-white');
+          } else {
+            icon.classList.replace('fa-solid', 'fa-regular');
+            icon.classList.remove('text-red-500');
+            btn.classList.remove('bg-white');
+            btn.classList.add('bg-black/20', 'text-white');
+          }
+        };
+
+        updateUI(isAdding);
+
+        try {
+          const response = await fetch('/service/favorite/toggle', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ serviceId: serviceId })
+          });
+
+          // KIỂM TRA PHẢN HỒI HTTP TRƯỚC KHI ĐỌC JSON
+          if (!response.ok) {
+            if (response.status === 401) {
+              alert("Vui lòng đăng nhập để thực hiện chức năng này!");
+              window.location.href = "/user/login";
+              return;
+            }
+            // Nếu là lỗi 500 hoặc lỗi khác, ném lỗi để nhảy vào catch
+            throw new Error(`Server returned status ${response.status}`);
+          }
+
+          // Chỉ đọc JSON khi chắc chắn response thành công (200 OK)
+          const result = await response.json();
+          console.log(result);
+          if (result.code === 200) {
+            alert("Thêm vào mục yêu thích thành công!");
+          } else {
+            throw new Error(result.message || "Unknown error");
+          }
+
+        } catch (error) {
+          console.error("Lỗi thực thi:", error);
+          // 3. ĐẢO NGƯỢC LẠI GIAO DIỆN NẾU THẤT BẠI
+          updateUI(!isAdding); 
+          alert("Không thể cập nhật mục yêu thích. Vui lòng kiểm tra lại kết nối!");
+        }
+      }

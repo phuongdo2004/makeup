@@ -1,0 +1,70 @@
+extends ../../layouts/default.pug
+
+block main
+  .container.mx-auto.px-4.py-12.max-w-6xl
+    //- Sử dụng method="POST" và thêm ?_method=PATCH
+    form(action="/user/edit?_method=PATCH" method="POST" enctype="multipart/form-data")
+      .flex.flex-col.justify-between.items-start.mb-10.gap-4(class='md:flex-row md:items-end')
+        div
+          h1.text-4xl.font-bold.serif-font.italic Chỉnh sửa hồ sơ
+          p.text-sm.text-neutral-400.mt-2.font-medium Cập nhật thông tin cá nhân của bạn để bảo mật tài khoản tốt hơn.
+        
+        .flex.items-center.gap-3
+          //- Sửa lại dòng này để tránh lỗi multiple attributes
+          a(href="/user/profile").px-8.py-3.rounded-full.text-xs.font-bold.border.border-neutral-200.transition-all.hover_bg-neutral-100.hover_border-neutral-300
+            span HỦY BỎ
+          button(type="submit").btn-black
+            i.fa-solid.fa-check.mr-2
+            span LƯU THAY ĐỔI
+
+      .grid.grid-cols-1.gap-8(class='lg:grid-cols-12')
+        div(class='lg:col-span-4')
+          .profile-card.p-10.flex.flex-col.items-center
+            .avatar-wrapper.mb-6.relative.group
+              img.w-44.h-44.rounded-full.object-cover.shadow-sm.border-8.border-sky-50(
+                src=user.avatar[0] 
+                alt='Avatar' 
+                id="avatar-preview"
+              )
+              label(for="avatar-input").absolute.bottom-2.right-2.bg-black.text-white.w-10.h-10.rounded-full.flex.items-center.justify-center.cursor-pointer.shadow-lg.hover_scale-110.transition-transform
+                i.fa-solid.fa-camera.text-xs
+              input#avatar-input.hidden(type="file" name="avatar" accept="image/*")
+            
+            h2.text-2xl.font-bold.serif-font.italic #{user.fullName}
+            p.font-bold.uppercase.mt-2(class='text-[10px] text-[#D2B48C] tracking-[0.2em]') THAY ĐỔI ẢNH ĐẠI DIỆN
+
+        div(class='lg:col-span-8')
+          .profile-card.p-10(class='md:p-12')
+            h3.font-extrabold.text-neutral-400.uppercase.mb-10(class='text-[11px] tracking-[0.15em]') THÔNG TIN CHI TIẾT
+            .space-y-8
+              .grid.grid-cols-1.gap-8(class='md:grid-cols-2')
+                div
+                  label.label-custom(for="fullName") HỌ VÀ TÊN
+                  input#fullName.form-input-custom(type='text' name="fullName" value=user.fullName required)
+                div
+                  label.label-custom(for="email") EMAIL LIÊN HỆ
+                  input#email.form-input-custom.opacity-60(type='email' value=user.email readonly)
+              
+              .grid.grid-cols-1.gap-8(class='md:grid-cols-2')
+                div
+                  label.label-custom(for="phone") SỐ ĐIỆN THOẠI
+                  input#phone.form-input-custom(type='text' name="phone" value=user.phone)
+                div
+                  label.label-custom(for="address") ĐỊA CHỈ
+                  input#address.form-input-custom(type='text' name="address" value=user.address)
+
+    script.
+      const avatarInput = document.getElementById('avatar-input');
+      const avatarPreview = document.getElementById('avatar-preview');
+      if(avatarInput) {
+        avatarInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+              avatarPreview.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      }

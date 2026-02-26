@@ -1,0 +1,33 @@
+footer.pt-20.pb-10(class="border-t border-white/5")
+  .container.mx-auto.px-6
+    .grid.gap-12.mb-16(class="grid-cols-1 md:grid-cols-4")
+      .col-span-1(class="md:col-span-2")
+        h1.text-3xl.font-black.tracking-tighter.serif-font.italic.text-white.mb-6
+          | SUSANNIE
+          span(class="text-[#D2B48C]") .Studio
+        p(class="text-white/50 text-sm max-w-sm mb-8 leading-relaxed italic")
+          | "Tôn vinh vẻ đẹp riêng biệt của bạn qua bàn tay nghệ thuật chuyên nghiệp."
+        .flex.gap-4
+          each icon in ['facebook-f', 'instagram', 'tiktok']
+            a(class="w-10 h-10 border border-white/10 flex items-center justify-center rounded-full hover:bg-[#D2B48C] hover:text-black transition-all" href="#")
+              i(class=`fa-brands fa-${icon}`)
+      div
+        h4(class="text-[#D2B48C] font-bold uppercase text-[10px] tracking-widest mb-6") Khám Phá
+        ul.space-y-4.text-sm(class="text-white/60")
+          li: a(class="hover:text-white transition-colors" href="#") Về Susannie
+          li: a(class="hover:text-white transition-colors" href="#") Dịch vụ Bridal
+          li: a(class="hover:text-white transition-colors" href="#") Khóa học chuyên nghiệp
+      div
+        h4(class="text-[#D2B48C] font-bold uppercase text-[10px] tracking-widest mb-6") Liên Hệ
+        ul.space-y-4.text-sm(class="text-white/60")
+          li
+            i(class="fa-solid fa-envelope mr-3 text-[#D2B48C]")
+            | contact@susannie.com
+          li
+            i(class="fa-solid fa-phone mr-3 text-[#D2B48C]")
+            | (+84) 901 234 567
+          li
+            i(class="fa-solid fa-location-arrow mr-3 text-[#D2B48C]")
+            | Quận 3, TP. Hồ Chí Minh
+    .pt-8.text-center(class="border-t border-white/5")
+      p(class="text-[9px] text-white/30 uppercase tracking-[0.4em]") © 2024 SUSANNIE STUDIO. ALL RIGHTS RESERVED. DESIGNED FOR ELEGANCE.

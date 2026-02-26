@@ -1,0 +1,44 @@
+//- Sidebar
+aside.sidebar.w-64.min-h-screen.sticky.top-0.flex.flex-col(class='text-white/70')
+  .p-8
+    h1.text-2xl.font-black.tracking-tighter.serif-font.italic.text-white
+      | SUSANNIE
+      span(class='text-[#D2B48C]') .Admin
+  nav.flex-1.px-4.space-y-2.uppercase.tracking-widest.font-bold(class='text-[11px]')
+    a.nav-item.active.flex.items-center.gap-4.p-4.rounded-xl(href='/admin/dashboard' class='text-[#D2B48C]')
+      i.fa-solid.fa-chart-line.text-lg
+      | Tổng quan
+    a.nav-item.flex.items-center.gap-4.p-4.rounded-xl(href='/admin/bookings')
+      i.fa-solid.fa-calendar-check.text-lg
+      | Quản lý lịch đặt
+    a.nav-item.flex.items-center.gap-4.p-4.rounded-xl(href='/admin/service')
+      i.fa-solid.fa-wand-magic-sparkles.text-lg
+      | Dịch vụ Makeup
+    
+    //- MỤC MỚI THÊM: Quản lý Artist
+    a.nav-item.flex.items-center.gap-4.p-4.rounded-xl(href='/admin/artists')
+      i.fa-solid.fa-palette.text-lg
+      | Đội ngũ Artist
+
+    a.nav-item.flex.items-center.gap-4.p-4.rounded-xl(href='/admin/customers')
+      i.fa-solid.fa-users.text-lg
+      | Khách hàng
+    a.nav-item.flex.items-center.gap-4.p-4.rounded-xl(href='/admin/reviews')
+      i.fa-solid.fa-star.text-lg
+      | Đánh giá & Bình luận
+    a.nav-item.flex.items-center.gap-4.p-4.rounded-xl(href='/admin/settings')
+      i.fa-solid.fa-gear.text-lg
+      | Cài đặt hệ thống
+  
+  .p-6.border-t(class='border-white/5')
+    a.flex.items-center.gap-3.mb-6.group(href='/admin/profile' class='transition-opacity hover:opacity-80')
+      //- Thêm class object-cover để ảnh tự căn giữa và cắt cúp đều trong khung tròn
+      img.w-10.h-10.rounded-full.border.object-cover(src=user.avatar[0] class='border-[#D2B48C]')
+      div
+        p.text-xs.font-bold.text-white(class='group-hover:text-[#D2B48C]') Quản trị viên
+        p.opacity-50(class='text-[10px]') #{user.email}
+    a.w-full.py-3.rounded-xl.transition-all.font-black.uppercase.tracking-widest.text-center.block(
+      href='/admin/auth/logout' 
+      class='bg-white/5 hover:bg-red-500/20 hover:text-red-400 text-[10px]'
+    )
+      | Đăng xuất
