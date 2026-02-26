@@ -1,9 +1,9 @@
 import {Request , Response} from "express";
-import { pagi } from "../../helpers/pagination.helper";
-import Booking from "../../model/booking.model";
-import Customer from "../../model/customer.model";
-import Service from "../../model/service.model";
-import { system } from "../../config/system";
+import { pagi } from "../../helpers/pagination.helper.js";
+import Booking from "../../model/booking.model.js";
+import Customer from "../../model/customer.model.js";
+import Service from "../../model/service.model.js";
+import { system } from "../../config/system.js";
 export const index = async( req :Request, res:Response) => {
     // 1. Cấu hình phân trang
 // 1. Cấu hình phân trang

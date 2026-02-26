@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 // Import Model của bạn (ví dụ Review)
-import Comment from "../../model/comment.model";
-import Customer from "../../model/customer.model";
-import Service from "../../model/service.model";
+import Comment from "../../model/comment.model.js";
+import Customer from "../../model/customer.model.js";
+import Service from "../../model/service.model.js";
 
 // export const index = async (req: Request, res: Response) => {
 //   // try {

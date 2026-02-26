@@ -1,8 +1,8 @@
 import express, { NextFunction }  from "express";
-import * as controller from "../../controller/client/user.controller" ;
+import * as controller from "../../controller/client/user.controller.js" ;
  import { Request, Response } from "express"; 
-import { requireAuth } from "../../middleware/client/auth.middleware";
-import { uploadCloud } from "../../middleware/admin/uploadCloud.middleware";
+import { requireAuth } from "../../middleware/client/auth.middleware.js";
+import { uploadCloud } from "../../middleware/admin/uploadCloud.middleware.js";
 import multer from "multer";
 const upload = multer({ storage: multer.memoryStorage() });
 const router = express.Router();

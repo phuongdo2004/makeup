@@ -1,18 +1,18 @@
 import { Express } from "express";
 import express, { NextFunction }  from "express";
-import { dashboardRouter} from "./dashboard.route";
+import { dashboardRouter} from "./dashboard.route.js";
 import {system} from "../../config/system.js";
 import multer from "multer";
 
 // const upload = multer({ storage: multer.memoryStorage() });
 // // import { userRouter } from "./user.route";
-import { profileRouter } from "./profile.route";
-import { serviceRouter } from "./service.route";
-import { bookingsRouter } from "./bookings.route";
-import { customerRouter } from "./customers.route";
-import { reviewsRouter } from "./reviews.route";
-import { userRouter } from "./user.route";
-import { artistRouter } from "./artist.route";
+import { profileRouter } from "./profile.route.js";
+import { serviceRouter } from "./service.route.js";
+import { bookingsRouter } from "./bookings.route.js";
+import { customerRouter } from "./customers.route.js";
+import { reviewsRouter } from "./reviews.route.js";
+import { userRouter } from "./user.route.js";
+import { artistRouter } from "./artist.route.js";
 import { requireAuth } from "../../middleware/admin/auth.middlewares.js";
 export const adminRouter = async(app:Express)=>{
   

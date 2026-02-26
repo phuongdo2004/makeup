@@ -1,8 +1,8 @@
 import {Request , Response} from "express";
 import md5 from "md5";
-import User from "../../model/user.model";
-import { system } from "../../config/system";
-import { formatDate } from "../../helpers/formatDate.helper";
+import User from "../../model/user.model.js";
+import { system } from "../../config/system.js";
+import { formatDate } from "../../helpers/formatDate.helper.js";
 export const index = async( req :Request, res:Response) => {
   const user = res.locals.user;
   console.log(user.created_at);

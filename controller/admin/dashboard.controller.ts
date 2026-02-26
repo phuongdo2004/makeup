@@ -1,9 +1,9 @@
 import {Request , Response} from "express";
-import User from "../../model/user.model";
-import Service from "../../model/service.model";
-import Booking from "../../model/booking.model";
-import Customer from "../../model/customer.model";
-import { pagi } from "../../helpers/pagination.helper";
+import User from "../../model/user.model.js";
+import Service from "../../model/service.model.js";
+import Booking from "../../model/booking.model.js";
+import Customer from "../../model/customer.model.js";
+import { pagi } from "../../helpers/pagination.helper.js";
 import { Op, fn, col } from 'sequelize';
 
 export const index = async (req: Request, res: Response) => {

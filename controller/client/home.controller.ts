@@ -1,7 +1,7 @@
 import {Request , Response} from "express";
-import Customer from "../../model/customer.model";
-import Service from "../../model/service.model";
-import Artist from "../../model/artist.model";
+import Customer from "../../model/customer.model.js";
+import Service from "../../model/service.model.js";
+import Artist from "../../model/artist.model.js";
 
 export const index = async( req :Request, res:Response) => {
   try {

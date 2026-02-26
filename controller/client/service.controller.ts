@@ -1,11 +1,11 @@
 import { Op } from "sequelize";
 import {Request , Response} from "express";
-import Service from "../../model/service.model";
-import Artist from "../../model/artist.model";
-import Customer from "../../model/customer.model";
-import Comment from "../../model/comment.model";
-import Booking from "../../model/booking.model";
-import { pagi } from "../../helpers/pagination.helper";
+import Service from "../../model/service.model.js";
+import Artist from "../../model/artist.model.js";
+import Customer from "../../model/customer.model.js";
+import Comment from "../../model/comment.model.js";
+import Booking from "../../model/booking.model.js";
+import { pagi } from "../../helpers/pagination.helper.js";
 export const index = async( req :Request, res:Response) => {
   const pagination = await pagi(req , res);
 

@@ -9,13 +9,13 @@ const upload = multer({ storage: storage });
 
 
 
-import { clientRouter } from "./router/client/index.route";
+import { clientRouter } from "./router/client/index.route.js";
 import bodyParser from "body-parser";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import {adminRouter} from "./router/admin/index.route";
-import { system } from "./config/system";
-import { sequelize } from "./config/database";
+import {adminRouter} from "./router/admin/index.route.js";
+import { system } from "./config/system.js";
+import { sequelize } from "./config/database.js";
 sequelize;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

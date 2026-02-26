@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import { system } from "../../config/system";
-import Service from "../../model/service.model";
-import Artist from "../../model/artist.model";
-import { pagi } from "../../helpers/pagination.helper";
-import Booking from "../../model/booking.model";
+import { system } from "../../config/system.js";
+import Service from "../../model/service.model.js";
+import Artist from "../../model/artist.model.js";
+import { pagi } from "../../helpers/pagination.helper.js";
+import Booking from "../../model/booking.model.js";
 // [GET] index start
 export const index = async (req: Request, res: Response) => {
   

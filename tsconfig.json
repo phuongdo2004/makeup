@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "esnext",
+    "module": "NodeNext",          // Sửa từ "esnext" thành "NodeNext"
+    "moduleResolution": "NodeNext",  // Sửa từ "node" thành "NodeNext"
     "lib": ["ES2020"],
-    "moduleResolution": "node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "types": ["node"],
@@ -11,11 +11,12 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "rootDir": "./"                // Đảm bảo tsc quét từ thư mục gốc
   },
   "ts-node": {
-    "esm": true,
-    "experimentalEsm": true
+    "esm": true
   },
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "dist"] // Loại trừ dist để tránh build lặp lại
 }

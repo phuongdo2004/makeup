@@ -1,8 +1,8 @@
 import { Request, Response } from "express"
 import md5 from "md5"
-import { formatDate } from "../../helpers/formatDate.helper";
+import { formatDate } from "../../helpers/formatDate.helper.js";
 
-  import Customer from "../../model/customer.model";
+  import Customer from "../../model/customer.model.js";
 export const login = async(req:Request, res:Response) => {
   res.render("client/pages/user/login.pug",{
     message: req.flash(),

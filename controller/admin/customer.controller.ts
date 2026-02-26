@@ -1,7 +1,7 @@
 import {Request , Response} from "express";
-import Customer from "../../model/customer.model";
-import Booking from "../../model/booking.model";
-import { pagi } from "../../helpers/pagination.helper";
+import Customer from "../../model/customer.model.js";
+import Booking from "../../model/booking.model.js";
+import { pagi } from "../../helpers/pagination.helper.js";
 export const index = async (req: Request, res: Response) => {
   const limit = 3;
 const page = parseInt(req.query.page as string) || 1;

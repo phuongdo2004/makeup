@@ -2,7 +2,7 @@ import express, { NextFunction }  from "express";
 import * as controller from "../../controller/admin/artist.controller.js"; ;
  import { Request, Response } from "express"; 
 import multer from "multer";
-import { uploadCloud } from "../../middleware/admin/uploadCloud.middleware";
+import { uploadCloud } from "../../middleware/admin/uploadCloud.middleware.js";
 const upload = multer({ storage: multer.memoryStorage() });
 const router = express.Router();
 

@@ -1,6 +1,6 @@
 import {Request , Response} from "express";
-import Artist from "../../model/artist.model";
-import { system } from "../../config/system";
+import Artist from "../../model/artist.model.js";
+import { system } from "../../config/system.js";
 export const index = async( req :Request, res:Response) => {
   const artists = await Artist.findAll({where: {status: 'active'}});
   for (const artist of artists) {

@@ -1,9 +1,9 @@
-import Booking from "../../model/booking.model";
+import Booking from "../../model/booking.model.js";
 import  axios  from "axios";
 import  { createHmac } from "crypto";
 import { Request, Response } from 'express';
-import { system } from "../../config/system";
-import Customer from "../../model/customer.model";
+import { system } from "../../config/system.js";
+import Customer from "../../model/customer.model.js";
 export const payment = async (req:Request, res: Response) => {
   try {
     const data = req.body;

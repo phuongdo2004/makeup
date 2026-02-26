@@ -1,5 +1,5 @@
-import Customer from "../../model/customer.model";
-import { system } from "../../config/system";
+import Customer from "../../model/customer.model.js";
+import { system } from "../../config/system.js";
 import { NextFunction, Request, Response } from "express";
 export const requireAuth = async(req:Request, res:Response, next:NextFunction)=>{
   if( !req.cookies.tokenCustomer){
