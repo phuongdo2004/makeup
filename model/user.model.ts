@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { sequelize } from "../config/database";
+import { sequelize } from "../config/database.js";
 import { nanoid } from "nanoid";
 
 // Hàm tạo token ngẫu nhiên nếu bạn cần dùng cho tokenUser

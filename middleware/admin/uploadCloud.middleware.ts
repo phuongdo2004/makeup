@@ -1,6 +1,6 @@
-import { StreamUpload } from "../../helpers/streamUpload.helper";
+import { StreamUpload } from "../../helpers/streamUpload.helper.js";
 import { NextFunction, Request, Response } from "express";
-import Service from "../../model/service.model";
+import Service from "../../model/service.model.js";
   export const uploadCloud = async (req: Request, res: Response, next: NextFunction) => {
   try {
     console.log("middleware uploadCloud called");

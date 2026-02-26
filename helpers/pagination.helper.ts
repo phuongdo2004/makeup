@@ -1,4 +1,4 @@
-import Service from "../model/service.model";
+import Service from "../model/service.model.js";
 import { Request, Response } from "express";
 
 // Định nghĩa cấu trúc dữ liệu để TypeScript không báo lỗi

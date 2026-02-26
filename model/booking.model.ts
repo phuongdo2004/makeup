@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { sequelize } from "../config/database";
+import { sequelize } from "../config/database.js";
 import { v4 as uuidv4 } from "uuid"; // Hoặc dùng nanoid tùy dự án của bạn
 
 const Booking = sequelize.define("Booking", {

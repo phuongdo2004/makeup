@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { sequelize } from "../config/database";
+import { sequelize } from "../config/database.js";
 import { nanoid } from "nanoid";
 
 // Hàm tạo token ngẫu nhiên nếu bạn cần dùng cho tokenUser
@@ -48,16 +48,15 @@ const Customer = sequelize.define("Customer", {
     type: DataTypes.TEXT,
     allowNull: true,
     defaultValue: "[]", // Lưu chuỗi JSON mảng rỗng mặc định
+   // Trong customer.model.ts phần get() và set()
     get() {
-      const rawValue = this.getDataValue('favorites');
-      try {
-        return rawValue ? JSON.parse(rawValue) : [];
-      } catch (e) {
-        return [];
-      }
+      const self = this as any; // Ép kiểu để thoát khỏi kiểm tra nghiêm ngặt của TS
+      const rawValue = self.getDataValue('favorites');
+      return rawValue ? JSON.parse(rawValue) : [];
     },
     set(value: string[]) {
-      this.setDataValue('favorites', JSON.stringify(value));
+      const self = this as any;
+      self.setDataValue('favorites', JSON.stringify(value));
     }
   },
   created_at: {
