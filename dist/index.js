@@ -1,3 +1,4 @@
+import path from "path";
 import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
@@ -6,6 +7,7 @@ import multer from "multer";
 const storage = multer.memoryStorage();
 // khi dung storage thi req.file se chua buffer
 const upload = multer({ storage: storage });
+const rootPath = process.cwd(); // Đây là thư mục D:\nodejs\makeup
 import { clientRouter } from "./router/client/index.route.js";
 import bodyParser from "body-parser";
 import { fileURLToPath } from "url";
@@ -36,10 +38,15 @@ app.use(flash());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.locals.prefixAdmin = system.prefixAdmin;
-app.set("views", `${__dirname}/views`);
+// app.set("views", `${__dirname}/views`);
+// app.set("view engine", "pug");
+app.set("views", path.join(rootPath, "views"));
 app.set("view engine", "pug");
-app.use(express.static(`${__dirname}/public`));
-const port = 2000;
+// app.use(express.static(`${__dirname}/public`));
+// app.use(express.static("./public"));
+app.use(express.static(path.join(rootPath, "public")));
+const port = process.env.PORT || 2000;
+console.log("Thư mục views đang cấu hình là:", app.get("views"));
 console.log("oke");
 adminRouter(app);
 clientRouter(app);

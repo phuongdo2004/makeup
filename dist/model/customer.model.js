@@ -42,19 +42,40 @@ const Customer = sequelize.define("Customer", {
         type: DataTypes.TEXT,
         allowNull: true,
     },
+    // favorites: {
+    //   type: DataTypes.TEXT,
+    //   allowNull: true,
+    //   defaultValue: "[]", // Lưu chuỗi JSON mảng rỗng mặc định
+    //  // Trong customer.model.ts phần get() và set()
+    //   get() {
+    //     const self = this as any; // Ép kiểu để thoát khỏi kiểm tra nghiêm ngặt của TS
+    //     const rawValue = self.getDataValue('favorites');
+    //     return rawValue ? JSON.parse(rawValue) : [];
+    //   },
+    //   set(value: string[]) {
+    //     const self = this as any;
+    //     self.setDataValue('favorites', JSON.stringify(value));
+    //   }
+    // },
     favorites: {
-        type: DataTypes.TEXT,
+        type: DataTypes.TEXT, // hoặc JSON tùy DB
         allowNull: true,
-        defaultValue: "[]", // Lưu chuỗi JSON mảng rỗng mặc định
-        // Trong customer.model.ts phần get() và set()
+        defaultValue: "[]",
         get() {
-            const self = this; // Ép kiểu để thoát khỏi kiểm tra nghiêm ngặt của TS
-            const rawValue = self.getDataValue('favorites');
-            return rawValue ? JSON.parse(rawValue) : [];
+            const rawValue = this.getDataValue('favorites');
+            if (!rawValue)
+                return []; // Nếu null thì trả về mảng rỗng
+            try {
+                // Chỉ parse nếu nó là chuỗi có cấu trúc JSON (bắt đầu bằng [ hoặc {)
+                return typeof rawValue === 'string' ? JSON.parse(rawValue) : rawValue;
+            }
+            catch (e) {
+                console.error("Lỗi parse JSON tại field favorites:", rawValue);
+                return []; // Nếu lỗi parse (như lỗi 'C' bạn gặp) thì trả về mảng rỗng để web không sập
+            }
         },
         set(value) {
-            const self = this;
-            self.setDataValue('favorites', JSON.stringify(value));
+            this.setDataValue('favorites', JSON.stringify(value));
         }
     },
     created_at: {

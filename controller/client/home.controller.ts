@@ -21,9 +21,7 @@ if(artist){
       (service as any)["images"] = (JSON.parse((service as any)["images"]))[0];
 
     }
-    
-    
-  
+
   }
   const customer = res.locals.Customer;
 
