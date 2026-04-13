@@ -33,13 +33,16 @@ export const payment = async (req, res) => {
         // 3. Lấy ID sau khi tạo thành công
         // TRONG SEQUELIZE, ID mặc định là 'id', không phải '_id' như MongoDB
         const bookingId = newBooking.get('id') || newBooking.id;
+        console.log("oke");
         console.log("✅ Tạo đơn đặt lịch thành công. ID:", bookingId);
+        console.log("Thông tin booking:");
         let { accessKey, secretKey, orderInfo, partnerCode, 
         // redirectUrl,
         // ipnUrl,
         requestType, extraData, orderGroupId, autoCapture, lang, } = system;
         const ipnUrl = process.env.ipnUrl;
         const redirectUrl = process.env.redirectUrl;
+        console.log(ipnUrl, redirectUrl);
         var requestId = bookingId;
         // Đảm bảo lấy giá trị ổn định
         const amount = price.toString();
@@ -47,8 +50,6 @@ export const payment = async (req, res) => {
         const currentRedirectUrl = redirectUrl || "";
         // 1. Tạo chuỗi rawSignature ĐÚNG THỨ TỰ
         const rawSignature = `accessKey=${accessKey}&amount=${amount}&extraData=${extraData}&ipnUrl=${currentIpnUrl}&orderId=${bookingId}&orderInfo=${orderInfo}&partnerCode=${partnerCode}&redirectUrl=${currentRedirectUrl}&requestId=${requestId}&requestType=${requestType}`;
-        // console.log("--- Kiểm tra chuỗi ký ---");
-        // console.log(rawSignature);
         const signature = createHmac('sha256', secretKey)
             .update(rawSignature)
             .digest('hex');
@@ -94,12 +95,15 @@ export const payment = async (req, res) => {
         // res.redirect(`/payment/checkout/${bookingId}`);
     }
     catch (error) {
+        console.error("Lỗi trong payment:", error.message);
         return res.status(500).json({ statusCode: 500, message: error.message });
     }
+    console.log("chay het roi");
 };
 export const paymentCallback = async (req, res) => {
-    console.log('MoMo Callback Data:', req.body);
+    console.log('MoMo Callback Data:');
     const { resultCode, orderId } = req.body;
+    console.log(`MoMo Callback - orderId: ${orderId}, resultCode: ${resultCode}`);
     if (resultCode == 0) {
         // orderId chính là cái bookingId bạn gửi đi lúc đầu
         await Booking.update({ status: "paid" }, {

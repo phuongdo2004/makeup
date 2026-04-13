@@ -25,7 +25,6 @@ block main
         .flex.justify-between.items-start.mb-4
           .w-10.h-10.rounded-xl.flex.items-center.justify-center(class='bg-[#F5F5DC] text-[#D2B48C]')
             i.fa-solid.fa-wallet.text-lg
-          span.text-green-500.text-xs.font-bold +12%
         p.text-neutral-400.uppercase.font-black.tracking-widest(class='text-[11px]') Doanh thu tháng
         h3.text-2xl.font-bold.mt-1 #{stats.revenue}đ
       
@@ -33,7 +32,6 @@ block main
         .flex.justify-between.items-start.mb-4
           .w-10.h-10.rounded-xl.bg-neutral-100.flex.items-center.justify-center.text-neutral-400
             i.fa-solid.fa-calendar.text-lg
-          span.text-neutral-400.text-xs.font-bold 0%
         p.text-neutral-400.uppercase.font-black.tracking-widest(class='text-[11px]') Lịch đặt mới
         h3.text-2xl.font-bold.mt-1 #{stats.newBookings}
       
@@ -41,17 +39,8 @@ block main
         .flex.justify-between.items-start.mb-4
           .w-10.h-10.rounded-xl.bg-neutral-100.flex.items-center.justify-center.text-neutral-400
             i.fa-solid.fa-users.text-lg
-          span.text-green-500.text-xs.font-bold +5
         p.text-neutral-400.uppercase.font-black.tracking-widest(class='text-[11px]') Tổng khách hàng
         h3.text-2xl.font-bold.mt-1 #{stats.totalCustomers}
-      
-      .card.p-6.border-2(class='border-[#D2B48C]/30 bg-[#F5F5DC]/20')
-        .flex.justify-between.items-start.mb-4
-          .w-10.h-10.rounded-xl.flex.items-center.justify-center.text-white(class='bg-[#D2B48C]')
-            i.fa-solid.fa-star.text-lg
-          span.text-xs.font-bold(class='text-[#D2B48C]') 4.9/5
-        p.text-neutral-400.uppercase.font-black.tracking-widest(class='text-[11px]') Đánh giá TB
-        h3.text-2xl.font-bold.mt-1 Tuyệt vời
 
     .card.overflow-hidden
       .p-8.border-b.border-neutral-100.flex.justify-between.items-center

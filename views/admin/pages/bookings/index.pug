@@ -12,30 +12,9 @@ block main
         .flex.gap-4
           .flex.bg-white.p-1.rounded-full.border.border-neutral-100.shadow-sm
             button.px-6.py-2.bg-black.rounded-full.font-bold.uppercase.tracking-widest.transition-all(class='text-[#D2B48C] text-[10px]') Tất cả
-
-      //- Thống kê (Phần này bạn có thể truyền biến tổng số lượng từ controller vào nếu muốn)
-      //- .grid.grid-cols-1.gap-6.mb-10(class='md:grid-cols-4')
-      //-   .card.p-6.border-b-2.border-yellow-400
-      //-     p.text-neutral-400.uppercase.font-black.tracking-widest(class='text-[10px]') Chờ xác nhận
-      //-     h3.text-2xl.font-bold.mt-1 05
-      //-   .card.p-6.border-b-2.border-blue-400
-      //-     p.text-neutral-400.uppercase.font-black.tracking-widest(class='text-[10px]') Sắp đến
-      //-     h3.text-2xl.font-bold.mt-1 12
-      //-   .card.p-6.border-b-2.border-green-500
-      //-     p.text-neutral-400.uppercase.font-black.tracking-widest(class='text-[10px]') Đã hoàn thành
-      //-     h3.text-2xl.font-bold.mt-1 156
-      //-   .card.p-6.border-b-2.border-red-500
-      //-     p.text-neutral-400.uppercase.font-black.tracking-widest(class='text-[10px]') Đã hủy
-      //-     h3.text-2xl.font-bold.mt-1 02
-
       .card.overflow-hidden
         .p-8.border-b.border-neutral-50.flex.justify-between.items-center
           h3.text-xl.font-bold.serif-font.italic Chi tiết lịch hẹn
-          .flex.gap-4
-            .relative
-              input.pl-10.pr-4.py-2.bg-neutral-50.border-none.rounded-full.text-xs.outline-none(type='text' placeholder='Tìm mã lịch đặt...' class='focus:ring-1 focus:ring-[#D2B48C]')
-              i.fa-solid.fa-search.absolute.left-4.text-neutral-300(class='top-1/2 -translate-y-1/2 text-[10px]')
-        
         .overflow-x-auto
           table.w-full.text-left
             thead.bg-neutral-50.uppercase.font-black.text-neutral-400.tracking-widest(class='text-[10px]')
@@ -45,7 +24,6 @@ block main
                 th.px-8.py-5 Thời gian
                 th.px-8.py-5 Dịch vụ
                 th.px-8.py-5 Thanh toán
-                th.px-8.py-5.text-right Thao tác
             tbody.divide-y.divide-neutral-50
               if bookings && bookings.length > 0
                 each item in bookings
@@ -71,18 +49,6 @@ block main
                     td.px-8.py-5
                       .flex.flex-col.gap-1
                         span(class=`status-pill w-fit ${item.statusClass}`) #{item.statusDisplay}
-                    
-                    //- Cột thao tác cần chặn nổi bọt sự kiện (stopPropagation) để không bị nhảy sang trang chi tiết khi nhấn nút
-                    td.px-8.py-5.text-right(onclick="event.stopPropagation();")
-                      .flex.justify-end.gap-2
-                        if item.status == 'pending'
-                          button.w-8.h-8.rounded-full.bg-green-50.text-green-600.transition-all(class='hover:bg-green-500 hover:text-white' title="Xác nhận")
-                            i.fa-solid.fa-check(class='text-[10px]')
-                          button.w-8.h-8.rounded-full.bg-red-50.text-red-600.transition-all(class='hover:bg-red-500 hover:text-white' title="Hủy")
-                            i.fa-solid.fa-xmark(class='text-[10px]')
-                        else
-                          button.p-2.text-neutral-400(class='hover:text-black')
-                            i.fa-solid.fa-ellipsis-vertical
               else
                 tr
                   td.px-8.py-10.text-center.text-neutral-400(colspan="6") Không có dữ liệu lịch đặt.

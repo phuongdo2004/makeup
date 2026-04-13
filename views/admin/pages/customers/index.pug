@@ -9,30 +9,12 @@ block main
       div
         h2.text-3xl.font-bold.serif-font.italic Quản lý khách hàng
         p.text-neutral-400.text-sm Hệ thống lưu trữ thông tin và lịch sử làm đẹp của khách hàng.
-
-    //- Thanh tìm kiếm và bộ lọc
-    .flex.gap-4.mb-6
-      form.relative.flex-1(method="GET" action=`/${prefixAdmin}/customers`)
-        input.w-full.pl-12.pr-4.py-4.bg-white.border.border-neutral-100.rounded-2xl.text-sm.outline-none.transition-all(name="keyword" type='text' placeholder='Tìm tên, số điện thoại hoặc email...' class='focus:ring-1 focus:ring-[#D2B48C]' value=keyword)
-        button(type="submit")
-          i.fa-solid.fa-magnifying-glass.absolute.left-5.text-neutral-300(class='top-1/2 -translate-y-1/2')
-      
-      select.px-6.py-4.bg-white.border.border-neutral-100.rounded-2xl.text-sm.outline-none.font-semibold.text-neutral-500(name="rank")
-        option(value="") Tất cả hạng thành viên
-        option(value="diamond") Diamond
-        option(value="gold") Gold
-        option(value="silver") Silver
-
     .card.overflow-hidden
       .overflow-x-auto
         table.w-full.text-left
           thead.bg-neutral-50.uppercase.font-black.text-neutral-400.tracking-widest(class='text-[10px]')
             tr
               th.px-8.py-5 Khách hàng
-              th.px-8.py-5 Hạng
-              th.px-8.py-5 Lần cuối ghé thăm
-              th.px-8.py-5 Tổng chi tiêu
-              th.px-8.py-5.text-right Thao tác
           tbody.divide-y.divide-neutral-50
             if customers && customers.length > 0
               each item in customers
@@ -44,30 +26,6 @@ block main
                       div
                         p.text-sm.font-bold.text-neutral-800 #{item.fullName}
                         p.text-neutral-400(class='text-[10px]') #{item.email || item.phone}
-                  
-                  td.px-8.py-5
-                    //- Logic hiển thị Badge theo hạng
-                    span.px-3.py-1.rounded-full.font-black.uppercase.tracking-widest.border(class=`text-[10px] ${item.rankClass}`)
-                      i.fa-solid.fa-gem.mr-1
-                      | #{item.rankName}
-                  
-                  td.px-8.py-5
-                    if item.lastVisit
-                      p.text-xs.font-bold #{item.lastVisitDate}
-                      p.text-neutral-400.italic(class='text-[10px]') #{item.lastService}
-                    else
-                      p.text-xs.font-bold.text-neutral-300 Chưa có dữ liệu
-                  
-                  td.px-8.py-5
-                    span.font-bold.text-sm(class='text-[#D2B48C]') #{item.totalSpent.toLocaleString()}đ
-
-                  
-                  td.px-8.py-5.text-right
-                    .flex.justify-end.gap-2
-                      a.w-9.h-9.rounded-xl.bg-neutral-50.flex.items-center.justify-center.text-neutral-400.border.border-transparent.transition-all(href=`/${prefixAdmin}/customers/detail/${item.customer_id}` class='hover:text-black hover:bg-white hover:border-neutral-100')
-                        i.fa-solid.fa-eye.text-xs
-                      button.w-9.h-9.rounded-xl.bg-neutral-50.flex.items-center.justify-center.text-neutral-400.border.border-transparent.transition-all(class='hover:text-red-500 hover:bg-white hover:border-neutral-100')
-                        i.fa-solid.fa-ban.text-xs
             else
               tr
                 td.px-8.py-10.text-center.text-neutral-400(colspan="6") Không tìm thấy khách hàng nào.

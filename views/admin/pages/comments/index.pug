@@ -17,13 +17,6 @@ block main
               - for (var i = 1; i <= 5; i++)
                 i(class=(i <= Math.round(stats.avg) ? 'fa-solid fa-star' : 'fa-regular fa-star'))
             span.text-neutral-300.ml-2.font-bold.uppercase.tracking-widest(class='text-[10px]') (#{stats.total} Đánh giá)
-
-      .flex.gap-4.mb-8
-        button.px-6.py-2.bg-black.rounded-full.font-black.uppercase.tracking-widest(class='text-[#D2B48C] text-[10px]') Tất cả
-        button.px-6.py-2.bg-white.text-neutral-400.rounded-full.font-black.uppercase.tracking-widest.border.border-neutral-100.transition-all(class='hover:text-black text-[10px]') 5 Sao
-        button.px-6.py-2.bg-white.text-neutral-400.rounded-full.font-black.uppercase.tracking-widest.border.border-neutral-100.transition-all(class='hover:text-black text-[10px]') Cần phản hồi
-
-      .space-y-6
         if reviews && reviews.length > 0
           each review in reviews
             .card.p-8.group.bg-white.rounded-3xl.border.border-neutral-100.shadow-sm

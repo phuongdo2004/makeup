@@ -54,21 +54,6 @@ block main
                 p.text-neutral-600.leading-relaxed.italic.text-sm.border-l-2.pl-4(class='border-[#D2B48C]')
                   | #{service.description}
               div
-                h5.text-xs.font-black.uppercase.tracking-widest.mb-4 Tiện ích đi kèm
-                ul.grid.grid-cols-2.gap-4
-                  li.flex.items-center.gap-3.text-sm.text-neutral-600
-                    i.fa-solid.fa-check(class='text-[#D2B48C]')
-                    |  L&agrave;m t&oacute;c phong c&aacute;ch ph&#x1B0;&#x1A1;ng T&acirc;y
-                  li.flex.items-center.gap-3.text-sm.text-neutral-600
-                    i.fa-solid.fa-check(class='text-[#D2B48C]')
-                    |  G&#x1EAF;n mi gi&#x1EA3; cao c&#x1EA5;p (silk)
-                  li.flex.items-center.gap-3.text-sm.text-neutral-600
-                    i.fa-solid.fa-check(class='text-[#D2B48C]')
-                    |  H&#x1ED7; tr&#x1EE3; d&#x1EB7;m ph&#x1EA5;n t&#x1EA1;i ti&#x1EC7;c (1 l&#x1EA7;n)
-                  li.flex.items-center.gap-3.text-sm.text-neutral-600
-                    i.fa-solid.fa-check(class='text-[#D2B48C]')
-                    |  Ph&#x1EE5; ki&#x1EC7;n t&oacute;c mi&#x1EC5;n ph&iacute; m&#x1B0;&#x1EE3;n
-              div
                 h5.text-xs.font-black.uppercase.tracking-widest.mb-6 Album minh h&#x1ECD;a (Gallery)
                 .grid.grid-cols-4.gap-4
                   each image ,index in service.images

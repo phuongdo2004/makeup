@@ -16,38 +16,7 @@ block main
         )
           i.fa-solid.fa-user-plus
           | Thêm Artist mới
-
-    //- Phần thống kê (Giữ nguyên)
-    .grid.grid-cols-1.gap-6.mb-10(class='md:grid-cols-4')
-      .card.p-6.border-l-4(class='border-[#D2B48C]')
-        p.text-neutral-400.uppercase.font-black.tracking-widest(class='text-[10px]') Tổng Artist
-        h3.text-2xl.font-bold.mt-1 12 Nhân sự
-      .card.p-6
-        p.text-neutral-400.uppercase.font-black.tracking-widest(class='text-[10px]') Đánh giá trung bình
-        h3.text-2xl.font-bold.mt-1(class='text-[#D2B48C]')
-          | 4.9 
-          i.fa-solid.fa-star.text-xs
-      .card.p-6
-        p.text-neutral-400.uppercase.font-black.tracking-widest(class='text-[10px]') Lịch đặt hôm nay
-        h3.text-2xl.font-bold.mt-1 18 Lượt
-      .card.p-6
-        p.text-neutral-400.uppercase.font-black.tracking-widest(class='text-[10px]') Top Performance
-        h3.text-lg.font-bold.mt-1.serif-font.italic Hồng Hạnh
-
     .card.overflow-hidden
-      .p-8.border-b.border-neutral-100.flex.justify-between.items-center.bg-white
-        .flex.items-center.gap-4
-          h3.text-xl.font-bold.serif-font.italic Danh sách chuyên viên
-          .relative
-            input.pl-10.pr-4.py-2.bg-neutral-100.border-none.rounded-full.text-xs.outline-none.w-72(type='text' placeholder='Tìm tên artist, phong cách...' class='focus:ring-1 focus:ring-[#D2B48C]')
-            i.fa-solid.fa-magnifying-glass.absolute.left-4.text-neutral-400(class='top-1/2 -translate-y-1/2 text-[10px]')
-        .flex.gap-2
-          select.px-4.py-2.border.border-neutral-200.rounded-lg.font-bold.uppercase.tracking-widest.bg-white.outline-none(class='text-[10px]')
-            option Tất cả trạng thái
-            option Sẵn sàng
-            option Đang bận
-          button.px-4.py-2.border.border-neutral-200.rounded-lg.font-bold.uppercase.tracking-widest(class='text-[10px] hover:bg-neutral-50') Sắp xếp
-
       .overflow-x-auto
         table.w-full.text-left
           thead.bg-neutral-50.uppercase.font-black.text-neutral-400.tracking-widest(class='text-[10px]')
@@ -80,11 +49,11 @@ block main
                 td.px-8.py-5
                   .flex.items-center.gap-1(class='text-[#D2B48C]')
                     span.text-xs.font-bold.text-neutral-800.mr-1 #{artist.rating}
-                    i.fa-solid.fa-star(class='text-[10px]')
-                    i.fa-solid.fa-star(class='text-[10px]')
-                    i.fa-solid.fa-star(class='text-[10px]')
-                    i.fa-solid.fa-star(class='text-[10px]')
-                    i.fa-solid.fa-star(class='text-[10px]')
+                    - for (var i = 1; i <= 5; i++)
+                      if i <= artist.rating
+                        i.fa-solid.fa-star(class='text-[10px]')
+                      else
+                        i.fa-regular.fa-star(class='text-[10px]')
                 td.px-8.py-5
                   span.status-pill.bg-green-100.text-green-700 #{artist.status === 'active' ? 'Sẵn sàng' : artist.status === 'busy' ? 'Đang bận' : 'Tạm nghỉ'}
                 td.px-8.py-5.text-right
@@ -111,12 +80,3 @@ block main
               action=""
               data-path=`/${prefixAdmin}/artists/deleted` 
             )
-      .p-6.border-t.border-neutral-100.flex.justify-between.items-center.bg-white
-        p.text-xs.text-neutral-400.font-medium Hiển thị 1 - 10 trên tổng số 12 Artist
-        .flex.gap-2
-          button.w-8.h-8.border.border-neutral-200.rounded.flex.items-center.justify-center.text-xs.transition-all(class='hover:bg-neutral-50')
-            i.fa-solid.fa-chevron-left
-          button.w-8.h-8.bg-black.text-white.rounded.flex.items-center.justify-center.text-xs.font-bold 1
-          button.w-8.h-8.border.border-neutral-200.rounded.flex.items-center.justify-center.text-xs.transition-all(class='hover:bg-neutral-50') 2
-          button.w-8.h-8.border.border-neutral-200.rounded.flex.items-center.justify-center.text-xs.transition-all(class='hover:bg-neutral-50')
-            i.fa-solid.fa-chevron-right

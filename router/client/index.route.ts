@@ -8,10 +8,10 @@ import { paymentRouter } from "./payment.route.js";
 const app:Express = express();
 export const clientRouter = (app:Express)=>{
   app.use("/user", userRouter);
+  app.use("/payment", paymentRouter);
   app.use(requireAuth);
   app.use("/home", homeRouter);
   app.use("/service", serviceRouter);
-  app.use("/payment", paymentRouter);
   
 
 }
