@@ -34,6 +34,10 @@ app.use(session({
     }
 }));
 app.use(flash());
+app.use((req, res, next) => {
+    res.locals.currentUrl = req.originalUrl;
+    next();
+});
 // 1. Cấu hình các bộ parse dữ liệu trước
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

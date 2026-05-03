@@ -9,10 +9,8 @@ export const login = async(req:Request, res:Response) => {
   })
 }
 export const postLogin = async(req:Request, res:Response) => {
-  console.log(req.body);
   const { email, password } = req.body;
   const hashedPassword = md5(password);
-  console.log(hashedPassword);
   const customer = await Customer.findOne({
     where: {
       email: email,
@@ -101,7 +99,6 @@ export const profile = async (req: Request, res: Response) => {
   });
 }
 export const edit = async(req: Request, res:Response)=>{
-  
    const customer = res.locals.Customer;
 if (!customer.avatar) {
     // Gán thành mảng chứa ảnh mặc định để user.avatar[0] hoạt động
@@ -124,23 +121,42 @@ if (!customer.avatar) {
 
 }
 export const patchEdit = async(req:Request, res:Response)=>{
-    if(!req.body.avatar){
-      req.body.avatar = (res.locals.Customer).avatar[0];
-    }
-    
-    let avatar = req.body.avatar;
-    avatar = JSON.stringify(avatar);
-    const {fullName, email , phone, address} = req.body;
+  const { fullName, email, phone, address } = req.body;
 
-  await Customer.update(
-    {
-      fullName, email , phone, address, avatar
-    },{
-    where:{
+  const getAvatarUrl = (avatarValue: any): string | null => {
+    if (!avatarValue) return null;
+    if (Array.isArray(avatarValue)) {
+      return avatarValue.length > 0 ? avatarValue[0] : null;
+    }
+    if (typeof avatarValue === 'string') {
+      const trimmed = avatarValue.trim();
+      if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+        try {
+          const parsed = JSON.parse(trimmed);
+          return Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : null;
+        } catch (_e) {
+          return trimmed;
+        }
+      }
+      return trimmed;
+    }
+    return String(avatarValue);
+  };
+
+  let avatarUrl = getAvatarUrl(req.body.avatar || res.locals.Customer?.avatar);
+
+  const updateData: any = { fullName, email, phone, address };
+  if (avatarUrl) {
+    updateData.avatar = JSON.stringify([avatarUrl]);
+  }
+
+  await Customer.update(updateData, {
+    where: {
       tokenCustomer: (res.locals.Customer).tokenCustomer,
     }
-   })
-   req.flash("success", "Cập nhật hồ sơ thành công!");
-res.redirect("/user/profile");
+  });
+
+  req.flash("success", "Cập nhật hồ sơ thành công!");
+  res.redirect("/user/profile");
 
 }

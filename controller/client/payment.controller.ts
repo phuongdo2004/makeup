@@ -119,14 +119,10 @@ if (result.data && result.data.payUrl) {
        console.error("Lỗi trong payment:", error.message);
        return res.status(500).json({ statusCode: 500, message: error.message });    
   }
-
-  console.log("chay het roi");
 };
 export const paymentCallback = async(req: Request, res: Response) => {
-  console.log('MoMo Callback Data:');
-
   const { resultCode, orderId } = req.body;
-console.log(`MoMo Callback - orderId: ${orderId}, resultCode: ${resultCode}`);
+// console.log(`MoMo Callback - orderId: ${orderId}, resultCode: ${resultCode}`);
   if (resultCode == 0) {
     
     // orderId chính là cái bookingId bạn gửi đi lúc đầu

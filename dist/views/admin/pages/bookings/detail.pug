@@ -1,0 +1,95 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+  +alert(3000)
+  main.flex-1.p-10
+    header.flex.justify-between.items-center.mb-10
+      div
+        a.text-xs.font-bold.uppercase.tracking-widest.text-neutral-400.flex.items-center.gap-2.mb-2(href=`/${prefixAdmin}/bookings` class="hover:text-black")
+          i.fa-solid.fa-arrow-left
+          | Quay lại danh sách
+        h2.text-3xl.font-bold.serif-font.italic Chi tiết lịch đặt #...#{booking.id.substring(0, 8)}
+      .flex.gap-3
+        //- Sửa nút Hủy lịch: Thêm button-cancel-booking và data-id
+        button.px-6.py-3.bg-red-50.text-red-600.rounded-full.text-xs.font-bold.uppercase.tracking-widest(
+          class="hover:bg-red-500 hover:text-white"
+          button-cancel-booking
+          data-id=booking.id
+        ) Hủy lịch
+        
+        button.px-6.py-3.bg-black.rounded-full.text-xs.font-bold.uppercase.tracking-widest(
+          class="text-[#D2B48C] hover:opacity-80"
+        ) Xác nhận lịch
+
+    //- Form ẩn để gửi phương thức PATCH
+    //- Lưu ý: Cần cài đặt 'method-override' ở server để hiểu _method=PATCH
+    form(
+      id="form-cancel-booking"
+      method="POST"
+      action=`/${prefixAdmin}/bookings/cancel/${booking.id}?_method=PATCH`
+      class="hidden"
+    )
+
+    .grid.grid-cols-3.gap-8
+      .col-span-2.space-y-8
+        .card.p-8
+          h3.text-lg.font-bold.mb-6.serif-font.italic Thông tin chung
+          .grid.grid-cols-2.gap-y-6
+            div
+              p.text-neutral-400.uppercase.tracking-widest(class="text-[10px] font-bold") Khách hàng
+              p.text-sm.font-bold #{booking.customerName}
+            div
+              p.text-neutral-400.uppercase.tracking-widest(class="text-[10px] font-bold") Số điện thoại
+              p.text-sm.font-bold #{booking.customerPhone}
+            div
+              p.text-neutral-400.uppercase.tracking-widest(class="text-[10px] font-bold") Dịch vụ sử dụng
+              p.text-sm.font-bold.text-blue-600 #{booking.serviceName}
+            div
+              p.text-neutral-400.uppercase.tracking-widest(class="text-[10px] font-bold") Trạng thái
+              span(class=`status-pill ${booking.statusClass}`) #{booking.statusLabel}
+
+        .card.p-8
+          h3.text-lg.font-bold.mb-6.serif-font.italic Thời gian & Địa điểm
+          .flex.items-center.gap-10
+            .flex.items-center.gap-4
+              .w-12.h-12.rounded-2xl.bg-neutral-50.flex.items-center.justify-center.text-xl
+                i.fa-regular.fa-calendar(class="text-[#D2B48C]")
+              div
+                p.text-neutral-400.uppercase(class="text-[10px] font-bold") Ngày hẹn
+                p.text-sm.font-bold #{booking.booking_date}
+            .flex.items-center.gap-4
+              .w-12.h-12.rounded-2xl.bg-neutral-50.flex.items-center.justify-center.text-xl
+                i.fa-regular.fa-clock(class="text-[#D2B48C]")
+              div
+                p.text-neutral-400.uppercase(class="text-[10px] font-bold") Khung giờ
+                p.text-sm.font-bold #{booking.time_start} - #{booking.time_end}
+          
+          .mt-8.p-4.bg-neutral-50.rounded-2xl
+            p.text-neutral-400.uppercase(class="text-[10px] font-bold mb-1") Địa chỉ thực hiện
+            p.text-sm #{booking.address || 'Tại Studio'}
+
+      .col-span-1
+        .card.p-8.bg-neutral-900.text-white
+          h3.text-lg.font-bold.mb-8.serif-font.italic Tổng kết chi phí
+          .space-y-4.border-b.border-neutral-800.pb-6
+            .flex.justify-between
+              span.text-neutral-400.text-xs Giá dịch vụ
+              span.text-xs.font-bold #{booking.price.toLocaleString()}đ
+          .pt-6
+            .flex.justify-between.items-end
+              span.text-neutral-400.text-xs Tổng cộng
+              span.text-2xl.font-bold(class="text-[#D2B48C]") #{booking.price.toLocaleString()}đ
+
+  //- Script xử lý gửi form
+  script.
+    const buttonCancel = document.querySelector("[button-cancel-booking]");
+    if(buttonCancel) {
+      buttonCancel.addEventListener("click", () => {
+        const isConfirm = confirm("Bạn có chắc chắn muốn hủy lịch đặt này không?");
+        if(isConfirm) {
+          const formCancel = document.querySelector("#form-cancel-booking");
+          formCancel.submit();
+        }
+      });
+    }

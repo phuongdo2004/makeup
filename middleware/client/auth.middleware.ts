@@ -41,6 +41,19 @@ if (customer) {
     customer.avatar = ["/uploads/avatar-default.jpg"];
   }
 
+  // Kiểm tra và xử lý favorites an toàn
+  if (customer.favorites) {
+    if (typeof customer.favorites === 'string') {
+      try {
+        customer.favorites = JSON.parse(customer.favorites);
+      } catch (e) {
+        customer.favorites = [];
+      }
+    }
+  } else {
+    customer.favorites = [];
+  }
+
   return next();
 }
   return next();

@@ -36,44 +36,6 @@ export const index = async (req, res) => {
         customer: customer,
     });
 };
-// detail service start
-// export const detail = async(req: Request, res: Response) => {
-//   const id = req.params.id;
-//   // 1. Tìm dịch vụ
-//   const service = await Service.findOne({
-//     where: { id: id }
-//   });
-//   console.log((service as any).price);
-//   if (!service) {
-//     return res.redirect("/services");
-//   }
-//   // 2. Xử lý mảng ảnh (QUAN TRỌNG)
-//   if ((service as any).images) {
-//     try {
-//       // Parse chuỗi JSON từ DB thành mảng thực thụ
-//       const allImages = JSON.parse((service as any).images);
-//       // Tạo biến mới 'allImages' chứa mảng để Pug chạy vòng lặp 'each'
-//       (service as any).allImages = allImages;
-//       // Giữ 'images' là ảnh đầu tiên để các chỗ khác không bị lỗi hiển thị
-//       (service as any).images = allImages[0];
-//     } catch (e) {
-//       console.log("Lỗi parse JSON images:", e);
-//       (service as any).allImages = [(service as any).images];
-//     }
-//   }
-//   // 3. Tìm Artist liên quan (Nhớ sửa lỗi 'experience' t nhắc lúc nãy)
-//   const artist = await Artist.findOne({
-//     where: {
-//       id: (service as any).artist_id
-//     },
-//     attributes: ['name', 'address', 'phone', 'experience', 'id']
-//   });
-//   // 4. Render ra giao diện
-//   res.render("client/pages/service/detail.pug", {
-//     service: service,
-//     artist: artist,
-//   });
-// }
 export const detail = async (req, res) => {
     const id = req.params.id;
     // 1. Tìm dịch vụ (Giữ nguyên)
@@ -195,14 +157,22 @@ export const toggleFavorite = async (req, res) => {
 };
 export const favorite = async (req, res) => {
     const customer = res.locals.Customer;
-    const favorite_services = customer.favorites || []; // Mảng các ID: ['id1', 'id2',...]
+    let favorite_services = customer.favorites || []; // Mảng các ID: ['id1', 'id2',...]
+    if (typeof favorite_services === 'string') {
+        try {
+            favorite_services = JSON.parse(favorite_services);
+        }
+        catch (e) {
+            favorite_services = [];
+        }
+    }
     // 1. Cấu hình phân trang
     const limit = 6; // Số lượng item mỗi trang
     const page = parseInt(req.query.page) || 1;
     const offset = (page - 1) * limit;
     // 2. Lấy danh sách ID cho trang hiện tại
     // Việc cắt mảng giúp bạn biết chính xác trang này cần lấy những ID nào
-    const idsForPage = favorite_services.slice(offset, offset + limit);
+    const idsForPage = Array.isArray(favorite_services) ? favorite_services.slice(offset, offset + limit) : [];
     let services = [];
     if (idsForPage.length > 0) {
         services = await Service.findAll({

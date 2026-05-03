@@ -6,10 +6,8 @@ export const login = async (req, res) => {
     });
 };
 export const postLogin = async (req, res) => {
-    console.log(req.body);
     const { email, password } = req.body;
     const hashedPassword = md5(password);
-    console.log(hashedPassword);
     const customer = await Customer.findOne({
         where: {
             email: email,
@@ -111,15 +109,34 @@ export const edit = async (req, res) => {
     });
 };
 export const patchEdit = async (req, res) => {
-    if (!req.body.avatar) {
-        req.body.avatar = (res.locals.Customer).avatar[0];
-    }
-    let avatar = req.body.avatar;
-    avatar = JSON.stringify(avatar);
     const { fullName, email, phone, address } = req.body;
-    await Customer.update({
-        fullName, email, phone, address, avatar
-    }, {
+    const getAvatarUrl = (avatarValue) => {
+        if (!avatarValue)
+            return null;
+        if (Array.isArray(avatarValue)) {
+            return avatarValue.length > 0 ? avatarValue[0] : null;
+        }
+        if (typeof avatarValue === 'string') {
+            const trimmed = avatarValue.trim();
+            if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+                try {
+                    const parsed = JSON.parse(trimmed);
+                    return Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : null;
+                }
+                catch (_e) {
+                    return trimmed;
+                }
+            }
+            return trimmed;
+        }
+        return String(avatarValue);
+    };
+    let avatarUrl = getAvatarUrl(req.body.avatar || res.locals.Customer?.avatar);
+    const updateData = { fullName, email, phone, address };
+    if (avatarUrl) {
+        updateData.avatar = JSON.stringify([avatarUrl]);
+    }
+    await Customer.update(updateData, {
         where: {
             tokenCustomer: (res.locals.Customer).tokenCustomer,
         }

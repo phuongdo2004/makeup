@@ -39,6 +39,7 @@
     "@types/method-override": "^3.0.0",
     "@types/multer": "^2.0.0",
     "@types/node": "^25.0.10",
+    "copyfiles": "^2.4.1",
     "tailwindcss": "^4.1.18",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",

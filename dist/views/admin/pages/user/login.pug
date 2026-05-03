@@ -1,0 +1,190 @@
+include ../../mixins/alert.pug
+doctype html
+html(lang="vi")
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    title Đăng nhập hệ thống | SUSANNIE Admin
+    script(src='https://cdn.tailwindcss.com')
+    link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css')
+    //- link(rel='stylesheet' href='/admin/css/main.css')
+    style.
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: #000;
+        color: white;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .serif-font { font-family: 'Playfair Display', serif; }
+      .gold-glow {
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(210, 180, 140, 0.15) 0%, rgba(0,0,0,0) 70%);
+        border-radius: 50%;
+        z-index: 0;
+      }
+        /* toast start */
+      :root {
+          --gold-primary: #d4af37;
+          --dark-bg: #1a1a1a;
+          --success-color: #2ecc71;
+          --warning-color: #f1c40f;
+          --delete-color: #e74c3c;
+      }
+
+      #toast-container {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          z-index: 9999;
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+      }
+
+      .toast {
+          width: 350px;
+          background: #fff;
+          padding: 15px 20px;
+          border-radius: 12px;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+          display: flex;
+          align-items: center;
+          position: relative;
+          overflow: hidden;
+          /* Trạng thái mặc định: Ẩn */
+          transform: translateX(120%);
+          transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.35);
+          opacity: 0;
+      }
+
+      .toast.active {
+          transform: translateX(0);
+          opacity: 1;
+      }
+
+      /* Các loại màu sắc */
+      .toast-success { border-left: 5px solid var(--success-color); }
+      .toast-warning { border-left: 5px solid var(--warning-color); }
+      .toast-delete  { border-left: 5px solid var(--delete-color); }
+
+      .toast-icon {
+          font-size: 24px;
+          margin-right: 15px;
+      }
+      .toast-success .toast-icon { color: var(--success-color); }
+      .toast-warning .toast-icon { color: var(--warning-color); }
+      .toast-delete .toast-icon  { color: var(--delete-color); }
+
+      .toast-content {
+          display: flex;
+          flex-direction: column;
+      }
+
+      .toast-title {
+          font-weight: 700;
+          color: var(--dark-bg);
+          font-size: 16px;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+      }
+
+      .toast-message {
+          color: #666;
+          font-size: 14px;
+          margin-top: 3px;
+      }
+
+      .toast-close {
+          position: absolute;
+          top: 10px;
+          right: 15px;
+          cursor: pointer;
+          font-size: 20px;
+          color: #ccc;
+          transition: 0.3s;
+      }
+
+      .toast-close:hover { color: var(--dark-bg); }
+
+      /* Thanh Progress bar chạy ngược */
+      .toast-progress {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          height: 3px;
+          width: 100%;
+          background: #eee;
+      }
+
+      .toast-progress::before {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          height: 100%;
+          width: 100%;
+          background: inherit;
+      }
+
+      .toast-success .toast-progress { background: var(--success-color); }
+      .toast-warning .toast-progress { background: var(--warning-color); }
+      .toast-delete .toast-progress  { background: var(--delete-color); }
+
+      .toast.active .toast-progress {
+          animation: progress 4s linear forwards;
+      }
+
+      @keyframes progress {
+          100% { width: 0%; }
+      }
+
+
+  body
+    +alert(3000)
+    .gold-glow.-top-20.-left-20
+    .gold-glow.-bottom-20.-right-20
+    
+    .w-full.max-w-md.p-8.relative.z-10
+      .text-center.mb-12
+        h1.text-4xl.font-black.tracking-tighter.serif-font.italic.text-white.mb-2
+          | SUSANNIE
+          //- Đã xóa dấu chấm ở đây
+          span(class='text-[#D2B48C]') .Admin
+        p.text-neutral-500.uppercase.font-bold(class='text-[10px] tracking-[0.3em]') Hệ thống quản trị nội bộ
+
+      .backdrop-blur-xl.border.p-10.shadow-2xl(class='bg-white/[0.03] border-white/10 rounded-[2rem]')
+        h2.text-2xl.font-bold.serif-font.italic.text-center.mb-8 Chào mừng quay trở lại
+        
+        form.space-y-6(action='/admin/auth/login' method='POST')
+          .space-y-2
+            label.font-black.uppercase.tracking-widest.ml-1(class='text-[10px] text-[#D2B48C]') Tài khoản
+            .relative
+              i.fa-solid.fa-envelope.absolute.left-4.text-neutral-500.text-xs(class='top-1/2 -translate-y-1/2')
+              input.w-full.pl-12.pr-4.py-4.border.rounded-2xl.text-sm.outline-none.transition-all.text-white(type='email' name='email' required class='bg-white/5 border-white/10 focus:border-[#D2B48C] focus:ring-1 focus:ring-[#D2B48C]' placeholder='admin@susannie.vn')
+          
+          .space-y-2
+            .flex.justify-between.items-center.px-1
+              label.font-black.uppercase.tracking-widest(class='text-[10px] text-[#D2B48C]') Mật khẩu
+              a.text-neutral-500.uppercase.font-bold(href='#' class='text-[9px] hover:text-[#D2B48C]') Quên?
+            .relative
+              i.fa-solid.fa-lock.absolute.left-4.text-neutral-500.text-xs(class='top-1/2 -translate-y-1/2')
+              input.w-full.pl-12.pr-4.py-4.border.rounded-2xl.text-sm.outline-none.transition-all.text-white(type='password' name='password' required class='bg-white/5 border-white/10 focus:border-[#D2B48C] focus:ring-1 focus:ring-[#D2B48C]' placeholder='••••••••')
+          
+          .flex.items-center.gap-2.px-1
+            input#remember.w-4.h-4.rounded(type='checkbox' class='border-white/10 bg-white/5 accent-[#D2B48C]')
+            label.text-xs.text-neutral-400(for='remember') Ghi nhớ đăng nhập
+          
+          button.w-full.py-4.text-black.font-black.uppercase.rounded-2xl.transition-all.transform.shadow-lg.mt-4(type='submit' class='bg-[#D2B48C] hover:bg-[#b8952e] text-[11px] tracking-[0.2em] hover:scale-[1.02] active:scale-95 shadow-[#D2B48C]/20')
+            | Đăng nhập ngay
+
+      p.text-center.mt-10.text-neutral-600.font-medium(class='text-[10px]')
+        | &copy; 2026 SUSANNIE STUDIO. Powered by Gold Dev Team.
+  script( type = "module" src="/admin/js/main.js")

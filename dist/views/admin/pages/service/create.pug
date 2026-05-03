@@ -1,0 +1,98 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+block main
+  main.flex-1.p-12
+    +alert(3000)
+    header.flex.justify-between.items-end.mb-10
+      div
+        h2.text-4xl.font-bold.serif-font.italic Thêm dịch vụ mới
+        p.text-neutral-400.mt-2.text-sm Tạo danh mục dịch vụ mới cho Susannie Studio.
+      a.text-sm.font-bold.uppercase.tracking-widest.flex.items-center.gap-2(href='/admin/services' class='text-neutral-400 hover:text-black')
+        i.fa-solid.fa-arrow-left
+        | Quay lại
+
+    .form-card.max-w-4xl.p-10
+      form(action=`/${prefixAdmin}/service/create` method="POST" enctype="multipart/form-data")
+        .grid.grid-cols-2.gap-8
+          //- Tên dịch vụ (name)
+          .col-span-2(class='md:col-span-1')
+            label.block.text-xs.font-black.uppercase.tracking-widest.text-neutral-400.mb-3 Tên dịch vụ
+            input.w-full.px-5.py-4.rounded-2xl(type="text" name="name" placeholder="Ví dụ: Makeup Cô Dâu Luxe" required)
+
+          //- Tên Artist (Gửi đi với tên trường artist_id)
+          .col-span-2(class='md:col-span-1')
+            label.block.text-xs.font-black.uppercase.tracking-widest.text-neutral-400.mb-3 Chuyên viên thực hiện
+            select.w-full.px-5.py-4.rounded-2xl.bg-neutral-50.border-none.outline-none.appearance-none(
+              name="artist_id" 
+              required
+              class="focus:ring-2 focus:ring-[#D2B48C]/50"
+            )
+              option(value="" disabled selected) -- Chọn nghệ sĩ trang điểm --
+              if artists
+                each artist in artists
+                  option(value=artist.id) #{artist.name}
+          //- Thời gian bắt đầu (time_start)
+          div
+            label.block.text-xs.font-black.uppercase.tracking-widest.text-neutral-400.mb-3 Giờ bắt đầu
+            input.w-full.px-5.py-4.rounded-2xl(type="time" name="time_start")
+
+          //- Thời gian kết thúc (time_end)
+          div
+            label.block.text-xs.font-black.uppercase.tracking-widest.text-neutral-400.mb-3 Giờ kết thúc
+            input.w-full.px-5.py-4.rounded-2xl(type="time" name="time_end")
+
+          //- Giá (price)
+          div
+            label.block.text-xs.font-black.uppercase.tracking-widest.text-neutral-400.mb-3 Giá dịch vụ (VNĐ)
+            input.w-full.px-5.py-4.rounded-2xl(type="number" name="price" placeholder="4.500.000")
+
+          //- Thời lượng (duration)
+          div
+            label.block.text-xs.font-black.uppercase.tracking-widest.text-neutral-400.mb-3 Thời lượng thực hiện
+            input.w-full.px-5.py-4.rounded-2xl(type="text" name="duration" placeholder="Ví dụ: 120 phút")
+
+          //- Tiện ích (amenities)
+          .col-span-2
+            label.block.text-xs.font-black.uppercase.tracking-widest.text-neutral-400.mb-3 Tiện ích đi kèm (Mô tả ngắn)
+            textarea.w-full.px-5.py-4.rounded-2xl(name="amenities" rows="3" placeholder="Nhập các tiện ích như: Làm tóc, Miễn phí phụ kiện...")
+            //- hinh anh
+          .col-span-2(upload-image)
+            label.block.text-xs.font-black.uppercase.tracking-widest.text-neutral-400.mb-3 Hình ảnh minh họa
+            
+            .relative.w-full.border-2.border-dashed.border-neutral-100.rounded-2xl.bg-neutral-50.transition-all(
+              class='min-h-[200px] hover:border-[#D2B48C] hover:bg-white group p-4'
+            )
+              //- Input gốc (Luôn nằm trên cùng để nhận sự kiện kéo thả)
+              input.absolute.inset-0.w-full.h-full.opacity-0.cursor-pointer.z-50(
+                type="file" 
+                name="images" 
+                accept="image/*"
+                multiple
+                upload-image-input
+              )
+              
+              //- Trạng thái 1: Khi chưa có ảnh
+              .flex.flex-col.items-center.justify-center.h-full.py-10(class="group-[.has-image]:hidden")
+                i.fa-solid.fa-cloud-arrow-up.text-4xl.text-neutral-300(class='group-hover:text-[#D2B48C] transition-colors')
+                p.text-xs.text-neutral-400.mt-4.font-bold Nhấn hoặc kéo thả nhiều ảnh vào đây (up ít nhất 4 ảnh)
+                //- SỬA TẠI ĐÂY:
+                p.text-neutral-300.uppercase.tracking-widest.mt-1(class="text-[10px]") (JPG, PNG, WEBP)
+
+              //- Trạng thái 2: Vùng hiển thị nhiều ảnh Preview
+              .hidden.grid.grid-cols-2.gap-4(
+                class="md:grid-cols-4 lg:grid-cols-5 group-[.has-image]:grid relative z-40"
+                upload-image-container
+              )
+                //- Nút xóa tất cả
+                button.absolute.right-0.font-black.uppercase.tracking-widest.text-red-400(
+                  type="button"
+                  close-icon-upload
+                  class="text-[10px] -top-12 hover:text-red-600 z-[60]"
+                ) 
+                  i.fa-solid.fa-trash-can.mr-1
+                  | Xóa tất cả ảnh đã chọn
+        //- Nút Submit
+        .mt-10.pt-10.border-t.border-neutral-50.flex.justify-end
+          button.px-10.py-4.bg-black.rounded-full.font-bold.text-sm.uppercase.tracking-widest.transition-all(type="submit" class='text-[#D2B48C] hover:scale-105 active:scale-95 shadow-xl shadow-black/10')
+            i.fa-solid.fa-check.mr-2
+            | Xác nhận thêm dịch vụ

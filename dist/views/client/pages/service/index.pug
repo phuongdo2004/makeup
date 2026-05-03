@@ -1,0 +1,146 @@
+extends ../../layouts/default.pug
+block main
+  section.page-banner.py-24.text-center.text-white
+    h2.text-5xl.font-bold.serif-font.italic.mb-4 Danh s&aacute;ch d&#x1ECB;ch v&#x1EE5;
+    p.text-sm.uppercase(class='tracking-[0.3em] text-[#D2B48C]') Trang ch&#x1EE7; / Danh s&aacute;ch d&#x1ECB;ch v&#x1EE5;
+  section.container.mx-auto.px-6.py-16
+    .grid.grid-cols-1.gap-10(class='md:grid-cols-2 lg:grid-cols-3')
+      each service in services
+        .service-card.bg-white.rounded-3xl.overflow-hidden.flex.flex-col.h-full
+          .relative.h-72.overflow-hidden
+            //- Nút Trái tim yêu thích (Mới thêm)
+            //- Tìm đến đoạn nút trái tim trong file Pug của bạn và sửa lại như sau:
+            button.absolute.top-4.left-4.z-20.w-10.h-10.flex.items-center.justify-center.rounded-full.backdrop-blur-md.transition-all.group(
+              class='bg-black/20 hover:bg-white text-white hover:text-red-500 shadow-lg'
+              data-id=service.id
+              onclick='toggleFavorite(this)'
+            )
+              //- Kiểm tra nếu id này nằm trong danh sách yêu thích của customer thì để fa-solid đỏ luôn
+              if customer && customer.favorites && customer.favorites.includes(service.id)
+
+                i.fa-solid.fa-heart.text-lg.text-red-500
+              else
+                i.fa-regular.fa-heart.text-lg
+            .absolute.top-4.right-4.font-bold.px-3.rounded-full.z-10.shadow-lg(class='bg-black/80 text-[#D2B48C] text-[12px] py-1.5')
+              i.fa-solid.fa-star.mr-1
+              |  #{service.rating.toFixed(1)}
+            img.w-full.h-full.object-cover(src=service.images)
+          .p-8.flex.flex-col.flex-grow
+            h3.text-xl.font-bold.text-black.uppercase.mb-2 #{service.name}
+            p.text-xs.text-neutral-400.mb-6.flex.items-center.italic
+              i.fa-solid.fa-location-dot.mr-2(class='text-[#D2B48C]')
+              |  #{service.address}
+            .flex.justify-between.items-center.py-4.border-y.border-neutral-50.mb-6
+              //- Nhóm bên trái: Icon + Thời lượng (Đã bọc lại để không bị vỡ layout)
+              .flex.items-center.gap-2
+                i.fa-regular.fa-clock.text-neutral-400(class='text-[14px]')
+                span.font-bold.uppercase.tracking-tighter.text-neutral-500(class='text-[11px]')
+                  | #{service.duration} phút
+              
+              //- Nhóm bên phải: Giữ nguyên thiết kế giá của bạn
+              span.bg-black.px-3.py-1.rounded-md.font-bold.text-sm(class='text-[#D2B48C]') 
+                | #{(service.price * 1).toLocaleString()} đ
+            //- .flex.gap-3.mb-8
+            //-   span.bg-neutral-100.font-bold.px-3.py-2.rounded-lg.flex.items-center.gap-2(class='text-[11px]')
+            //-     i.fa-solid.fa-calendar-check(class='text-[#D2B48C]')
+            //-     |  210 l&#x1B0;&#x1EE3;t
+            //-   span.bg-neutral-100.font-bold.px-3.py-2.rounded-lg.flex.items-center.gap-2(class='text-[11px]')
+            //-     i.fa-solid.fa-award(class='text-[#D2B48C]')
+            //-     |  10 n&abreve;m
+            a(href=`/service/detail/${service.id}` class="w-full inline-block text-center py-4 bg-black text-[#D2B48C] rounded-xl text-[11px] font-bold uppercase tracking-widest hover:bg-[#D2B48C] hover:text-black transition-all")
+              | Xem chi tiết & Đặt lịch
+    //- Thay thế đoạn .flex.justify-center.items-center.gap-3.mt-20 cũ bằng đoạn này:
+    .flex.justify-center.items-center.gap-3.mt-20
+      //- Nút quay lại trang trước
+      if pagination.currentPage > 1
+        a(
+          href=`?page=${pagination.currentPage - 1}`
+          class="w-12.h-12.flex.items-center.justify-center.rounded-xl.bg-white.text-black.font-bold.border.border-neutral-200.transition-all.hover:bg-[#D2B48C]"
+        )
+          i.fa-solid.fa-chevron-left.text-xs
+
+      //- Vòng lặp hiển thị số trang
+      - for (var i = 1; i <= pagination.totalPage; i++)
+        a(
+          href=`?page=${i}`
+          class=(pagination.currentPage == i ? "bg-black text-[#D2B48C]" : "bg-white text-black border-neutral-200 hover:bg-[#D2B48C]")
+          class="w-12 h-12 flex items-center justify-center rounded-xl font-bold border transition-all shadow-lg"
+        ) #{i}
+
+      //- Nút sang trang kế tiếp
+      if pagination.currentPage < pagination.totalPage
+        a(
+          href=`?page=${pagination.currentPage + 1}`
+          class="w-12.h-12.flex.items-center.justify-center.rounded-xl.bg-white.text-black.font-bold.border.border-neutral-200.transition-all.hover:bg-[#D2B48C]"
+        )
+          i.fa-solid.fa-chevron-right.text-xs
+  script.
+    const paginationButtons = document.querySelectorAll('[button-pagination]');
+    if(paginationButtons.length > 0) {
+        let url = new URL(window.location.href);
+
+        paginationButtons.forEach(button => {
+            button.addEventListener("click", () => {
+                const page = button.getAttribute("button-pagination");
+                
+                url.searchParams.set("page", page);
+                window.location.href = url.href; // Tải lại trang với URL mới
+            });
+        });
+    }
+    async function toggleFavorite(btn) {
+      const serviceId = btn.getAttribute('data-id');
+      const icon = btn.querySelector('i');
+      
+      // 1. Optimistic UI: Đổi màu ngay để tạo cảm giác mượt mà
+      const isAdding = icon.classList.contains('fa-regular');
+      const updateUI = (adding) => {
+        if (adding) {
+          icon.classList.replace('fa-regular', 'fa-solid');
+          icon.classList.add('text-red-500');
+          btn.classList.add('bg-white');
+          btn.classList.remove('bg-black/20', 'text-white');
+        } else {
+          icon.classList.replace('fa-solid', 'fa-regular');
+          icon.classList.remove('text-red-500');
+          btn.classList.remove('bg-white');
+          btn.classList.add('bg-black/20', 'text-white');
+        }
+      };
+
+      updateUI(isAdding);
+
+      try {
+        const response = await fetch('/service/favorite/toggle', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ serviceId: serviceId })
+        });
+
+        // KIỂM TRA PHẢN HỒI HTTP TRƯỚC KHI ĐỌC JSON
+        if (!response.ok) {
+          if (response.status === 401) {
+            alert("Vui lòng đăng nhập để thực hiện chức năng này!");
+            window.location.href = "/user/login";
+            return;
+          }
+          // Nếu là lỗi 500 hoặc lỗi khác, ném lỗi để nhảy vào catch
+          throw new Error(`Server returned status ${response.status}`);
+        }
+
+        // Chỉ đọc JSON khi chắc chắn response thành công (200 OK)
+        const result = await response.json();
+        console.log(result);
+        if (result.code === 200) {
+          alert("Thêm vào mục yêu thích thành công!");
+        } else {
+          throw new Error(result.message || "Unknown error");
+        }
+
+      } catch (error) {
+        console.error("Lỗi thực thi:", error);
+        // 3. ĐẢO NGƯỢC LẠI GIAO DIỆN NẾU THẤT BẠI
+        updateUI(!isAdding); 
+        alert("Không thể cập nhật mục yêu thích. Vui lòng kiểm tra lại kết nối!");
+      }
+    }

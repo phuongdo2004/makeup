@@ -40,6 +40,20 @@ export const requireAuth = async (req, res, next) => {
                     // Nếu không có avatar, gán mảng chứa ảnh mặc định
                     customer.avatar = ["/uploads/avatar-default.jpg"];
                 }
+                // Kiểm tra và xử lý favorites an toàn
+                if (customer.favorites) {
+                    if (typeof customer.favorites === 'string') {
+                        try {
+                            customer.favorites = JSON.parse(customer.favorites);
+                        }
+                        catch (e) {
+                            customer.favorites = [];
+                        }
+                    }
+                }
+                else {
+                    customer.favorites = [];
+                }
                 return next();
             }
             return next();

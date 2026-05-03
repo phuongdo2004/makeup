@@ -66,6 +66,7 @@ export const store = async (req, res) => {
 };
 // get detail start
 export const detail = async (req, res) => {
+    // console.log("service detail controller");
     const id = req.params.id;
     const service = await Service.findOne({
         where: {
@@ -74,13 +75,20 @@ export const detail = async (req, res) => {
         },
         raw: true
     });
-    console.log(service);
+    // console.log(service);
     if (service["images"]) {
         service["images"] = (JSON.parse(service["images"]));
     }
     service.amenities = JSON.parse(service.amenities);
+    const artist = await Artist.findOne({
+        where: {
+            id: service.artist_id,
+        },
+        raw: true
+    });
     res.render("admin/pages/service/detail", {
         service: service,
+        artistName: artist?.name || "",
     });
 };
 // get detail end
