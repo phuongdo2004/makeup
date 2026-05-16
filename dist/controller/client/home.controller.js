@@ -1,26 +1,36 @@
 import Customer from "../../model/customer.model.js";
 import Service from "../../model/service.model.js";
-import Artist from "../../model/artist.model.js";
 import Comment from "../../model/comment.model.js";
 export const index = async (req, res) => {
     try {
-        const services = await Service.findAll({ limit: 3 });
-        for (const service of services) {
-            // tim address 
-            const artist = await Artist.findOne({
-                where: {
-                    id: service.artist_id,
+        console.log("Đang truy cập trang chủ..."); // Debug: Kiểm tra xem có vào được đây không
+        // 1. Lấy danh sách dịch vụ
+        const services = await Service.findAll({
+            where: { is_deleted: 0 },
+            limit: 6
+        });
+        // console.log("Dịch vụ đã lấy:", services); // Debug: Kiểm tra dữ liệu dịch vụ lấy được
+        // Xử lý an toàn cho từng dịch vụ
+        if (services && services.length > 0) {
+            for (const service of services) {
+                // --- ĐÃ BỎ PHẦN TÌM ARTIST THEO artist_id VÌ CỘT NÀY KHÔNG CÒN ---
+                // Xử lý ảnh an toàn
+                const rawImages = service.images;
+                if (rawImages) {
+                    try {
+                        // Kiểm tra xem có phải là chuỗi JSON không trước khi parse
+                        const parsedImages = typeof rawImages === 'string' ? JSON.parse(rawImages) : rawImages;
+                        service.images = Array.isArray(parsedImages) ? parsedImages[0] : parsedImages;
+                    }
+                    catch (e) {
+                        console.log("Lỗi parse ảnh dịch vụ:", e);
+                        service.images = ""; // Nếu lỗi thì để trống thay vì sập web
+                    }
                 }
-            });
-            if (artist) {
-                service.address = artist.address;
-            }
-            if (service["images"]) {
-                service["images"] = (JSON.parse(service["images"]))[0];
             }
         }
         const customer = res.locals.Customer;
-        // Lấy top 3 phản hồi có rating cao nhất
+        // 2. Lấy top 3 phản hồi (Feedbacks)
         let feedbacks = [];
         try {
             const comments = await Comment.findAll({
@@ -28,59 +38,52 @@ export const index = async (req, res) => {
                 limit: 3,
                 raw: true
             });
-            // Lấy thông tin khách hàng cho từng comment
-            for (const comment of comments) {
-                const commentedCustomer = await Customer.findOne({
-                    where: { customer_id: comment.customer_id },
-                    attributes: ['fullName', 'avatar'],
-                    raw: true
-                });
-                let avatarUrl = null;
-                if (commentedCustomer?.avatar) {
-                    const avatarValue = commentedCustomer.avatar;
-                    if (typeof avatarValue === 'string') {
-                        const trimmed = avatarValue.trim();
-                        if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
-                            try {
-                                const parsed = JSON.parse(trimmed);
-                                if (Array.isArray(parsed) && parsed.length > 0) {
-                                    avatarUrl = parsed[0];
-                                }
-                                else {
-                                    avatarUrl = String(parsed);
-                                }
+            if (comments && comments.length > 0) {
+                for (const comment of comments) {
+                    const commentedCustomer = await Customer.findOne({
+                        where: { customer_id: comment.customer_id },
+                        attributes: ['fullName', 'avatar'],
+                        raw: true
+                    });
+                    // Xử lý Avatar an toàn
+                    let avatarUrl = null;
+                    const avatarValue = commentedCustomer?.avatar;
+                    if (avatarValue) {
+                        try {
+                            if (typeof avatarValue === 'string' && avatarValue.startsWith('[')) {
+                                const parsed = JSON.parse(avatarValue);
+                                avatarUrl = Array.isArray(parsed) ? parsed[0] : parsed;
                             }
-                            catch (error) {
+                            else {
                                 avatarUrl = avatarValue;
                             }
                         }
-                        else {
+                        catch (error) {
                             avatarUrl = avatarValue;
                         }
                     }
-                    else {
-                        avatarUrl = String(avatarValue);
-                    }
+                    comment.customer = {
+                        fullName: commentedCustomer?.fullName || 'Khách hàng ẩn danh',
+                        avatar: avatarUrl
+                    };
                 }
-                comment.customer = {
-                    fullName: commentedCustomer?.fullName || 'Khách hàng ẩn danh',
-                    avatar: avatarUrl
-                };
+                feedbacks = comments;
             }
-            feedbacks = comments;
         }
         catch (error) {
             console.log("Lỗi khi lấy feedbacks:", error);
             feedbacks = [];
         }
+        // 3. Render
         res.render("client/pages/home/index.pug", {
-            services: services,
+            services: services || [], // Luôn gửi mảng dù rỗng
             message: req.flash(),
             customer: customer,
-            feedbacks: feedbacks
+            feedbacks: feedbacks || []
         });
     }
     catch (error) {
-        res.status(500).send("Lỗi máy chủ");
+        console.error("LỖI CHÍNH TẠI TRANG CHỦ:", error); // In lỗi ra Terminal để em xem
+        res.status(500).send("Lỗi máy chủ: " + error.message);
     }
 };

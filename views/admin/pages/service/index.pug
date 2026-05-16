@@ -8,7 +8,7 @@ block main
     header.flex.justify-between.items-center.mb-10
       div
         h2.text-3xl.font-bold.serif-font.italic Danh sách dịch vụ Makeup
-        p.text-neutral-400.text-sm Quản lý các gói dịch vụ và bảng giá tại Susannie Studio.
+        p.text-neutral-400.text-sm Quản lý các gói dịch vụ và bảng giá chung tại Susannie Studio.
       .flex.gap-4
         .relative
           button.w-12.h-12.rounded-full.bg-white.border.border-neutral-100.flex.items-center.justify-center.text-neutral-500.transition-all(class='hover:text-black')
@@ -43,11 +43,10 @@ block main
               th.px-8.py-4 Tên dịch vụ
               th.px-8.py-4 Thời lượng
               th.px-8.py-4 Giá tiền
-              th.px-8.py-4 Nhân viên
+              //- ĐÃ XÓA CỘT NHÂN VIÊN Ở ĐÂY
               th.px-8.py-4.text-right Thao tác
           tbody.divide-y.divide-neutral-50
             each item in services
-              //- SỬA TẠI ĐÂY: Thêm onclick và cursor-pointer
               tr.transition-all.group(
                 class='hover:bg-neutral-50/50 cursor-pointer'
                 onclick=`window.location.href='/${prefixAdmin}/service/detail/${item.id}'`
@@ -55,19 +54,18 @@ block main
                 td.px-8.py-5
                   img.w-16.h-16.object-cover.rounded-2xl.border.border-neutral-100.shadow-sm.transition-transform(src= item.images class='group-hover:scale-105')
                 td.px-8.py-5
-                  p.text-sm.font-bold.text-neutral-800 #{item.title}
-                  p.text-neutral-400.mt-1.uppercase.tracking-tighter(class='text-[10px]') Tên: #{item.name}
+                  p.text-sm.font-bold.text-neutral-800 #{item.name}
+                  if(item.rating)
+                    p.text-yellow-500.text-xs.mt-1
+                      i.fa-solid.fa-star.mr-1
+                      | #{item.rating}
                 td.px-8.py-5
                   .flex.items-center.gap-2.text-xs.text-neutral-500
                     i.fa-regular.fa-clock
                     | #{item.duration} phút
                 td.px-8.py-5.font-bold.text-sm(class='text-[#D2B48C]')
-                  | #{item.price.toLocaleString()}đ
-                td.px-8.py-5
-                  span.status-pill.bg-green-100.text-green-700 #{item.artist_fullName}
-                
+                  | #{item.price ? Math.floor(item.price).toLocaleString('vi-VN') : 0}đ
                 td.px-8.py-5.text-right
-                  //- SỬA TẠI ĐÂY: Dùng stopPropagation để không bị nhảy trang khi nhấn nút
                   .flex.justify-end.gap-2(onclick="event.stopPropagation();")
                     a.w-8.h-8.rounded-lg.flex.items-center.justify-center.text-neutral-400.transition-all(
                       href=`/${prefixAdmin}/service/edit/${item.id}`
@@ -75,7 +73,6 @@ block main
                       title='Chỉnh sửa'
                     )
                       i.fa-solid.fa-pen-to-square.text-xs
-                    //- Trong vòng lặp danh sách
                     button.w-8.h-8.rounded-lg.flex.items-center.justify-center.text-neutral-400.transition-all(
                       class='hover:bg-red-50 hover:text-red-500' 
                       title='Xóa' 
@@ -84,12 +81,12 @@ block main
                     )
                       i.fa-solid.fa-trash-can.text-xs
 
-
-                    //- Đặt Form này ở cuối file (ngoài vòng lặp)
-                    form(
-                      id="form-delete-item"
-                      method="POST"
-                      action=""
-                      data-path=`/${prefixAdmin}/service/delete`
-                    )
-      +pagination(pagination)
+          //- Đặt Form xóa ở ngoài vòng lặp
+          form(
+            id="form-delete-item"
+            method="POST"
+            action=""
+            data-path=`/${prefixAdmin}/service/delete`
+          )
+        .p-10
+          +pagination(pagination)

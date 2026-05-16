@@ -5,8 +5,8 @@ export const requireAuth = async(req:Request, res:Response, next:NextFunction)=>
   console.log("middleware auth");
   if( !req.cookies.token){
     console.log("no token");
-    if (req.path !== `/${system.prefixAdmin}/auth/login`) {
-              return res.redirect(`/${system.prefixAdmin}/auth/login`);
+    if (req.path !== `/admin/auth/login`) {
+              return res.redirect(`/admin/auth/login`);
     }
           return next();
   }else{
@@ -30,7 +30,7 @@ if(user){
   return next();
 }else{
   console.log("no user found");
-  return res.redirect(`/${system.prefixAdmin}/auth/login`);
+  return res.redirect("/admin/auth/login");
 }
 }
 }

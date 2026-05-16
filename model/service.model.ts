@@ -14,31 +14,15 @@ const Service = sequelize.define("Service", {
     type: DataTypes.STRING(255),
     allowNull: false,
   },
-  artist_id: {
-    type: DataTypes.STRING(255),
-    allowNull: false,
-  },
-  time_start: {
-    type: DataTypes.TIME, 
-    allowNull: false,
-  },
-  time_end: {
-    type: DataTypes.TIME,
-    allowNull: true,
-  },
   price: {
     type: DataTypes.DECIMAL(10, 2), 
     allowNull: true,
   },
-  // THÊM TRƯỜNG RATING Ở ĐÂY
-  rating: {
-    type: DataTypes.FLOAT, // Khớp với kiểu 'float' trong ảnh database của bạn
-    allowNull: true,       // Cho phép NULL như hiển thị trong cột 'Có'
-    defaultValue: 4.0        // Mặc định là 0
-  },
+  // ĐÃ XÓA RATING TẠI ĐÂY
   duration: {
     type: DataTypes.INTEGER,
     allowNull: true,
+    defaultValue: 60
   },
   amenities: {
     type: DataTypes.TEXT("long"), 
@@ -66,5 +50,4 @@ const Service = sequelize.define("Service", {
   timestamps: false, 
   tableName: 'services', 
 });
-
 export default Service;

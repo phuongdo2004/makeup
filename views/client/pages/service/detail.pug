@@ -4,7 +4,7 @@ block main
   section.service-banner.py-32.text-center
     h2.text-5xl.font-bold.serif-font.italic.mb-4.drop-shadow-lg(class='md:text-6xl text-[#D2B48C]') Chi Tiết Dịch Vụ
     p.text-xs.uppercase.font-medium(class='text-white/80 md:text-sm tracking-[0.4em]')
-      | Trang chủ / Dịch vụ / gsaudusgcis
+      | Trang chủ / Dịch vụ /
       //- ĐÃ SỬA: Xóa dấu chấm thừa ở đây
       span(class='text-[#D2B48C]') #{service.name}
 
@@ -18,26 +18,26 @@ block main
         .text-center(class='md:text-left')
           h2.text-4xl.font-bold.text-black.uppercase.tracking-tight.mb-2 #{service.name}
           p.text-sm.text-neutral-500.font-medium
-            i.fa-solid.fa-user-tie.mr-2(class='text-[#D2B48C]')
-            | Chuyên viên: 
-            span.text-black.font-bold #{artist.name}
-            span.ml-4
-              i.fa-solid.fa-phone.mr-1(class='text-[#D2B48C]')
-              | #{artist.phone}
+            //- i.fa-solid.fa-user-tie.mr-2(class='text-[#D2B48C]')
+            //- | Chuyên viên: 
+            //- span.text-black.font-bold #{artist.name}
+            //- span.ml-4
+            //-   i.fa-solid.fa-phone.mr-1(class='text-[#D2B48C]')
+            //-   | #{artist.phone}
 
       .grid.grid-cols-1.gap-12(class='md:grid-cols-2')
         .space-y-6
           div
             label.uppercase.font-black.tracking-widest.text-neutral-400.block.mb-2(class='text-[10px]') Địa điểm
-            p.text-sm.font-bold.leading-relaxed #{artist.address}
-          div
-            label.uppercase.font-black.tracking-widest.text-neutral-400.block.mb-2(class='text-[10px]') Kinh nghiệm
-            p.text-sm.font-bold #{artist.experience} năm
-        .space-y-6
-          div
-            label.uppercase.font-black.tracking-widest.text-neutral-400.block.mb-2(class='text-[10px]') Giờ làm việc
-            p.text-sm.font-bold.text-black.inline-block.px-3.py-1.rounded(class='bg-[#F5F5DC]') 
-              | #{service.time_start.slice(0, 5)} - #{service.time_end.slice(0, 5)}
+            p.text-sm.font-bold.leading-relaxed Thị trấn Lim, Huyện Tiên Du, Bắc Ninh
+          //- div
+          //-   label.uppercase.font-black.tracking-widest.text-neutral-400.block.mb-2(class='text-[10px]') Kinh nghiệm
+          //-   p.text-sm.font-bold #{artist.experience} năm
+        //- .space-y-6
+        //-   div
+        //-     label.uppercase.font-black.tracking-widest.text-neutral-400.block.mb-2(class='text-[10px]') Giờ làm việc
+        //-     p.text-sm.font-bold.text-black.inline-block.px-3.py-1.rounded(class='bg-[#F5F5DC]') 
+        //-       | #{service.time_start.slice(0, 5)} - #{service.time_end.slice(0, 5)}
       .mt-12
         h4.text-sm.font-black.uppercase.mb-6.flex.items-center.gap-2(class='tracking-[0.2em]')
           span.w-8(class='h-[2px] bg-[#D2B48C]')
@@ -213,7 +213,7 @@ block main
             span#displayTimeConfirm.font-bold --:--
           .flex.justify-between.pb-2.border-b.border-dashed
             span.text-neutral-400 Địa điểm:
-            span.font-bold #{artist.address}
+            span.font-bold Thị trấn Lim, Huyện Tiên Du, Bắc Ninh
           .flex.justify-between.pt-4
             span.text-neutral-400 Tổng số tiền:
             span.text-xl.font-black.text-red-600 #{(service.price * 1).toLocaleString()} đ
@@ -221,7 +221,7 @@ block main
         button.flex-1.py-4.bg-white.border.rounded-2xl.font-bold(onclick='closeConfirmModal()') Quay lại
         button.py-4.bg-black.rounded-2xl.font-black(onclick='goToPaymentPage()' class='flex-[2] text-[#D2B48C]') Thanh toán
 
-  script.
+  //- script.
     let sDate = "";
     let sTime = "";
     const existingBookings = JSON.parse('!{existingBookings || "[]"}');

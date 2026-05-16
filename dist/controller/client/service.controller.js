@@ -3,7 +3,6 @@ import Service from "../../model/service.model.js";
 import Artist from "../../model/artist.model.js";
 import Customer from "../../model/customer.model.js";
 import Comment from "../../model/comment.model.js";
-import Booking from "../../model/booking.model.js";
 import { pagi } from "../../helpers/pagination.helper.js";
 export const index = async (req, res) => {
     const pagination = await pagi(req, res);
@@ -15,15 +14,6 @@ export const index = async (req, res) => {
         raw: true
     });
     for (const service of services) {
-        // tim address 
-        const artist = await Artist.findOne({
-            where: {
-                id: service.artist_id,
-            },
-        });
-        if (artist) {
-            service.address = artist.address;
-        }
         if (service["images"]) {
             service["images"] = (JSON.parse(service["images"]))[0];
         }
@@ -53,11 +43,6 @@ export const detail = async (req, res) => {
             service.allImages = [service.images];
         }
     }
-    // 3. Tìm Artist liên quan (Giữ nguyên)
-    const artist = await Artist.findOne({
-        where: { id: service.artist_id },
-        attributes: ['name', 'address', 'phone', 'experience', 'id']
-    });
     // 4. LẤY BÌNH LUẬN THEO KIỂU THỦ CÔNG (Không dùng include)
     // Lấy tất cả comment của dịch vụ này
     const rawReviews = await Comment.findAll({
@@ -90,22 +75,11 @@ export const detail = async (req, res) => {
             customer_avatar: customer ? customer.avatar : null
         });
     }
-    // 4. LẤY DANH SÁCH LỊCH ĐÃ ĐẶT (Xử lý trùng giờ)
-    // Lấy các booking của artist này mà chưa bị hủy
-    const existingBookings = await Booking.findAll({
-        where: {
-            id_artist: artist.id,
-        },
-        attributes: ['booking_date', 'time_start', 'time_end'],
-        raw: true
-    });
     // 5. Render ra giao diện
     res.render("client/pages/service/detail.pug", {
         service: service,
-        artist: artist,
         reviews: reviews // Giờ reviews đã có thêm customer_name và customer_avatar
-        ,
-        existingBookings: JSON.stringify(existingBookings) // Chuyển sang JSON để Script ở Frontend đọc được
+        // ,existingBookings: JSON.stringify(existingBookings) // Chuyển sang JSON để Script ở Frontend đọc được
     });
 };
 // detail service end

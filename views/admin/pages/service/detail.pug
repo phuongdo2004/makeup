@@ -1,62 +1,87 @@
 extends ../../layouts/default.pug
 include ../../mixins/alert.pug
+
 block main
-    +alert(3000)
-    main.flex-1.p-10
-      header.flex.justify-between.items-center.mb-10
-        .flex.items-center.gap-6
-          a.w-12.h-12.rounded-full.border.border-neutral-200.flex.items-center.justify-center.transition-all(href='/admin/service' class='hover:bg-black hover:text-[#D2B48C]')
-            i.fa-solid.fa-arrow-left
-          div
-            h2.text-3xl.font-bold.serif-font.italic Chi tiết dịch
-            p.text-neutral-400.text-sm Xem v&agrave; qu&#x1EA3;n l&yacute; th&ocirc;ng tin chuy&ecirc;n s&acirc;u c&#x1EE7;a g&oacute;i d&#x1ECB;ch v&#x1EE5;.
-        .flex.gap-4
-          button.px-6.py-3.border.border-red-200.text-red-500.rounded-full.font-bold.text-sm.uppercase.tracking-widest.transition-all(class='hover:bg-red-50')
-            i.fa-solid.fa-trash-can.mr-2
-            |  Xóa
-          a.px-6.py-3.bg-black.rounded-full.font-bold.text-sm.uppercase.tracking-widest.flex.items-center.gap-2.transition-all.shadow-lg(
-            href=`/${prefixAdmin}/service/edit/${service.id}`
-            class='text-[#D2B48C] hover:bg-neutral-800 shadow-black/10'
-          )
-            i.fa-solid.fa-pen-to-square
-            |  Chỉnh sửa dịch vụ
-      .grid.grid-cols-1.gap-8(class='lg:grid-cols-3')
-        .space-y-6(class='lg:col-span-1')
-          .card.p-4
-            .relative.group.overflow-hidden.rounded-2xl
+  +alert(3000)
+  main.flex-1.p-10
+    header.flex.justify-between.items-center.mb-10
+      .flex.items-center.gap-6
+        a.w-12.h-12.rounded-full.border.border-neutral-200.flex.items-center.justify-center.transition-all(href=`/${prefixAdmin}/service` class='hover:bg-black hover:text-[#D2B48C]')
+          i.fa-solid.fa-arrow-left
+        div
+          h2.text-3xl.font-bold.serif-font.italic Chi tiết dịch vụ
+          p.text-neutral-400.text-sm Xem thông tin gói dịch vụ tại Susannie Studio.
+      
+      .flex.gap-4
+        button.px-6.py-3.border.border-red-200.text-red-500.rounded-full.font-bold.text-sm.uppercase.tracking-widest.transition-all(
+          class='hover:bg-red-50'
+          button-delete
+          data-id=service.id
+        )
+          i.fa-solid.fa-trash-can.mr-2
+          | Xóa
+        
+        a.px-6.py-3.bg-black.rounded-full.font-bold.text-sm.uppercase.tracking-widest.flex.items-center.gap-2.transition-all.shadow-lg(
+          href=`/${prefixAdmin}/service/edit/${service.id}`
+          class='text-[#D2B48C] hover:bg-neutral-800 shadow-black/10'
+        )
+          i.fa-solid.fa-pen-to-square
+          | Chỉnh sửa dịch vụ
+
+    .grid.grid-cols-1.gap-8(class='lg:grid-cols-3')
+      //- Cột bên trái: Ảnh đại diện
+      .space-y-6(class='lg:col-span-1')
+        .card.p-4.bg-white.rounded-2xl.shadow-sm
+          .relative.group.overflow-hidden.rounded-2xl
+            if(service.images && service.images.length > 0)
               img.w-full.object-cover.transition-transform.duration-700(src=service.images[0] class='aspect-[3/4] group-hover:scale-110')
-              .absolute.top-4.right-4
-                span.status-pill.backdrop-blur-md.border(class='bg-black/50 text-[#D2B48C] border-[#D2B48C]/30') &#x1EA2;nh &dstrok;&#x1EA1;i di&#x1EC7;n
+            else
+              .w-full.bg-neutral-100.flex.items-center.justify-center(class='aspect-[3/4]')
+                i.fa-regular.fa-image.text-4xl.text-neutral-300
 
-          .card.p-8.space-y-6
-            h4.font-black.uppercase(class='text-[10px] tracking-[0.2em] text-[#D2B48C]') Thông số nhanh
-            .space-y-4
-              .flex.justify-between.items-center
-                span.text-xs.text-neutral-400.font-bold.uppercase.tracking-tighter Giá niêm yết
-                span.text-lg.font-bold.text-black #{service.price}&dstrok;
-              .flex.justify-between.items-center
-                span.text-xs.text-neutral-400.font-bold.uppercase.tracking-tighter Thời lượng
-                span.text-sm.font-bold.text-black.italic #{service.duration} phút
-              .flex.justify-between.items-center
-                span.text-xs.text-neutral-400.font-bold.uppercase.tracking-tighter Người Makeup
-                span.status-pill.bg-green-100.text-green-700 #{artistName}
-        .space-y-6(class='lg:col-span-2')
-          .card.p-10
-            .mb-10
-              span.font-black.uppercase.block.mb-2(class='text-[10px] tracking-[0.3em] text-[#D2B48C]') Thông tin dịch vụ
-              h3.text-4xl.font-bold.serif-font.italic.mb-4 #{service.name}
-              .flex.gap-4
-                span.px-3.py-1.bg-neutral-100.rounded.font-bold.uppercase.tracking-widest.text-neutral-500(class='text-[9px]') Mã: #{service.id}
+        .card.p-8.bg-white.rounded-2xl.shadow-sm.space-y-6
+          h4.font-black.uppercase(class='text-[10px] tracking-[0.2em] text-[#D2B48C]') Thông số dịch vụ
+          .space-y-4
+            .flex.justify-between.items-center
+              span.text-xs.text-neutral-400.font-bold.uppercase Giá niêm yết
+              span.text-lg.font-bold.text-black #{service.price ? Math.floor(service.price).toLocaleString('vi-VN') : 0}đ
+            .flex.justify-between.items-center
+              span.text-xs.text-neutral-400.font-bold.uppercase Thời lượng
+              span.text-sm.font-bold.text-black #{service.duration} phút
+            .flex.justify-between.items-center
+              span.text-xs.text-neutral-400.font-bold.uppercase Loại hình
+              span.px-3.py-1.bg-green-100.text-green-700.rounded-full.font-bold(class='text-[10px]') Dịch vụ Studio
 
-            .space-y-8
-              div
-                h5.text-xs.font-black.uppercase.tracking-widest.mb-4 Mô tả ngắn
-                p.text-neutral-600.leading-relaxed.italic.text-sm.border-l-2.pl-4(class='border-[#D2B48C]')
-                  | #{service.amenities}
-              div
-                h5.text-xs.font-black.uppercase.tracking-widest.mb-6 Album minh h&#x1ECD;a (Gallery)
-                .grid.grid-cols-4.gap-4
-                  each image ,index in service.images
-                    img.w-full.aspect-square.object-cover.rounded-xl.transition-all.cursor-pointer.shadow-sm(src=service.images[index] class='hover:opacity-80')
-                  .w-full.aspect-square.rounded-xl.bg-neutral-50.border.border-dashed.border-neutral-300.flex.items-center.justify-center.text-neutral-400.transition-all.cursor-pointer(class='hover:bg-neutral-100')
-                    i.fa-solid.fa-plus.text-xl
+      //- Cột bên phải: Nội dung chi tiết
+      .space-y-6(class='lg:col-span-2')
+        .card.p-10.bg-white.rounded-2xl.shadow-sm
+          .mb-10
+            span.font-black.uppercase.block.mb-2(class='text-[10px] tracking-[0.3em] text-[#D2B48C]') Thông tin chi tiết
+            h3.text-4xl.font-bold.serif-font.italic.mb-4 #{service.name}
+            span.px-3.py-1.bg-neutral-100.rounded.font-bold.uppercase.tracking-widest.text-neutral-500(class='text-[9px]') ID: #{service.id}
+
+          .space-y-8
+            div
+              h5.text-xs.font-black.uppercase.tracking-widest.mb-4 Tiện ích đi kèm
+              p.text-neutral-600.leading-relaxed.italic.text-sm.border-l-2.pl-4(class='border-[#D2B48C]')
+                | #{service.amenities || "Chưa cập nhật thông tin tiện ích."}
+            
+            div
+              h5.text-xs.font-black.uppercase.tracking-widest.mb-4 Mô tả dịch vụ
+              p.text-neutral-600.text-sm
+                | #{service.description || "Không có mô tả chi tiết cho dịch vụ này."}
+            
+            div
+              h5.text-xs.font-black.uppercase.tracking-widest.mb-6 Album ảnh dịch vụ
+              .grid.grid-cols-2.gap-4(class='md:grid-cols-4')
+                if(service.images && service.images.length > 0)
+                  each image in service.images
+                    img.w-full.aspect-square.object-cover.rounded-xl.transition-all.cursor-pointer(src=image class='hover:opacity-80 shadow-sm')
+                
+                a.w-full.aspect-square.rounded-xl.bg-neutral-50.border.border-dashed.border-neutral-300.flex.items-center.justify-center.text-neutral-400.transition-all(
+                  href=`/${prefixAdmin}/service/edit/${service.id}`
+                  class='hover:bg-neutral-100'
+                )
+                  i.fa-solid.fa-plus.text-xl
+
+  form(id="form-delete-item" method="POST" action="" data-path=`/${prefixAdmin}/service/delete`)

@@ -25,7 +25,7 @@ block main
           img.rounded-2xl.relative.z-10.grayscale.transition-all.duration-700.w-full.object-cover(src='https://images.unsplash.com/photo-1522337094846-8a818192de1f?q=80&w=1000&auto=format&fit=crop' class='hover:grayscale-0 h-[500px]')
 
         .relative(class="lg:w-1/2")
-          h3(class="text-4xl serif-font italic mb-6 text-[#D2B48C]") Hành trình 10 năm kiến tạo vẻ đẽp
+          h3(class="text-4xl serif-font italic mb-6 text-[#D2B48C]") Hành trình 10 năm kiến tạo vẻ đẹp
           p(class="text-white/70 leading-relaxed mb-8 italic")
             | Susannie không chỉ là một Makeup Artist, chúng tôi là người kể câu chuyện của bạn thông qua cọ vẽ. Với 10 năm kinh nghiệm trong lĩnh vực Bridal và High-end Makeup.
           .grid.grid-cols-2.gap-8(class="border-t border-white/10 pt-8")
@@ -67,7 +67,7 @@ block main
                 h3.text-xl.font-bold.text-black.uppercase.mb-2 #{service.name}
                 p.text-xs.text-neutral-400.mb-6.flex.items-center.italic
                   i.fa-solid.fa-location-dot.mr-2(class='text-[#D2B48C]')
-                  |  #{service.address}
+                  |  Thị trấn Lim, Huyện Tiên Du, Bắc Ninh
                 .flex.justify-between.items-center.py-4.border-y.border-neutral-50.mb-6
                   //- Nhóm bên trái: Icon + Thời lượng (Đã bọc lại để không bị vỡ layout)
                   .flex.items-center.gap-2
@@ -78,13 +78,6 @@ block main
                   //- Nhóm bên phải: Giữ nguyên thiết kế giá của bạn
                   span.bg-black.px-3.py-1.rounded-md.font-bold.text-sm(class='text-[#D2B48C]') 
                     | #{(service.price * 1).toLocaleString()} đ
-                //- .flex.gap-3.mb-8
-                //-   span.bg-neutral-100.font-bold.px-3.py-2.rounded-lg.flex.items-center.gap-2(class='text-[11px]')
-                //-     i.fa-solid.fa-calendar-check(class='text-[#D2B48C]')
-                //-     |  210 l&#x1B0;&#x1EE3;t
-                //-   span.bg-neutral-100.font-bold.px-3.py-2.rounded-lg.flex.items-center.gap-2(class='text-[11px]')
-                //-     i.fa-solid.fa-award(class='text-[#D2B48C]')
-                //-     |  10 n&abreve;m
                 a(href=`/service/detail/${service.id}` class="w-full inline-block text-center py-4 bg-black text-[#D2B48C] rounded-xl text-[11px] font-bold uppercase tracking-widest hover:bg-[#D2B48C] hover:text-black transition-all")
                   | Xem chi tiết & Đặt lịch
 

@@ -17,17 +17,7 @@ export const index = async( req :Request, res:Response) => {
     raw: true
   })
     for (const service of services) {
-// tim address 
-const artist = await Artist.findOne({
-  where:{
-    id: (service as any).artist_id,
-  },
-});
 
-if(artist){
-  (service as any).address = (artist as any).address;
-  
-}
     if ((service as any)["images"]) {
       (service as any)["images"] = (JSON.parse((service as any)["images"]))[0];
 
@@ -60,12 +50,6 @@ export const detail = async(req: Request, res: Response) => {
       (service as any).allImages = [(service as any).images];
     }
   }
-
-  // 3. Tìm Artist liên quan (Giữ nguyên)
-  const artist = await Artist.findOne({
-    where: { id: (service as any).artist_id },
-    attributes: ['name', 'address', 'phone', 'experience', 'id']
-  });
 
   // 4. LẤY BÌNH LUẬN THEO KIỂU THỦ CÔNG (Không dùng include)
   // Lấy tất cả comment của dịch vụ này
@@ -101,22 +85,14 @@ export const detail = async(req: Request, res: Response) => {
       customer_avatar: customer ? (customer as any).avatar : null
     });
   }
-  // 4. LẤY DANH SÁCH LỊCH ĐÃ ĐẶT (Xử lý trùng giờ)
-// Lấy các booking của artist này mà chưa bị hủy
-const existingBookings = await Booking.findAll({
-  where: { 
-    id_artist: (artist as any).id,
-  },
-  attributes: ['booking_date', 'time_start', 'time_end'],
-  raw: true
-});
+
  
   // 5. Render ra giao diện
   res.render("client/pages/service/detail.pug", {
     service: service,
-    artist: artist,
+
     reviews: reviews // Giờ reviews đã có thêm customer_name và customer_avatar
-  ,existingBookings: JSON.stringify(existingBookings) // Chuyển sang JSON để Script ở Frontend đọc được
+  // ,existingBookings: JSON.stringify(existingBookings) // Chuyển sang JSON để Script ở Frontend đọc được
   });
 }
 // detail service end

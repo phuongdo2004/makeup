@@ -1,7 +1,5 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database.js";
-import { nanoid } from "nanoid";
-const generateShortToken = (length) => nanoid(length);
 const Artist = sequelize.define("Artist", {
     id: {
         type: DataTypes.STRING(36),
@@ -17,7 +15,7 @@ const Artist = sequelize.define("Artist", {
         allowNull: true,
     },
     avatar: {
-        type: DataTypes.TEXT("long"), // longtext utf8mb4_bin
+        type: DataTypes.TEXT("long"),
         allowNull: true,
     },
     experience: {
@@ -25,11 +23,10 @@ const Artist = sequelize.define("Artist", {
         allowNull: true,
         defaultValue: 2
     },
-    // Bổ sung trường rating (số sao)
     rating: {
-        type: DataTypes.DOUBLE, // Kiểu số thực để lưu 4.5, 4.8, 5.0
+        type: DataTypes.DOUBLE,
         allowNull: true,
-        defaultValue: 5.0 // Mặc định cho nghệ sĩ mới là 5 sao
+        defaultValue: 5.0
     },
     status: {
         type: DataTypes.STRING(20),
@@ -46,24 +43,20 @@ const Artist = sequelize.define("Artist", {
         unique: true,
     },
     biography: {
-        type: DataTypes.TEXT, // Chuyển từ STRING sang TEXT
+        type: DataTypes.TEXT,
         allowNull: true
     },
-    time_start: {
-        type: DataTypes.TIME,
-        allowNull: true,
-    },
-    time_end: {
-        type: DataTypes.TIME,
-        allowNull: true,
-    },
+    // ĐÃ XÓA time_start và time_end ở đây.
+    // Lý do: Em đã quy định khung giờ chung (3h - 21h) cho toàn bộ hệ thống ở bảng Booking, 
+    // nên không cần lưu thời gian bắt đầu/kết thúc riêng lẻ ở từng Artist nữa cho đỡ rối.
     created_at: {
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: DataTypes.NOW,
+        field: 'created_at' // Đảm bảo Sequelize biết cột này tên là created_at trong DB
     },
 }, {
     timestamps: false,
-    tableName: 'artist',
+    tableName: 'artist', // Anh đổi thành số nhiều cho đúng chuẩn đặt tên bảng
 });
 export default Artist;

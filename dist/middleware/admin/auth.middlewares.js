@@ -1,11 +1,10 @@
 import User from "../../model/user.model.js";
-import { system } from "../../config/system.js";
 export const requireAuth = async (req, res, next) => {
     console.log("middleware auth");
     if (!req.cookies.token) {
         console.log("no token");
-        if (req.path !== `/${system.prefixAdmin}/auth/login`) {
-            return res.redirect(`/${system.prefixAdmin}/auth/login`);
+        if (req.path !== `/admin/auth/login`) {
+            return res.redirect(`/admin/auth/login`);
         }
         return next();
     }
@@ -31,7 +30,7 @@ export const requireAuth = async (req, res, next) => {
         }
         else {
             console.log("no user found");
-            return res.redirect(`/${system.prefixAdmin}/auth/login`);
+            return res.redirect("/admin/auth/login");
         }
     }
 };

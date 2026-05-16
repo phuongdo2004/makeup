@@ -3,184 +3,379 @@ import { system } from "../../config/system.js";
 import Service from "../../model/service.model.js";
 import Artist from "../../model/artist.model.js";
 import { pagi } from "../../helpers/pagination.helper.js";
-import Booking from "../../model/booking.model.js";
-// [GET] index start
+
+// [GET] /admin/services
 export const index = async (req: Request, res: Response) => {
-  
-    const pagination = await pagi(req , res);
-    
-   const services  = await Service.findAll({
-    where:{
-      is_deleted:0
-    },limit:(await pagination).limitItem,
-      offset: (await pagination).skip,
-    raw: true
-  })
-for (const service of services) {
-// tim address 
-const artist = await Artist.findOne({
-  where:{
-    id: (service as any).artist_id,
-  },
-});
+    try {
+        const pagination = await pagi(req, res);
+        
+        // Chỉ lấy các trường hiện có trong Database sau khi em đã chạy SQL xóa cột
+        const services = await Service.findAll({
+            where: { is_deleted: 0 },
+            limit: (await pagination).limitItem,
+            offset: (await pagination).skip,
+            raw: true
+        });
 
-if(artist){
-  (service as any).address = (artist as any).address;
-  (service as any).artist_fullName = (artist as any).name;
+        // Xử lý dữ liệu an toàn để hiển thị ra danh sách
+        const processedServices = services.map(service => {
+            // 1. Xử lý ảnh an toàn (Lấy tấm đầu tiên)
+            let imageDisplay = "";
+            if ((service as any).images) {
+                try {
+                    const imgs = JSON.parse((service as any).images);
+                    imageDisplay = Array.isArray(imgs) ? imgs[0] : imgs;
+                } catch (e) {
+                    // Nếu không phải JSON (ví dụ link trực tiếp), dùng luôn link đó
+                    imageDisplay = (service as any).images; 
+                }
+            }
 
-}
-    if ((service as any)["images"]) {
-      (service as any)["images"] = (JSON.parse((service as any)["images"]))[0];
+            // 2. Trả về object sạch, không còn rating hay artist_id
+            return {
+                ...service,
+                images: imageDisplay,
+                address: "Susannie Studio" // Fix cứng vì đã xóa bảng Artist/artist_id
+            };
+        });
 
+        res.render("admin/pages/service/index.pug", {
+            services: processedServices,
+            pagination: pagination,
+            totalService: pagination.count,
+        });
+    } catch (error) {
+        console.error("Lỗi trang quản lý dịch vụ:", error);
+        res.status(500).send("Lỗi hệ thống: Dữ liệu bảng Service không khớp.");
     }
-  }
-// tim khach hang
-res.render("admin/pages/service/index.pug", {
-  services: services,
-  pagination:pagination,
-  totalService : pagination.count,
-})
-
-}
-// [GET] create start
+};
+// [GET] /admin/service/create
 export const create = async (req: Request, res: Response) => {
-
-  const artists = await Artist.findAll();
-  // message: req.flash()
-  res.render("admin/pages/service/create.pug", {
-    message: req.flash(),
-    artists:artists,
-  })
-
+    try {
+        // Lấy danh sách artist để chọn (Nếu không có artist thì trả về mảng rỗng)
+        const artists = await Artist.findAll({ raw: true }) || [];
+        res.render("admin/pages/service/create.pug", {
+            message: req.flash(),
+            artists: artists,
+        });
+    } catch (error) {
+        res.render("admin/pages/service/create.pug", { artists: [] });
+    }
 }
-// [GET] create end
 
-// [POST] store start 
+// [POST] /admin/service/store
+// export const store = async (req: Request, res: Response) => {
+//     try {
+//         const newService = req.body;
+        
+//         // Luôn đảm bảo lưu vào DB dưới dạng String của JSON
+//         newService.amenities = JSON.stringify(req.body.amenities || "");
+//         newService.images = JSON.stringify(req.body.images || []);
+
+//         await Service.create(newService);
+//         req.flash('success', 'Thêm dịch vụ thành công');
+//         res.redirect(`${system.prefixAdmin}/services`);
+//     } catch (error: any) {
+//         console.error("LỖI SQL CHI TIẾT:", error.parent || error);
+//         res.status(500).send("Lỗi lưu dịch vụ");
+//     }
+// }
+// [POST] /admin/service/store
 export const store = async (req: Request, res: Response) => {
   try {
     const newService = req.body;
-    newService.amenities = JSON.stringify(req.body.amenities);
-    newService.images = JSON.stringify(req.body.images);
 
-    // Kiểm tra xem nanoid có tạo ra ID không
-    console.log("Dữ liệu trước khi lưu:", newService);
+    // 1. ÉP BUỘC thời lượng là 60 (Dù người dùng có gửi gì lên)
+    newService.duration = 60;
+
+    // 2. KIỂM TRA GIÁ (Phải >= 100.000)
+    const price = parseInt(newService.price);
+    if (!price || price < 100000) {
+      req.flash('error', 'Giá dịch vụ phải ít nhất là 100.000 VNĐ');
+      return res.redirect("back");
+    }
+
+    // 3. Xử lý dữ liệu khác
+    newService.amenities = JSON.stringify(req.body.amenities || "");
+    newService.images = JSON.stringify(req.body.images || []);
+
+    console.log("Dữ liệu chuẩn hóa trước khi lưu:", newService);
 
     await Service.create(newService);
+    
     req.flash('success', 'Thêm dịch vụ thành công');
-    // Sử dụng biến "back" không có dấu ngoặc kép nếu muốn dùng alias của Express
-    // Hoặc dùng req.get('Referrer') để chắc chắn
-    res.redirect(req.get('Referrer') || `${system.prefixAdmin}/services`);
+    console.log("Dịch vụ mới đã được tạo thành công!");
+    
+    res.redirect("/admin/service");
+
   } catch (error: any) {
-    // QUAN TRỌNG: Log này sẽ hiện thông báo lỗi CHI TIẾT từ MySQL
-    console.error("LỖI SQL CHI TIẾT:", error.parent || error);
+    console.error("LỖI SQL CHI TIẾT:", error);
     res.status(500).send("Lỗi hệ thống: " + error.message);
   }
 }
-// get detail start
+
+// [GET] /admin/service/detail/:id
+// export const detail = async (req: Request, res: Response) => {
+//     try {
+//         const id = req.params.id;
+//         const service = await Service.findOne({
+//             where: { id: id, is_deleted: 0 },
+//             raw: true
+//         });
+
+//         if (!service) return res.redirect("back");
+
+//         // Parse an toàn
+//         try {
+//             (service as any).images = JSON.parse((service as any).images || "[]");
+//             (service as any).amenities = JSON.parse((service as any).amenities || "\"\"");
+//         } catch (e) {}
+
+//         const artist = await Artist.findOne({
+//             where: { id: (service as any).artist_id },
+//             raw: true
+//         });
+
+//         res.render("admin/pages/service/detail", {
+//             service: service,
+//             artistName: (artist as any)?.name || "N/A",
+//         });
+//     } catch (error) {
+//         res.redirect("back");
+//     }
+// }
+
+// [GET] /admin/service/detail/:id
 export const detail = async (req: Request, res: Response) => {
-  // console.log("service detail controller");
-  const id = req.params.id;
-  const service = await Service.findOne({
-    where: {
-      id: id,
-      is_deleted: 0,
-    },
-    raw: true
-  })
-  // console.log(service);
+    try {
+        const id = req.params.id;
+        
+        // Chỉ lấy các trường hiện có trong Database
+        const service = await Service.findOne({
+            where: { id: id, is_deleted: 0 },
+            raw: true
+        });
 
-  if ((service as any)["images"]) {
-    (service as any)["images"] = (JSON.parse((service as any)["images"]));
+        if (!service) {
+            req.flash('error', 'Không tìm thấy dịch vụ');
+            return res.redirect("back");
+        }
 
-  }
-(service as any).amenities = JSON.parse((service as any).amenities);
-const artist = await Artist.findOne({
-  where:{
-    id: (service as any).artist_id,
-  },
-  raw: true
-});
+        // Parse JSON an toàn cho ảnh và tiện ích
+        try {
+            if ((service as any).images) {
+                const parsedImages = JSON.parse((service as any).images);
+                (service as any).images = Array.isArray(parsedImages) ? parsedImages : [parsedImages];
+            } else {
+                (service as any).images = [];
+            }
 
-res.render("admin/pages/service/detail", {
-  service: service,
-  artistName: (artist as any)?.name || "",
-})
+            if ((service as any).amenities) {
+                const parsedAmenities = JSON.parse((service as any).amenities);
+                (service as any).amenities = parsedAmenities;
+            }
+        } catch (e) {
+            console.error("Lỗi parse JSON:", e);
+        }
+
+        res.render("admin/pages/service/detail.pug", {
+            service: service,
+            // Đã xóa phần tìm Artist vì cấu trúc bảng mới không còn dùng chung artist_id
+        });
+    } catch (error) {
+        console.error("Lỗi trang chi tiết:", error);
+        res.redirect("back");
+    }
 }
-// get detail end
-// get edit start
+// [GET] /admin/service/edit/:id
+// export const edit = async (req: Request, res: Response) => {
+//     try {
+//         const id = req.params.id;
+//         const service = await Service.findOne({
+//             where: { id: id, is_deleted: 0 },
+//             raw: true
+//         });
+
+//         if (!service) return res.redirect("back");
+
+//         // Parse dữ liệu cũ để hiện lên form
+//         try {
+//             (service as any).amenities = JSON.parse((service as any).amenities || "\"\"");
+//             (service as any).images = JSON.parse((service as any).images || "[]");
+//         } catch (e) {}
+
+//         const artists = await Artist.findAll({ raw: true }) || [];
+
+//         res.render("admin/pages/service/edit", {
+//             service: service,
+//             artists: artists,
+//             message: req.flash()
+//         });
+//     } catch (error) {
+//         res.redirect("back");
+//     }
+// }
+
+// // [POST] /admin/service/edit/:id
+// export const editPost = async (req: Request, res: Response) => {
+//     try {
+//         const id = req.params.id;
+//         const dataUpdate = req.body;
+
+//         // 1. Xử lý images
+//         if (dataUpdate.images) {
+//             dataUpdate.images = Array.isArray(dataUpdate.images) 
+//                 ? JSON.stringify(dataUpdate.images) 
+//                 : JSON.stringify([dataUpdate.images]);
+//         }
+
+//         // 2. Xử lý duration
+//         if (dataUpdate.duration) {
+//             dataUpdate.duration = parseInt(dataUpdate.duration.toString().replace(/\D/g, ''));
+//         }
+
+//         // 3. Xử lý amenities
+//         dataUpdate.amenities = JSON.stringify(dataUpdate.amenities || "");
+
+//         await Service.update(dataUpdate, { where: { id: id } });
+        
+//         req.flash("success", "Đã cập nhật thành công!");
+//         res.redirect(`${system.prefixAdmin}/services`);
+//     } catch (error) {
+//         console.error("Lỗi Update:", error);
+//         res.redirect("back");
+//     }
+// };
+// [GET] /admin/service/edit/:id
 export const edit = async (req: Request, res: Response) => {
-  const id = req.params.id;
-  const service = await Service.findOne({
-    where: {
-      id: id,
-      is_deleted: 0,
-    },
-    raw: true
-  })
-  if (service) {
-    (service as any).amenities = JSON.parse((service as any).amenities);
-  }
-  if ((service as any)["images"]) {
-    (service as any)["images"] = (JSON.parse((service as any)["images"]));
+    try {
+        const id = req.params.id;
+        const service = await Service.findOne({
+            where: { id: id, is_deleted: 0 },
+            raw: true
+        });
 
-  }
-  res.render("admin/pages/service/edit", {
-    service: service,
-    message: req.flash()
+        if (!service) return res.redirect(`/${system.prefixAdmin}/service`);
 
-  }
+        // Parse dữ liệu để hiện lên form
+        try {
+            if ((service as any).images) {
+                const parsedImgs = JSON.parse((service as any).images);
+                (service as any).images = Array.isArray(parsedImgs) ? parsedImgs : [parsedImgs];
+            } else {
+                (service as any).images = [];
+            }
+            
+            // Nếu amenities là chuỗi JSON thì parse, không thì để nguyên
+            if ((service as any).amenities) {
+                try {
+                    (service as any).amenities = JSON.parse((service as any).amenities);
+                } catch (e) { /* để nguyên chuỗi */ }
+            }
+        } catch (e) {
+            console.error("Lỗi parse dữ liệu Edit:", e);
+        }
 
-  )
+        res.render("admin/pages/service/edit", {
+            service: service,
+            message: req.flash()
+        });
+    } catch (error) {
+        res.redirect("back");
+    }
 }
-// get edit end
-// [POST] edit start
+
+// [PATCH] /admin/service/edit/:id
+// export const editPost = async (req: Request, res: Response) => {
+//     try {
+//         const id = req.params.id;
+//         const dataUpdate = req.body;
+
+//         // 1. Xử lý images (Giữ ảnh cũ nếu không chọn ảnh mới)
+//         // Kiểm tra nếu có dữ liệu images từ middleware upload gửi lên
+//         if (dataUpdate.images && dataUpdate.images.length > 0) {
+//             dataUpdate.images = Array.isArray(dataUpdate.images) 
+//                 ? JSON.stringify(dataUpdate.images) 
+//                 : JSON.stringify([dataUpdate.images]);
+//         } else {
+//             /**
+//              * QUAN TRỌNG: Nếu người dùng không chọn ảnh mới, 
+//              * ta xóa luôn key 'images' ra khỏi đối tượng update.
+//              * Như vậy Sequelize sẽ không tác động đến cột images trong DB.
+//              */
+//             delete dataUpdate.images;
+//         }
+
+//         // 2. Xử lý duration & price (Ép kiểu số)
+//         if (dataUpdate.duration) dataUpdate.duration = parseInt(dataUpdate.duration);
+//         if (dataUpdate.price) dataUpdate.price = parseInt(dataUpdate.price);
+
+//         // 3. Xử lý amenities
+//         // Lưu ý: Nếu bạn muốn lưu dạng chuỗi để hiện lên textarea thì không cần stringify,
+//         // nhưng nếu DB yêu cầu JSON thì giữ nguyên dòng dưới.
+//         dataUpdate.amenities = JSON.stringify(dataUpdate.amenities || "");
+
+//         // Thực hiện cập nhật
+//         await Service.update(dataUpdate, { where: { id: id } });
+        
+//         req.flash("success", "Đã cập nhật thành công!");
+//         res.redirect(`/${system.prefixAdmin}/service`);
+        
+//     } catch (error) {
+//         console.error("Lỗi Update:", error);
+//         req.flash("error", "Cập nhật thất bại!");
+//         res.redirect("back");
+//     }
+// };
 export const editPost = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
+    const dataUpdate = req.body;
 
-    // 1. Xử lý images (Bắt buộc phải Stringify mảng ảnh)
-    if (req.body.images && Array.isArray(req.body.images)) {
-      req.body.images = JSON.stringify(req.body.images);
+    // QUAN TRỌNG: Kiểm tra xem middleware có gửi ảnh mới về không
+    if (dataUpdate.images && dataUpdate.images.length > 0) {
+      // Nếu có ảnh mới (là mảng URL), ta stringify để lưu vào DB (cột longtext)
+      dataUpdate.images = JSON.stringify(dataUpdate.images);
+    } else {
+      // Nếu KHÔNG có ảnh mới (req.body.images undefined), 
+      // ta XÓA LUÔN cái key này để Sequelize không update đè giá trị NULL vào DB
+      delete dataUpdate.images;
     }
 
-    // 2. Xử lý amenities (Nếu rỗng thì cho về null để tránh lỗi Constraint)
-    if (!req.body.amenities || req.body.amenities.trim() === "") {
-      req.body.amenities = null;
-    }
+    // Các trường khác xử lý bình thường
+    if (dataUpdate.price) dataUpdate.price = parseInt(dataUpdate.price);
+    if (dataUpdate.duration) dataUpdate.duration = parseInt(dataUpdate.duration);
+    
+    // Amenities nếu lưu JSON thì stringify, nếu lưu text thì để nguyên
+    // dataUpdate.amenities = JSON.stringify(dataUpdate.amenities || "");
 
-    // 3. Xử lý duration (Xóa chữ "phút" nếu có để tránh lỗi kiểu INTEGER)
-    if (req.body.duration) {
-      req.body.duration = parseInt(req.body.duration.toString().replace(/\D/g, ''));
-    }
-    // Trong controller editPost
-    if (req.body.amenities) {
-      // Biến chuỗi text thành một mảng để hợp lệ hóa nếu DB bắt check JSON
-      req.body.amenities = JSON.stringify(req.body.amenities);
-    }
+    await Service.update(dataUpdate, { where: { id: id } });
 
-    await Service.update(req.body, {
-      where: { id: id }
-    });
-    req.flash("success", "Đã cập nhật thành công!")
-    res.redirect(`/${system.prefixAdmin}/service`);
+    req.flash("success", "Cập nhật dịch vụ thành công!");
+    res.redirect(`/admin/service`);
   } catch (error) {
-    console.error("Lỗi Update chi tiết:", error);
-
+    console.error("Lỗi Controller Edit:", error);
+    res.redirect("back");
   }
 };
-// [POST] edit end
-// [PATCH] delete
-export const deleted = async(req:Request, res:Response)=>{
- 
-  const id = req.params.id;
-   await Service.update(req.body, {
-      where: { id: id }
-    });
-  await Service.update({is_deleted: 1},
-   { where:{
-      id:id
-    }}
-  )
-   req.flash("success", "Đã xóa dịch vụ thành công!")
-    res.redirect(`/${system.prefixAdmin}/service`);
+// [PATCH] /admin/service/delete/:id
+export const deleted = async(req: Request, res: Response) => {
+    try {
+        const id = req.params.id;
+
+        // Cập nhật trạng thái xóa
+        await Service.update(
+            { is_deleted: 1 }, 
+            { where: { id: id } }
+        );
+
+        req.flash("success", "Đã xóa dịch vụ thành công!");
+        
+        // CHỈNH TẠI ĐÂY: Quay về trang danh sách thay vì quay lại trang detail đã mất
+        res.redirect(`/${system.prefixAdmin}/service`); 
+
+    } catch (error) {
+        console.error("Lỗi khi xóa:", error);
+        res.redirect(`/${system.prefixAdmin}/service`);
+    }
 }

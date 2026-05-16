@@ -1,94 +1,97 @@
-import {Request , Response} from "express";
+import { Request, Response } from "express";
 import Customer from "../../model/customer.model.js";
 import Service from "../../model/service.model.js";
 import Artist from "../../model/artist.model.js";
 import Comment from "../../model/comment.model.js";
-import { sequelize } from "../../config/database.js";
 
-export const index = async( req :Request, res:Response) => {
+export const index = async (req: Request, res: Response) => {
   try {
-      const services = await Service.findAll({limit: 3});
-        for (const service of services) {
-// tim address 
-const artist = await Artist.findOne({
-  where:{
-    id: (service as any).artist_id,
-  }
-});
-
-if(artist){
-  (service as any).address = (artist as any).address;
-}
-    if ((service as any)["images"]) {
-      (service as any)["images"] = (JSON.parse((service as any)["images"]))[0];
-
-    }
-
-  }
-  const customer = res.locals.Customer;
-
-  // Lấy top 3 phản hồi có rating cao nhất
-  let feedbacks: any[] = [];
-  try {
-    const comments = await Comment.findAll({
-      order: [['rating', 'DESC'], ['created_at', 'DESC']],
-      limit: 3,
-      raw: true
+    console.log("Đang truy cập trang chủ..."); // Debug: Kiểm tra xem có vào được đây không
+    // 1. Lấy danh sách dịch vụ
+    const services = await Service.findAll({ 
+      where: { is_deleted: 0 },
+      limit: 6
     });
 
-    // Lấy thông tin khách hàng cho từng comment
-    for (const comment of comments) {
-      const commentedCustomer = await Customer.findOne<any>({
-        where: { customer_id: (comment as any).customer_id },
-        attributes: ['fullName', 'avatar'],
+    // console.log("Dịch vụ đã lấy:", services); // Debug: Kiểm tra dữ liệu dịch vụ lấy được
+    // Xử lý an toàn cho từng dịch vụ
+    if (services && services.length > 0) {
+      for (const service of services) {
+        // --- ĐÃ BỎ PHẦN TÌM ARTIST THEO artist_id VÌ CỘT NÀY KHÔNG CÒN ---
+        
+        // Xử lý ảnh an toàn
+        const rawImages = (service as any).images;
+        if (rawImages) {
+          try {
+            // Kiểm tra xem có phải là chuỗi JSON không trước khi parse
+            const parsedImages = typeof rawImages === 'string' ? JSON.parse(rawImages) : rawImages;
+            (service as any).images = Array.isArray(parsedImages) ? parsedImages[0] : parsedImages;
+          } catch (e) {
+            console.log("Lỗi parse ảnh dịch vụ:", e);
+            (service as any).images = ""; // Nếu lỗi thì để trống thay vì sập web
+          }
+        }
+      }
+    }
+
+    const customer = res.locals.Customer;
+
+    // 2. Lấy top 3 phản hồi (Feedbacks)
+    let feedbacks: any[] = [];
+    try {
+      const comments = await Comment.findAll({
+        order: [['rating', 'DESC'], ['created_at', 'DESC']],
+        limit: 3,
         raw: true
       });
 
-      let avatarUrl: string | null = null;
-      if (commentedCustomer?.avatar) {
-        const avatarValue = commentedCustomer.avatar;
-        if (typeof avatarValue === 'string') {
-          const trimmed = avatarValue.trim();
-          if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+      if (comments && comments.length > 0) {
+        for (const comment of comments) {
+          const commentedCustomer = await Customer.findOne<any>({
+            where: { customer_id: (comment as any).customer_id },
+            attributes: ['fullName', 'avatar'],
+            raw: true
+          });
+
+          // Xử lý Avatar an toàn
+          let avatarUrl: string | null = null;
+          const avatarValue = commentedCustomer?.avatar;
+          
+          if (avatarValue) {
             try {
-              const parsed = JSON.parse(trimmed);
-              if (Array.isArray(parsed) && parsed.length > 0) {
-                avatarUrl = parsed[0];
+              if (typeof avatarValue === 'string' && avatarValue.startsWith('[')) {
+                const parsed = JSON.parse(avatarValue);
+                avatarUrl = Array.isArray(parsed) ? parsed[0] : parsed;
               } else {
-                avatarUrl = String(parsed);
+                avatarUrl = avatarValue;
               }
             } catch (error) {
               avatarUrl = avatarValue;
             }
-          } else {
-            avatarUrl = avatarValue;
           }
-        } else {
-          avatarUrl = String(avatarValue);
+
+          (comment as any).customer = {
+            fullName: commentedCustomer?.fullName || 'Khách hàng ẩn danh',
+            avatar: avatarUrl
+          };
         }
+        feedbacks = comments;
       }
-
-      (comment as any).customer = {
-        fullName: commentedCustomer?.fullName || 'Khách hàng ẩn danh',
-        avatar: avatarUrl
-      };
+    } catch (error) {
+      console.log("Lỗi khi lấy feedbacks:", error);
+      feedbacks = [];
     }
-    
-    feedbacks = comments;
-  } catch (error) {
-    console.log("Lỗi khi lấy feedbacks:", error);
-    feedbacks = [];
-  }
 
-res.render("client/pages/home/index.pug", {
-  services: services,
-  message: req.flash(),
-  customer:customer,
-  feedbacks: feedbacks
-});
-  
-  } catch (error) {
-    res.status(500).send("Lỗi máy chủ");
-  }
+    // 3. Render
+    res.render("client/pages/home/index.pug", {
+      services: services || [], // Luôn gửi mảng dù rỗng
+      message: req.flash(),
+      customer: customer,
+      feedbacks: feedbacks || []
+    });
 
-}
+  } catch (error) {
+    console.error("LỖI CHÍNH TẠI TRANG CHỦ:", error); // In lỗi ra Terminal để em xem
+    res.status(500).send("Lỗi máy chủ: " + (error as any).message);
+  }
+};
