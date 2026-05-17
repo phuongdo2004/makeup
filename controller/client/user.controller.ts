@@ -35,21 +35,50 @@ export const register = async(req:Request, res:Response) => {
     {message: req.flash(),}
   )
 }
-export const postRegister = async(req:Request, res:Response) => {
-  // Lấy dữ liệu từ form đăng ký
-  const { fullName, email, password } = req.body; 
-  const hashedPassword = md5(password);
-  console.log(hashedPassword);
-  // Lưu dữ liệu người dùng vào cơ sở dữ liệu (giả sử bạn có hàm saveUser)
- const customer= await Customer.create({
-  fullName: fullName,
-  email: email,
-  password: hashedPassword
-})
-  await customer.save();
-  // Chuyển hướng người dùng đến trang đăng nhập sau khi đăng ký thành công
-  res.redirect("/user/login");
-}
+// export const postRegister = async(req:Request, res:Response) => {
+//   // Lấy dữ liệu từ form đăng ký
+//   const { fullName, email, password } = req.body; 
+//   const hashedPassword = md5(password);
+//   console.log(hashedPassword);
+//   // Lưu dữ liệu người dùng vào cơ sở dữ liệu (giả sử bạn có hàm saveUser)
+//  const customer= await Customer.create({
+//   fullName: fullName,
+//   email: email,
+//   password: hashedPassword
+// })
+//   await customer.save();
+//   // Chuyển hướng người dùng đến trang đăng nhập sau khi đăng ký thành công
+//   res.redirect("/user/login");
+// }
+
+export const postRegister = async (req: Request, res: Response) => {
+  try {
+    // 1. Lấy dữ liệu từ form đăng ký
+    const { fullName, email, password } = req.body; 
+    const hashedPassword = md5(password);
+
+    // 2. Tạo bản ghi mới bằng Customer.create()
+    // KHÔNG truyền trường tokenCustomer vào đây, hệ thống sẽ tự sinh 11 ký tự dựa trên Schema của bạn
+    // KHÔNG dùng thêm lệnh .save() ở phía dưới vì .create() đã tự lưu rồi
+    await Customer.create({
+      fullName: fullName,
+      email: email,
+      password: hashedPassword
+      // Trường customer_id cũng tự động nhận UUIDV4 từ Schema luôn nhé
+    });
+
+    req.flash("success", "Đăng ký tài khoản thành công!");
+    
+    // 3. Chuyển hướng người dùng đến trang đăng nhập
+    res.redirect("/user/login");
+
+  } catch (error: any) {
+    // In lỗi chi tiết ra terminal nếu sau này phát sinh thêm lỗi trường khác
+    console.error("❌ Lỗi chi tiết tại postRegister:", error.message);
+    req.flash("error", "Đăng ký thất bại, vui lòng thử lại!");
+    res.redirect("back");
+  }
+};
 export const toggleFavorite = async (req: Request, res: Response) => {
   
 

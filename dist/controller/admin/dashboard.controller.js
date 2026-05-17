@@ -1,98 +1,126 @@
 import User from "../../model/user.model.js";
-import Service from "../../model/service.model.js";
 import Booking from "../../model/booking.model.js";
 import Customer from "../../model/customer.model.js";
+import { sequelize } from "../../config/database.js"; // Import cấu hình sequelize để chạy hàm SUM, COUNT nhóm theo ngày
 import { Op } from 'sequelize';
 export const index = async (req, res) => {
-    // --- 0. Thông tin User & Auth ---
-    const user = await User.findOne({
-        where: { tokenUser: req.cookies.token },
-        raw: true
-    });
-    if (user && user.avatar) {
-        try {
-            user.avatar = JSON.parse(user.avatar);
+    try {
+        // --- 0. Thông tin User & Auth ---
+        const user = await User.findOne({
+            where: { tokenUser: req.cookies.token },
+            raw: true
+        });
+        if (user && user.avatar) {
+            try {
+                user.avatar = JSON.parse(user.avatar);
+            }
+            catch { }
         }
-        catch { }
-    }
-    else if (user) {
-        user.avatar = "/uploads/avatar-default.jpg";
-    }
-    // --- 1. Tính toán thống kê (Tháng hiện tại) ---
-    const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    // A. Doanh thu tháng (Chỉ tính các lịch đã thanh toán hoặc đặt cọc)
-    const revenueData = await Booking.sum('price', {
-        where: {
+        else if (user) {
+            user.avatar = "/uploads/avatar-default.jpg";
+        }
+        // --- 1. Xử lý bộ lọc Khoảng ngày ---
+        let { startDate, endDate } = req.query;
+        const today = new Date();
+        const todayString = today.toISOString().split('T')[0];
+        if (!endDate)
+            endDate = todayString;
+        if (!startDate) {
+            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 2);
+            startDate = firstDayOfMonth.toISOString().split('T')[0];
+        }
+        // Điều kiện lọc chung
+        const dateRangeCondition = {
             status: ['paid', 'deposited'],
             is_deleted: 0,
-            created_at: { [Op.gte]: startOfMonth }
-        }
-    }) || 0;
-    // B. Tổng lịch đặt mới (Trong tháng này)
-    const newBookingsCount = await Booking.count({
-        where: {
-            is_deleted: 0,
-            created_at: { [Op.gte]: startOfMonth }
-        }
-    });
-    // C. Tổng khách hàng (Tất cả khách hàng không bị xóa)
-    const totalCustomers = await Customer.count({});
-    // --- 2. Xử lý Phân trang & Danh sách Booking gần đây ---
-    const limit = 4;
-    const page = parseInt(req.query.page) || 1;
-    const offset = (page - 1) * limit;
-    const countBookings = await Booking.count({ where: { is_deleted: 0 } });
-    const totalPage = Math.ceil(countBookings / limit);
-    const pagination = {
-        currentPage: page,
-        limitItem: limit,
-        totalPage: totalPage,
-        skip: offset
-    };
-    const bookings = await Booking.findAll({
-        where: { is_deleted: 0 },
-        limit: pagination.limitItem,
-        offset: pagination.skip,
-        raw: true,
-        order: [['created_at', 'DESC']]
-    });
-    // --- 3. Gộp dữ liệu Customer & Service vào Booking ---
-    for (const item of bookings) {
-        const booking = item;
-        // Lấy khách hàng
-        const customer = await Customer.findOne({
-            where: { customer_id: booking.id_customer },
-            attributes: ['fullName', 'phone'],
-            raw: true
-        });
-        booking.fullName = customer ? customer.fullName : "Khách vãng lai";
-        booking.phone = customer ? customer.phone : "N/A";
-        // Lấy dịch vụ
-        const service = await Service.findOne({
-            where: { id: booking.id_service },
-            attributes: ['name'],
-            raw: true
-        });
-        booking.serviceName = service ? service.name : "Dịch vụ";
-        // Xử lý trạng thái hiển thị
-        const statusMap = {
-            'pending': { label: 'Chờ xác nhận', class: 'bg-yellow-100 text-yellow-700' },
-            'paid': { label: 'Đã thanh toán', class: 'bg-green-100 text-green-700' },
-            'deposited': { label: 'Đã đặt cọc', class: 'bg-blue-100 text-blue-700' }
+            booking_date: { [Op.between]: [startDate, endDate] }
         };
-        booking.statusDisplay = statusMap[booking.status]?.label || 'Không xác định';
-        booking.statusClass = statusMap[booking.status]?.class || 'bg-gray-100';
+        // --- 2. Tính toán số liệu thống kê cho 3 Cards ---
+        // A. TỔNG DOANH THU THỰC TẾ: Đơn đã paid thì lấy toàn bộ price, đơn deposited thì chỉ lấy phần deposit đã thu
+        const revenueResult = await Booking.findOne({
+            attributes: [
+                [
+                    sequelize.literal(`
+        SUM(
+          CASE 
+            WHEN status = 'paid' THEN price
+            WHEN status = 'deposited' THEN deposit 
+            ELSE 0 
+          END
+        )
+      `),
+                    'total_real_revenue'
+                ]
+            ],
+            where: dateRangeCondition,
+            raw: true
+        });
+        const revenueData = revenueResult ? Number(revenueResult.total_real_revenue) : 0;
+        // B. Tổng số đơn lịch đặt thành công
+        const totalBookingsCount = await Booking.count({ where: dateRangeCondition });
+        // C. Tổng số khách hàng đăng ký
+        const totalCustomers = await Customer.count({});
+        // --- 3. Nhóm dữ liệu theo Ngày để vẽ Biểu đồ & làm Bảng chi tiết ---
+        const chartRawData = await Booking.findAll({
+            attributes: [
+                'booking_date',
+                [sequelize.fn('COUNT', sequelize.col('id')), 'daily_bookings'],
+                // 1. TIỀN ĐẶT CỌC: Chỉ tính tiền cọc của những đơn ĐANG ở trạng thái đặt cọc 'deposited'
+                // Đơn đã 'paid' sẽ KHÔNG bị cộng tiền cọc vào đây nữa, giúp phân tách dòng tiền rạch ròi
+                [
+                    sequelize.literal(`
+        SUM(CASE WHEN status = 'deposited' THEN deposit ELSE 0 END)
+      `),
+                    'daily_deposited'
+                ],
+                // 2. ĐÃ THANH TOÁN: Lấy toàn bộ tổng giá trị (price) của các đơn đã hoàn thành tất toán 'paid'
+                [
+                    sequelize.literal(`
+        SUM(CASE WHEN status = 'paid' THEN price ELSE 0 END)
+      `),
+                    'daily_paid'
+                ],
+                // 3. TỔNG DOANH THU: Cộng gộp dòng tiền thực tế thu được trong ngày (Cọc của đơn cọc + Toàn bộ của đơn paid)
+                [
+                    sequelize.literal(`
+        SUM(
+          CASE 
+            WHEN status = 'paid' THEN price 
+            WHEN status = 'deposited' THEN deposit 
+            ELSE 0 
+           END
+        )
+      `),
+                    'daily_revenue'
+                ]
+            ],
+            where: dateRangeCondition,
+            group: ['booking_date'],
+            order: [['booking_date', 'ASC']],
+            raw: true
+        });
+        const revenueChartData = chartRawData.map(item => ({
+            booking_date: item.booking_date,
+            daily_bookings: item.daily_bookings,
+            daily_deposited: Number(item.daily_deposited || 0),
+            daily_paid: Number(item.daily_paid || 0),
+            daily_revenue: Number(item.daily_revenue || 0)
+        }));
+        // --- 4. Render ---
+        res.render("admin/pages/dashboard/index.pug", {
+            user,
+            startDate,
+            endDate,
+            stats: {
+                revenue: revenueData.toLocaleString('vi-VN'), // Vẫn định dạng chấm phẩy đẹp mắt
+                totalBookings: totalBookingsCount,
+                totalCustomers: totalCustomers
+            },
+            revenueChartData
+        });
     }
-    // --- 4. Render ---
-    res.render("admin/pages/dashboard/index.pug", {
-        user,
-        bookings,
-        stats: {
-            revenue: revenueData.toLocaleString('vi-VN'),
-            newBookings: newBookingsCount,
-            totalCustomers: totalCustomers
-        },
-        pagination
-    });
+    catch (error) {
+        console.error("❌ Lỗi tại dashboard controller:", error.message);
+        res.status(500).send("Có lỗi xảy ra trong quá trình xử lý thống kê.");
+    }
 };

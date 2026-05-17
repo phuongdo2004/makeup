@@ -5,7 +5,6 @@ block main
     h2.text-5xl.font-bold.serif-font.italic.mb-4.drop-shadow-lg(class='md:text-6xl text-[#D2B48C]') Chi Tiết Dịch Vụ
     p.text-xs.uppercase.font-medium(class='text-white/80 md:text-sm tracking-[0.4em]')
       | Trang chủ / Dịch vụ /
-      //- ĐÃ SỬA: Xóa dấu chấm thừa ở đây
       span(class='text-[#D2B48C]') #{service.name}
 
   main.container.mx-auto.px-6.py-12.max-w-5xl
@@ -18,26 +17,13 @@ block main
         .text-center(class='md:text-left')
           h2.text-4xl.font-bold.text-black.uppercase.tracking-tight.mb-2 #{service.name}
           p.text-sm.text-neutral-500.font-medium
-            //- i.fa-solid.fa-user-tie.mr-2(class='text-[#D2B48C]')
-            //- | Chuyên viên: 
-            //- span.text-black.font-bold #{artist.name}
-            //- span.ml-4
-            //-   i.fa-solid.fa-phone.mr-1(class='text-[#D2B48C]')
-            //-   | #{artist.phone}
 
       .grid.grid-cols-1.gap-12(class='md:grid-cols-2')
         .space-y-6
           div
             label.uppercase.font-black.tracking-widest.text-neutral-400.block.mb-2(class='text-[10px]') Địa điểm
             p.text-sm.font-bold.leading-relaxed Thị trấn Lim, Huyện Tiên Du, Bắc Ninh
-          //- div
-          //-   label.uppercase.font-black.tracking-widest.text-neutral-400.block.mb-2(class='text-[10px]') Kinh nghiệm
-          //-   p.text-sm.font-bold #{artist.experience} năm
-        //- .space-y-6
-        //-   div
-        //-     label.uppercase.font-black.tracking-widest.text-neutral-400.block.mb-2(class='text-[10px]') Giờ làm việc
-        //-     p.text-sm.font-bold.text-black.inline-block.px-3.py-1.rounded(class='bg-[#F5F5DC]') 
-        //-       | #{service.time_start.slice(0, 5)} - #{service.time_end.slice(0, 5)}
+
       .mt-12
         h4.text-sm.font-black.uppercase.mb-6.flex.items-center.gap-2(class='tracking-[0.2em]')
           span.w-8(class='h-[2px] bg-[#D2B48C]')
@@ -54,146 +40,103 @@ block main
         .flex.flex-wrap.gap-3
           span.bg-neutral-100.px-4.py-2.rounded-full.text-xs.font-bold.flex.items-center
             i.fa-solid.fa-house-chimney.mr-2(class='text-[#D2B48C]')
-            | Trang điểm tại nhà
+            | #{service.description}
 
       button.w-full.mt-12.py-5.bg-black.font-bold.rounded-2xl.transition-all.uppercase.text-sm.shadow-xl(onclick='openBookingModal()' class='text-[#D2B48C] hover:bg-[#D2B48C] hover:text-black tracking-[0.2em]')
         | Đặt lịch ngay
+
     .py-12.border-t(class='border-black/5')
-      h3.text-2xl.font-bold.serif-font.italic.mb-6 Mô tả dịch vụ
-      p.text-neutral-500.mb-10
-        | #{service.description}
-      //- PHẦN TEST ẢNH NGẪU NHIÊN
-      //- PHẦN HIỂN THỊ ẢNH
+      h3.text-2xl.font-bold.serif-font.italic.mb-6 Ảnh dịch vụ
       .relative.max-w-4xl.mx-auto.my-10
-        .swiper.mySwiper.rounded-3xl.overflow-hidden.shadow-2xl.bg-neutral-900
-          //- Thêm bg-neutral-900 (màu đen) để phần trống trông chuyên nghiệp hơn
+        .swiper.mySwiper.overflow-hidden.shadow-2xl.bg-neutral-900(class='rounded-[30px]')
           .swiper-wrapper
             - var testImages = service.allImages ? service.allImages : [];
             each imgUrl in testImages
               .swiper-slide.flex.items-center.justify-center
-                //- ĐỔI object-cover THÀNH object-contain
-                img.max-w-full.max-h-full.object-contain(
-                  src=`${imgUrl}?auto=format&fit=max&w=1200&q=80` 
-                  class='aspect-[16/9] md:aspect-auto md:h-[600px]'
-                )
+                .w-full.overflow-hidden.flex.items-center.justify-center(class='h-[400px] md:h-[550px]')
+                  img.max-w-full.max-h-full.object-contain(
+                    src=`${imgUrl}?auto=format&fit=max&w=1200&q=80` 
+                    alt=service.name
+                  )
 
           .swiper-button-next(class='!text-[#D2B48C]')
           .swiper-button-prev(class='!text-[#D2B48C]')
           .swiper-pagination
-    //- PHẦN BÌNH LUẬN VÀ ĐÁNH GIÁ
-    .py-12.border-t(class='border-black/5')
-      .flex.justify-between.items-center.mb-8
-        h3.text-2xl.font-bold.serif-font.italic Đánh giá khách hàng
-        .flex.items-center.gap-2
-          span.text-2xl.font-black #{service.rating || 0}
-          .flex.text-yellow-400.text-xs
-            - for (var x = 0; x < 5; x++)
-              if (service.rating > x)
-                i.fa-solid.fa-star
-              else
-                i.fa-regular.fa-star
-          span.text-neutral-400.text-xs (Dựa trên lượt đặt)
 
-      //- FORM GỬI BÌNH LUẬN MỚI
-      //- SỬA LỖI Ở ĐÂY: Đưa class có ngoặc vuông vào trong class=''
-      .bg-neutral-50.p-8.mb-12(class='rounded-[30px]')
-        h4.text-sm.font-black.uppercase.mb-4(class='tracking-widest') Viết đánh giá của bạn
-        form#reviewForm(onsubmit='submitReview(event)')
-          .flex.gap-4.mb-4
-            input#ratingValue(type="hidden" name="rating" value="5")
-            .flex.gap-2.bg-white.px-4.py-2.rounded-full.border.border-neutral-200
-              //- Tìm đoạn này trong file của bạn và cập nhật class
-              each star in [1, 2, 3, 4, 5]
-                i.fa-star.cursor-pointer.star-rating.text-yellow-400.transition-transform(
-                  class=(star <= 5 ? 'fa-solid' : 'fa-regular') 
-                  class='hover:scale-125'
-                  onclick=`setRating(${star})` 
-                  data-value=star
-                )
-          
-          textarea#reviewContent.w-full.p-4.rounded-2xl.border.border-neutral-200.text-sm.outline-none(
-            rows="3" 
-            placeholder="Chia sẻ trải nghiệm của bạn về dịch vụ này..." 
-            required 
-            class='focus:border-[#D2B48C]'
-          )
-          
-          button.mt-4.px-8.py-3.bg-black.text-white.rounded-full.text-xs.font-bold.uppercase.tracking-widest(
-            type="submit" 
-            class='hover:bg-[#D2B48C] hover:text-black transition-all'
-          ) Gửi đánh giá
-      //- PHẦN DANH SÁCH BÌNH LUẬN
-      .mt-6.bg-white.p-8.rounded-3xl.shadow-sm.border.border-neutral-100
-        .flex.items-center.gap-6.mb-10
-          h4.font-bold.text-lg #{reviews ? reviews.length : 0} Bình luận
-          //- SỬA LỖI DÒNG 127 Ở ĐÂY
-          .flex.items-center.gap-2.text-sm.text-neutral-500.cursor-pointer(class='hover:text-black')
-            i.fa-solid.fa-bars-staggered
-            span Sắp xếp theo
-
-        #reviewList.space-y-8
-          if reviews && reviews.length > 0
-            each review in reviews
-              .flex.gap-4
-                //- AVATAR
-                .w-10.h-10.rounded-full.overflow-hidden.bg-neutral-100.flex-shrink-0
-                  if review.customer_avatar
-                    img.w-full.h-full.object-cover(src=review.customer_avatar)
-                  else
-                    .w-full.h-full.flex.items-center.justify-center(class='bg-[#F5F5DC]')
-                      i.fa-solid.fa-user.text-xs(class='text-[#D2B48C]')
-
-                //- NỘI DUNG
-                div.flex-1
-                  .flex.items-center.gap-2.mb-1
-                    //- Hiển thị tên (thêm @ cho giống Youtube)
-                    span.text-sm.font-bold.text-neutral-900 @#{review.customer_name ? review.customer_name.replace(/\s+/g, '').toLowerCase() : 'user'}
-                    span.text-xs.text-neutral-400 #{new Date(review.created_at).toLocaleDateString('vi-VN')}
-                  
-                  .flex.text-yellow-400.mb-2(class='text-[8px]')
-                    - for (var i = 1; i <= 5; i++)
-                      if (i <= review.rating)
-                        i.fa-solid.fa-star
-                      else
-                        i.fa-regular.fa-star
-                  
-                  p.text-sm.text-neutral-700.leading-relaxed #{review.content}
-                  
-                  //- Nút Like/Dislike kiểu Youtube
-                  .flex.items-center.gap-4.mt-3.text-neutral-400
-                    .flex.items-center.gap-1.cursor-pointer(class='hover:text-black transition-colors')
-                      i.fa-regular.fa-thumbs-up.text-xs
-                      span.text-xs 0
-                    .flex.items-center.gap-1.cursor-pointer(class='hover:text-black transition-colors')
-                      i.fa-regular.fa-thumbs-down.text-xs
-                    span.text-xs.font-bold.cursor-pointer.ml-2(class='hover:text-black transition-colors') Phản hồi
-          else
-            .text-center.py-16
-              i.fa-solid.fa-comment-slash.text-neutral-100.text-5xl.mb-4
-              p.text-neutral-400.text-sm Chưa có bình luận nào cho dịch vụ này.
-
+  //- MODAL 1: ĐẶT LỊCH DỊCH VỤ (Đã tích hợp vùng chọn Chuyên viên)
   #bookingModal.fixed.inset-0.hidden.items-center.justify-center.p-4(class='z-[100] bg-black/60 backdrop-blur-sm' onclick='closeBookingModal()')
     .bg-white.w-full.max-w-2xl.shadow-2xl.overflow-hidden.relative.border(class='rounded-[40px] border-black/10' onclick='event.stopPropagation()')
       .p-6.border-b.border-neutral-100.flex.justify-between.items-center.bg-black(class='text-[#D2B48C]')
         h3.font-bold.text-lg.serif-font.italic.uppercase.tracking-wider ĐẶT LỊCH DỊCH VỤ
         button.text-2xl(onclick='closeBookingModal()') ×
       
-      .p-8.overflow-y-auto(class='max-h-[75vh]')
-        //- PHẦN 1: CHỌN NGÀY
+      .p-8.overflow-y-auto(class='max-h-[70vh] custom-scrollbar')
+        //- BƯỚC 1: Chọn Nhân viên (Artists đẩy từ controller qua)
         .mb-8
-          label.uppercase.font-black.text-neutral-400.block.mb-4(class='text-[11px] tracking-[0.2em]') 1. CHỌN NGÀY LÀM VIỆC
-          #dateList.flex.gap-4.overflow-x-auto.pb-4.no-scrollbar
+          label.uppercase.font-black.text-neutral-400.block.mb-4(class='text-[11px] tracking-[0.2em]') 1. CHỌN CHUYÊN VIÊN
+          .grid.grid-cols-2.gap-4(class='sm:grid-cols-3' id='artistList')
+            - var testArtists = artists ? artists : [];
+            if testArtists.length > 0
+              each artist in testArtists
+                .artist-item.p-4.border.border-neutral-200.rounded-2xl.text-center.cursor-pointer.transition-all(
+                  class='hover:border-black'
+                  data-id=artist.id 
+                  data-name=artist.name 
+                  onclick='selectArtist(this)'
+                )
+                  img.w-16.h-16.rounded-full.object-cover.mx-auto.mb-2.border(src=artist.avatar ? artist.avatar : '/images/default-avatar.png')
+                  p.text-xs.font-black.text-black.uppercase.tracking-tight #{artist.name}
+                  p.text-neutral-400.mt-1(class='text-[10px]') #{artist.experience || 0} năm kinh nghiệm
+            else
+              p.text-sm.text-neutral-500.col-span-full Chuyên viên hiện không có sẵn.
 
-        //- PHẦN 2: CHỌN KHUNG GIỜ
+        //- BƯỚC 2: Chọn Ngày (Giới hạn tối đa 7 ngày)
+        #dateSection.mb-8.hidden.border-t.pt-8
+          label.uppercase.font-black.text-neutral-400.block.mb-4(class='text-[11px] tracking-[0.2em]') 2. CHỌN NGÀY LÀM VIỆC
+          #dateList.flex.gap-3.overflow-x-auto.pb-4.no-scrollbar
+
+        //- BƯỚC 3: Chọn Khung Giờ (Ca 1 tiếng từ 3h sáng đến 9h tối)
         #timeSection.mb-8.hidden.border-t.pt-8
-          label.uppercase.font-black.text-neutral-400.block.mb-4(class='text-[11px] tracking-[0.2em]') 2. CHỌN KHUNG GIỜ CÒN TRỐNG
-          #timeList.grid.grid-cols-2.gap-3(class='md:grid-cols-4')
+          label.uppercase.font-black.text-neutral-400.block.mb-4(class='text-[11px] tracking-[0.2em]') 3. CHỌN KHUNG GIỜ CÒN TRỐNG
+          #timeList.grid.grid-cols-2.gap-3(class='sm:grid-cols-3 md:grid-cols-4')
 
       .p-6.bg-neutral-50.border-t.border-neutral-100.flex.gap-4
         button.flex-1.py-4.bg-white.border.border-neutral-200.rounded-2xl.font-bold.text-xs.uppercase(onclick='closeBookingModal()') Hủy bỏ
         button.py-4.bg-black.rounded-2xl.font-black.text-xs.uppercase(onclick='openConfirmModal()' class='flex-[2] text-[#D2B48C]') Xác nhận đặt lịch
 
-  //- MODAL 2: XÁC NHẬN (Đã sửa ID để khớp với JS)
+  //- MODAL 2: XÁC NHẬN THÔNG TIN (Đã đổi thành Tiền đặt cọc)
+  //- #confirmModal.fixed.inset-0.hidden.items-center.justify-center.p-4(class='z-[110] bg-black/60 backdrop-blur-sm')
+  //-   .bg-white.w-full.max-w-xl.shadow-2xl.overflow-hidden.relative.border(class='rounded-[40px] border-black/10' onclick='event.stopPropagation()')
+  //-     .p-6.border-b.border-neutral-100.flex.justify-between.items-center
+  //-       h3.font-bold.text-lg.text-black.serif-font.italic Xác nhận thông tin
+  //-       button.text-2xl(onclick='closeConfirmModal()') ×
+  //-     .p-8
+  //-       .space-y-4
+  //-         .flex.justify-between.pb-2.border-b.border-dashed
+  //-           span.text-neutral-400 Dịch vụ:
+  //-           span.font-bold.text-black #{service.name}
+  //-         .flex.justify-between.pb-2.border-b.border-dashed
+  //-           span.text-neutral-400 Chuyên viên:
+  //-           span#selectedArtistDisplay.font-bold.text-black --
+  //-         .flex.justify-between.pb-2.border-b.border-dashed
+  //-           span.text-neutral-400 Ngày:
+  //-           span#selectedDateDisplay.font-bold --/--/2026
+  //-         .flex.justify-between.pb-2.border-b.border-dashed
+  //-           span.text-neutral-400 Giờ:
+  //-           span#displayTimeConfirm.font-bold --:--
+  //-         .flex.justify-between.pb-2.border-b.border-dashed
+  //-           span.text-neutral-400 Địa điểm:
+  //-           span.font-bold Thị trấn Lim, Huyện Tiên Du, Bắc Ninh
+  //-         .flex.justify-between.pb-2.border-b.border-dashed
+  //-           span.text-neutral-400 Tổng giá dịch vụ:
+  //-           span.font-bold.text-neutral-600 #{(service.price * 1).toLocaleString()} đ
+  //-         .flex.justify-between.pt-4
+  //-           span.text-neutral-400 Tiền đặt cọc:
+  //-           span.text-xl.font-black.text-red-600 100.000 đ
+  //-     .p-6.bg-neutral-50.flex.gap-4
+  //-       button.flex-1.py-4.bg-white.border.rounded-2xl.font-bold(onclick='closeConfirmModal()') Quay lại
+  //-       button.py-4.bg-black.rounded-2xl.font-black(onclick='goToPaymentPage()' class='flex-[2] text-[#D2B48C]') Thanh toán
+  //- MODAL 2: XÁC NHẬN THÔNG TIN
   #confirmModal.fixed.inset-0.hidden.items-center.justify-center.p-4(class='z-[110] bg-black/60 backdrop-blur-sm')
     .bg-white.w-full.max-w-xl.shadow-2xl.overflow-hidden.relative.border(class='rounded-[40px] border-black/10' onclick='event.stopPropagation()')
       .p-6.border-b.border-neutral-100.flex.justify-between.items-center
@@ -205,154 +148,263 @@ block main
             span.text-neutral-400 Dịch vụ:
             span.font-bold.text-black #{service.name}
           .flex.justify-between.pb-2.border-b.border-dashed
+            span.text-neutral-400 Chuyên viên:
+            span#selectedArtistDisplay.font-bold.text-black --
+          .flex.justify-between.pb-2.border-b.border-dashed
             span.text-neutral-400 Ngày:
             span#selectedDateDisplay.font-bold --/--/2026
           .flex.justify-between.pb-2.border-b.border-dashed
             span.text-neutral-400 Giờ:
-            //- SỬA TẠI ĐÂY: ID phải là displayTimeConfirm
             span#displayTimeConfirm.font-bold --:--
           .flex.justify-between.pb-2.border-b.border-dashed
             span.text-neutral-400 Địa điểm:
-            span.font-bold #{artist.address}
+            span.font-bold Thị trấn Lim, Huyện Tiên Du, Bắc Ninh
+          .flex.justify-between.pb-2.border-b.border-dashed
+            span.text-neutral-400 Tổng giá dịch vụ:
+            span.font-bold.text-neutral-600 #{(service.price * 1).toLocaleString()} đ
+          .flex.justify-between.pb-2.border-b.border-dashed
+            span.text-neutral-400 Tiền đặt cọc:
+            span.font-bold.text-black 100.000 đ
+          
+          //- THÊM MỚI: Hiển thị số tiền còn nợ thực tế
           .flex.justify-between.pt-4
-            span.text-neutral-400 Tổng số tiền:
-            span.text-xl.font-black.text-red-600 #{(service.price * 1).toLocaleString()} đ
+            span.text-neutral-400 Số tiền còn nợ (Trả sau):
+            span.text-xl.font-black.text-red-600 #{((service.price * 1) - 100000).toLocaleString()} đ
+
       .p-6.bg-neutral-50.flex.gap-4
         button.flex-1.py-4.bg-white.border.rounded-2xl.font-bold(onclick='closeConfirmModal()') Quay lại
         button.py-4.bg-black.rounded-2xl.font-black(onclick='goToPaymentPage()' class='flex-[2] text-[#D2B48C]') Thanh toán
+  style.
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .artist-item.selected { border-color: black; background-color: #F5F5DC; }
+    .date-item.selected { background-color: black; color: #D2B48C; }
+    .time-item.selected { background-color: #D2B48C; color: black; border-color: #D2B48C; }
 
+  //- THƯ VIỆN & CẤU HÌNH SWIPER JS CHẠY TỰ ĐỘNG CÂN ĐỐI
+  script(src='https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js')
+  link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css')
   script.
-    let sDate = "";
-    let sTime = "";
-    const existingBookings = JSON.parse('!{existingBookings || "[]"}');
-
-    const bookingConfig = {
-      start: "#{service.time_start}",
-      end: "#{service.time_end}",
-      duration: parseInt("#{service.duration}") || 60
-    };
-
-    // 2. Hàm kiểm tra trùng lịch
-    function isSlotBooked(dateStr, timeStart, timeEnd) {
-      if (!existingBookings.length) return false;
-
-      const parts = dateStr.split('/');
-      const formattedDate = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
-
-      return existingBookings.some(b => {
-        if (b.booking_date !== formattedDate) return false;
-
-        const toMins = t => {
-          const [h, m] = t.split(':').map(Number);
-          return h * 60 + m;
-        };
-
-        const s1 = toMins(timeStart);
-        const e1 = toMins(timeEnd);
-        const s2 = toMins(b.time_start.slice(0, 5));
-        const e2 = toMins(b.time_end.slice(0, 5));
-
-        return (s1 < e2 && e1 > s2);
+    document.addEventListener('DOMContentLoaded', function () {
+      new Swiper('.mySwiper', {
+        slidesPerView: 1,
+        centeredSlides: true,
+        spaceBetween: 0,
+        loop: true,
+        speed: 800,
+        autoplay: {
+          delay: 3000,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true,
+        },
+        navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+        pagination: { el: '.swiper-pagination', clickable: true },
       });
-    }
+    });
 
-    function generateSlots() {
-      const slots = [];
-      let current = new Date(`2026-01-01T${bookingConfig.start}`);
-      const endTime = new Date(`2026-01-01T${bookingConfig.end}`);
-      while (current < endTime) {
-        let next = new Date(current.getTime() + bookingConfig.duration * 60000);
-        if (next > endTime) break;
-        slots.push(`${current.toTimeString().slice(0, 5)} - ${next.toTimeString().slice(0, 5)}`);
-        current = next; 
-      }
-      return slots;
-    }
+    // Đối tượng lưu trữ trạng thái đặt lịch toàn cục
+    let bookingData = { artistId: '', artistName: '', date: '', time: '' };
 
     function openBookingModal() {
-      document.getElementById('bookingModal').classList.replace('hidden', 'flex');
+      const modal = document.getElementById('bookingModal');
+      modal.style.display = 'flex';
+      modal.classList.remove('hidden');
+    }
+
+    function closeBookingModal() {
+      const modal = document.getElementById('bookingModal');
+      modal.style.display = 'none';
+      modal.classList.add('hidden');
+    }
+
+    // Xử lý chọn nhân viên
+    function selectArtist(element) {
+      document.querySelectorAll('.artist-item').forEach(el => el.classList.remove('selected'));
+      element.classList.add('selected');
+      
+      bookingData.artistId = element.getAttribute('data-id');
+      bookingData.artistName = element.getAttribute('data-name');
+      
+      document.getElementById('dateSection').classList.remove('hidden');
+      renderDays();
+
+      // Reset lại vùng hiển thị giờ khi đổi nhân viên
+      document.getElementById('timeSection').classList.add('hidden');
+      bookingData.date = '';
+      bookingData.time = '';
+    }
+
+    // Tự động sinh danh sách 7 ngày
+    function renderDays() {
       const dateList = document.getElementById('dateList');
       dateList.innerHTML = '';
+      const daysOfWeek = ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
       const today = new Date();
-      
-      for (let i = 0; i < 10; i++) {
-        const d = new Date();
-        d.setDate(today.getDate() + i);
-        const dStr = `${d.getDate()}/${d.getMonth() + 1}/2026`;
+
+      for (let i = 0; i < 7; i++) {
+        const nextDate = new Date(today);
+        nextDate.setDate(today.getDate() + i);
+
+        const dayName = i === 0 ? 'Hôm nay' : daysOfWeek[nextDate.getDay()];
+        const dateString = `${nextDate.getDate()}/${nextDate.getMonth() + 1}`;
+        const fullDateValue = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}-${String(nextDate.getDate()).padStart(2, '0')}`;
+
+        const dayBtn = document.createElement('div');
+        dayBtn.className = 'date-item flex-shrink-0 w-24 p-3 border border-neutral-200 rounded-2xl text-center cursor-pointer transition-all hover:border-black';
+        dayBtn.innerHTML = `
+          <p class="text-[10px] font-bold text-neutral-400 uppercase">${dayName}</p>
+          <p class="text-sm font-black text-black mt-1">${dateString}</p>
+        `;
         
-        const div = document.createElement('div'); 
-        div.className = 'date-card p-4 border rounded-2xl min-w-[80px] text-center cursor-pointer hover:border-[#D2B48C]';
-        div.innerHTML = `<p class='text-xs font-bold'>${d.getDate()}/${d.getMonth() + 1}</p>`;
-        
-        div.onclick = function() {
-          document.querySelectorAll('.date-card').forEach(el => el.classList.remove('bg-[#F5F5DC]', 'border-[#D2B48C]'));
-          this.classList.add('bg-[#F5F5DC]', 'border-[#D2B48C]');
-          sDate = dStr;
+        dayBtn.onclick = async function() {
+          document.querySelectorAll('.date-item').forEach(el => el.classList.remove('selected'));
+          dayBtn.classList.add('selected');
+          bookingData.date = fullDateValue;
           
-          const list = document.getElementById('timeList');
-          document.getElementById('timeSection').classList.remove('hidden');
-          list.innerHTML = '';
+          // Khi chọn ngày, ẩn phần chọn giờ cũ đi để đợi tải dữ liệu mới
+          document.getElementById('timeSection').classList.add('hidden');
           
-          generateSlots().forEach(slot => {
-            const [start, end] = slot.split(" - ");
-            const booked = isSlotBooked(sDate, start, end);
-            const tDiv = document.createElement('div');
+          // SỬA TẠI ĐÂY: Đổi từ /services/ sang /service/ cho đúng route chuẩn của em
+          try {
+            const response = await fetch(`/service/check-busy?id_artist=${bookingData.artistId}&booking_date=${bookingData.date}`);
+            const result = await response.json();
             
-            if (booked) {
-              tDiv.className = 'py-3 border rounded-xl text-center bg-neutral-100 text-neutral-400 cursor-not-allowed text-[11px] font-bold';
-              tDiv.innerHTML = `${slot} <br> <span class='text-[9px] text-red-400'>Đã có khách</span>`;
+            if (result.success) {
+              document.getElementById('timeSection').classList.remove('hidden');
+              //- renderTimeSlots(result.busySlots); // Gọi hàm đổ giờ bận
+              // Kiểm tra xem ngày đang chọn có phải là hôm nay không (i === 0 chính là hôm nay)
+              const isToday = (i === 0); 
+              renderTimeSlots(result.busySlots, isToday);
             } else {
-              tDiv.className = 'time-card py-3 border rounded-xl text-center cursor-pointer text-[11px] font-bold border-neutral-100 hover:border-[#D2B48C]';
-              tDiv.innerText = slot;
-              tDiv.onclick = function() {
-                document.querySelectorAll('.time-card').forEach(el => el.classList.remove('bg-[#D2B48C]', 'text-black'));
-                this.classList.add('bg-[#D2B48C]', 'text-black');
-                sTime = slot;
-              };
+              alert("Không thể tải lịch làm việc của nghệ sĩ này!");
             }
-            list.appendChild(tDiv);
-          });
+          } catch (error) {
+            console.error("Lỗi kết nối:", error);
+          }
         };
-        dateList.appendChild(div);
+        dateList.appendChild(dayBtn);
       }
     }
 
+    // Tự động phân chia khung giờ và vô hiệu hóa (disable) ca bận
+    //- function renderTimeSlots(busySlots = []) {
+    //-   const timeList = document.getElementById('timeList');
+    //-   timeList.innerHTML = '';
+    //-   bookingData.time = ''; // Reset khung giờ đã chọn trước đó
+
+    //-   for (let hour = 3; hour <= 20; hour++) {
+    //-     const startTime = `${String(hour).padStart(2, '0')}:00`;
+    //-     const endTime = `${String(hour + 1).padStart(2, '0')}:00`;
+    //-     const slotDisplay = `${startTime} - ${endTime}`;
+
+    //-     // Kiểm tra xem ca này có nằm trong danh sách bận không
+    //-     const isBusy = busySlots.includes(slotDisplay);
+
+    //-     const timeBtn = document.createElement('div');
+        
+    //-     if (isBusy) {
+    //-       // Giao diện cho ca đã bị khóa/bận
+    //-       timeBtn.className = 'time-item p-3 border border-neutral-200 bg-neutral-100 text-neutral-400 rounded-xl text-center cursor-not-allowed font-bold text-xs line-through opacity-60';
+    //-       timeBtn.innerText = `${slotDisplay} (Bận)`;
+    //-     } else {
+    //-       // Giao diện cho ca còn trống
+    //-       timeBtn.className = 'time-item p-3 border border-neutral-200 rounded-xl text-center cursor-pointer font-bold text-xs transition-all hover:border-black text-black';
+    //-       timeBtn.innerText = slotDisplay;
+          
+    //-       timeBtn.onclick = function() {
+    //-         document.querySelectorAll('.time-item').forEach(el => el.classList.remove('selected'));
+    //-         timeBtn.classList.add('selected');
+    //-         bookingData.time = slotDisplay;
+    //-       };
+    //-     }
+        
+    //-     timeList.appendChild(timeBtn);
+    //-   }
+    //- }
+    // Tự động phân chia khung giờ, ẩn ca quá khứ nếu là hôm nay và vô hiệu hóa ca bận
+    function renderTimeSlots(busySlots = [], isToday = false) {
+      const timeList = document.getElementById('timeList');
+      timeList.innerHTML = '';
+      bookingData.time = ''; // Reset khung giờ đã chọn trước đó
+
+      // Lấy giờ hiện tại của hệ thống
+      const currentHour = new Date().getHours();
+
+      for (let hour = 3; hour <= 20; hour++) {
+        // LÓGIC CHECK GIỜ QUÁ KHỨ: 
+        // Nếu là ngày hôm nay và `hour` nhỏ hơn giờ hiện tại thì bỏ qua không hiển thị
+        // (Ví dụ: 11h20 thì currentHour = 11 -> ca 11h (11:00-12:00) sẽ bị ẩn, tính từ 12h)
+        if (isToday && hour < currentHour) {
+          continue;
+        }
+
+        const startTime = `${String(hour).padStart(2, '0')}:00`;
+        const endTime = `${String(hour + 1).padStart(2, '0')}:00`;
+        const slotDisplay = `${startTime} - ${endTime}`;
+
+        // Kiểm tra xem ca này có nằm trong danh sách bận không
+        const isBusy = busySlots.includes(slotDisplay);
+
+        const timeBtn = document.createElement('div');
+        
+        if (isBusy) {
+          // Giao diện cho ca đã bị khóa/bận
+          timeBtn.className = 'time-item p-3 border border-neutral-200 bg-neutral-100 text-neutral-400 rounded-xl text-center cursor-not-allowed font-bold text-xs line-through opacity-60';
+          timeBtn.innerText = `${slotDisplay} (Bận)`;
+        } else {
+          // Giao diện cho ca còn trống
+          timeBtn.className = 'time-item p-3 border border-neutral-200 rounded-xl text-center cursor-pointer font-bold text-xs transition-all hover:border-black text-black';
+          timeBtn.innerText = slotDisplay;
+          
+          timeBtn.onclick = function() {
+            document.querySelectorAll('.time-item').forEach(el => el.classList.remove('selected'));
+            timeBtn.classList.add('selected');
+            bookingData.time = slotDisplay;
+          };
+        }
+        
+        timeList.appendChild(timeBtn);
+      }
+    }
     function openConfirmModal() {
-      if(!sDate || !sTime) return alert("Vui lòng chọn ngày và giờ!");
+      if (!bookingData.artistId || !bookingData.date || !bookingData.time) {
+        alert('Vui lòng hoàn thành đủ 3 bước chọn: Chuyên viên, Ngày hẹn và Giờ ca làm việc nhé!');
+        return;
+      }
       
-      // Đóng modal cũ, mở modal mới
-      document.getElementById('bookingModal').classList.add('hidden');
-      document.getElementById('confirmModal').classList.replace('hidden', 'flex');
-      
-      // Đổ dữ liệu vào modal xác nhận
-      const dateEl = document.getElementById('selectedDateDisplay');
-      const timeEl = document.getElementById('displayTimeConfirm');
-      
-      if(dateEl) dateEl.innerText = sDate;
-      if(timeEl) timeEl.innerText = sTime;
+      document.getElementById('selectedArtistDisplay').innerText = bookingData.artistName;
+      const [year, month, day] = bookingData.date.split('-');
+      document.getElementById('selectedDateDisplay').innerText = `${day}/${month}/${year}`;
+      document.getElementById('displayTimeConfirm').innerText = bookingData.time;
+
+      document.getElementById('confirmModal').style.display = 'flex';
+      document.getElementById('confirmModal').classList.remove('hidden');
     }
 
-    function closeBookingModal() { document.getElementById('bookingModal').classList.replace('flex', 'hidden'); }
-    function closeConfirmModal() { document.getElementById('confirmModal').classList.replace('flex', 'hidden'); }
+    function closeConfirmModal() {
+      document.getElementById('confirmModal').style.display = 'none';
+      document.getElementById('confirmModal').classList.add('hidden');
+    }
 
     function goToPaymentPage() {
-      const timeParts = sTime.split(" - ");
       const form = document.createElement('form');
       form.method = 'POST';
       form.action = '/payment';
       
-      // LẤY ĐỊA CHỈ: Ở đây mình lấy địa chỉ mặc định của Artist từ biến Pug truyền vào
-      // Nếu bạn muốn khách tự nhập, hãy tạo 1 input id='customerAddress' rồi lấy .value ở đây
-      const artistAddress = "#{artist.address}"; 
+      const depositAmount = 100000;
+      const servicePrice = parseFloat("#{service.price}");
+      const remainingBalance = servicePrice - depositAmount;
+      const serviceAddress = "Thị trấn Lim, Huyện Tiên Du, Bắc Ninh"; 
 
       const data = {
         id_service: "#{service.id}", 
-        id_artist: "#{artist.id}",
-        booking_date: sDate,
-        time_start: timeParts[0],
-        time_end: timeParts[1],
-        price: "#{service.price}",
-        address: artistAddress // THÊM DÒNG NÀY ĐỂ GỬI ĐỊA CHỈ LÊN SERVER
+        id_artist: bookingData.artistId,        
+        booking_date: bookingData.date,         
+        slot_time: bookingData.time,            
+        price: servicePrice,
+        deposit: depositAmount,                 
+        remaining_balance: remainingBalance,    
+        address: serviceAddress
       };
 
       for (const key in data) {
@@ -362,74 +414,7 @@ block main
         input.value = data[key];
         form.appendChild(input);
       }
+      
       document.body.appendChild(form);
       form.submit();
     }
-    // 1. Hàm xử lý chọn sao (Rating)
-    function setRating(n) {
-      document.getElementById('ratingValue').value = n;
-      const stars = document.querySelectorAll('.star-rating');
-      stars.forEach((star, index) => {
-        if (index < n) {
-          star.classList.replace('fa-regular', 'fa-solid');
-        } else {
-          star.classList.replace('fa-solid', 'fa-regular');
-        }
-      });
-    }
-
-    async function submitReview(event) {
-      event.preventDefault();
-      
-      const rating = document.getElementById('ratingValue').value;
-      const content = document.getElementById('reviewContent').value;
-      const serviceId = "#{service.id}";
-
-      if (!content.trim()) return alert("Vui lòng nhập nội dung!");
-
-      try {
-        const response = await fetch('/service/review', { // KIỂM TRA LẠI ROUTE NÀY
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ service_id: serviceId, rating, content }),
-        });
-
-        // Kiểm tra nếu response không phải JSON
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          const text = await response.text();
-          console.error("Server trả về HTML thay vì JSON:", text);
-          return alert("Lỗi Server: API không trả về định dạng JSON.");
-        }
-
-        const result = await response.json();
-        if (result.code === 200) {
-          alert("Cảm ơn bạn đã đánh giá!");
-          location.reload();
-        } else {
-          alert(result.message || "Lỗi từ phía server.");
-        }
-      } catch (error) {
-        console.error("Lỗi Fetch:", error);
-        alert("Không thể kết nối đến máy chủ.");
-      }
-    }
-    // Thêm đoạn này vào cuối phần script hiện tại của bạn
-    document.addEventListener('DOMContentLoaded', function() {
-      const swiper = new Swiper(".mySwiper", {
-        loop: true,
-        spaceBetween: 20,
-        pagination: {
-          el: ".swiper-pagination",
-          clickable: true,
-        },
-        navigation: {
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        },
-        autoplay: {
-          delay: 3000,
-          disableOnInteraction: false,
-        },
-      });
-    });

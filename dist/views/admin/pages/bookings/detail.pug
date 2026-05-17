@@ -3,27 +3,44 @@ include ../../mixins/alert.pug
 
 block main
   +alert(3000)
-  main.flex-1.p-10
+  main.flex-1.p-10.bg-neutral-50.min-h-screen
     header.flex.justify-between.items-center.mb-10
       div
         a.text-xs.font-bold.uppercase.tracking-widest.text-neutral-400.flex.items-center.gap-2.mb-2(href=`/${prefixAdmin}/bookings` class="hover:text-black")
           i.fa-solid.fa-arrow-left
           | Quay lại danh sách
         h2.text-3xl.font-bold.serif-font.italic Chi tiết lịch đặt #...#{booking.id.substring(0, 8)}
-      .flex.gap-3
-        //- Sửa nút Hủy lịch: Thêm button-cancel-booking và data-id
-        button.px-6.py-3.bg-red-50.text-red-600.rounded-full.text-xs.font-bold.uppercase.tracking-widest(
-          class="hover:bg-red-500 hover:text-white"
-          button-cancel-booking
-          data-id=booking.id
-        ) Hủy lịch
-        
-        button.px-6.py-3.bg-black.rounded-full.text-xs.font-bold.uppercase.tracking-widest(
-          class="text-[#D2B48C] hover:opacity-80"
-        ) Xác nhận lịch
+      
+      .flex.items-center.gap-4
+        //- FORM CẬP NHẬT TRẠNG THÁI (Đã sửa đổi method thành POST)
+        form(
+          method="POST"
+          action=`/${prefixAdmin}/bookings/change-status/${booking.id}?_method=PATCH`
+          class="flex items-center gap-2 bg-white p-2 rounded-full border border-neutral-200 shadow-sm"
+        )
+          select(
+            name="status" 
+            class="bg-transparent text-xs font-bold uppercase tracking-widest px-4 py-2 outline-none cursor-pointer"
+          )
+            option(value="pending" selected=(booking.status === 'pending')) ⏳ Chờ xác nhận
+            option(value="deposited" selected=(booking.status === 'deposited')) 🔵 Đã đặt cọc
+            option(value="paid" selected=(booking.status === 'paid')) ✅ Đã hoàn thành
+            option(value="cancelled" selected=(booking.status === 'cancelled')) ❌ Đã hủy
+          
+          button(
+            type="submit"
+            class="px-6 py-2 bg-black text-[#D2B48C] rounded-full text-[10px] font-bold uppercase tracking-widest hover:opacity-80 transition-all cursor-pointer"
+          ) Cập nhật
 
-    //- Form ẩn để gửi phương thức PATCH
-    //- Lưu ý: Cần cài đặt 'method-override' ở server để hiểu _method=PATCH
+        //- Nút Hủy nhanh (Chỉ hiện nếu chưa bị hủy)
+        if booking.status !== 'cancelled'
+          button.px-6.py-3.bg-red-50.text-red-600.rounded-full.text-xs.font-bold.uppercase.tracking-widest(
+            class="hover:bg-red-500 hover:text-white transition-all cursor-pointer"
+            button-cancel-booking
+            data-id=booking.id
+          ) Hủy lịch
+
+    //- Form ẩn để gửi lệnh Hủy
     form(
       id="form-cancel-booking"
       method="POST"
@@ -33,23 +50,20 @@ block main
 
     .grid.grid-cols-3.gap-8
       .col-span-2.space-y-8
-        .card.p-8
+        .card.p-8.bg-white.rounded-2xl.shadow-sm
           h3.text-lg.font-bold.mb-6.serif-font.italic Thông tin chung
           .grid.grid-cols-2.gap-y-6
             div
               p.text-neutral-400.uppercase.tracking-widest(class="text-[10px] font-bold") Khách hàng
               p.text-sm.font-bold #{booking.customerName}
             div
-              p.text-neutral-400.uppercase.tracking-widest(class="text-[10px] font-bold") Số điện thoại
-              p.text-sm.font-bold #{booking.customerPhone}
-            div
               p.text-neutral-400.uppercase.tracking-widest(class="text-[10px] font-bold") Dịch vụ sử dụng
               p.text-sm.font-bold.text-blue-600 #{booking.serviceName}
             div
-              p.text-neutral-400.uppercase.tracking-widest(class="text-[10px] font-bold") Trạng thái
-              span(class=`status-pill ${booking.statusClass}`) #{booking.statusLabel}
+              p.text-neutral-400.uppercase.tracking-widest(class="text-[10px] font-bold") Trạng thái hiện tại
+              span(class=`status-pill ${booking.statusClass} px-3 py-1 rounded-full text-[10px] font-bold uppercase`) #{booking.statusLabel}
 
-        .card.p-8
+        .card.p-8.bg-white.rounded-2xl.shadow-sm
           h3.text-lg.font-bold.mb-6.serif-font.italic Thời gian & Địa điểm
           .flex.items-center.gap-10
             .flex.items-center.gap-4
@@ -62,27 +76,33 @@ block main
               .w-12.h-12.rounded-2xl.bg-neutral-50.flex.items-center.justify-center.text-xl
                 i.fa-regular.fa-clock(class="text-[#D2B48C]")
               div
-                p.text-neutral-400.uppercase(class="text-[10px] font-bold") Khung giờ
-                p.text-sm.font-bold #{booking.time_start} - #{booking.time_end}
+                p.text-neutral-400.uppercase(class="text-[10px] font-bold") Khung giờ (Slot)
+                p.text-sm.font-bold #{booking.slot_time}
           
           .mt-8.p-4.bg-neutral-50.rounded-2xl
             p.text-neutral-400.uppercase(class="text-[10px] font-bold mb-1") Địa chỉ thực hiện
             p.text-sm #{booking.address || 'Tại Studio'}
 
       .col-span-1
-        .card.p-8.bg-neutral-900.text-white
+        .card.p-8.bg-neutral-900.text-white.rounded-3xl.shadow-xl
           h3.text-lg.font-bold.mb-8.serif-font.italic Tổng kết chi phí
+          
           .space-y-4.border-b.border-neutral-800.pb-6
             .flex.justify-between
-              span.text-neutral-400.text-xs Giá dịch vụ
-              span.text-xs.font-bold #{booking.price.toLocaleString()}đ
+              span.text-neutral-400.text-xs Tổng giá dịch vụ
+              span.text-xs.font-bold #{booking.priceDisplay}đ
+            
+            .flex.justify-between
+              span.text-neutral-400.text-xs Đã đặt cọc
+              span.text-xs.font-bold.text-green-400 #{booking.depositDisplay}đ
+          
           .pt-6
             .flex.justify-between.items-end
-              span.text-neutral-400.text-xs Tổng cộng
-              span.text-2xl.font-bold(class="text-[#D2B48C]") #{booking.price.toLocaleString()}đ
+              span.text-neutral-400.text-xs Còn lại cần trả
+              span.text-2xl.font-bold(class="text-[#D2B48C]") #{booking.remainingDisplay}đ
 
-  //- Script xử lý gửi form
   script.
+    // Xử lý nút Hủy lịch đặt nhanh bằng Form ẩn
     const buttonCancel = document.querySelector("[button-cancel-booking]");
     if(buttonCancel) {
       buttonCancel.addEventListener("click", () => {

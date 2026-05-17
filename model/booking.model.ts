@@ -20,7 +20,7 @@ const Booking = sequelize.define("Booking", {
     type: DataTypes.STRING(36),
     allowNull: false,
     references: {
-      model: 'artists', // Đảm bảo khớp với tableName 'artists' đã sửa ở trên
+      model: 'artists',
       key: 'id'
     }
   },
@@ -33,24 +33,33 @@ const Booking = sequelize.define("Booking", {
     }
   },
   booking_date: {
-    type: DataTypes.DATEONLY, 
+    type: DataTypes.DATEONLY, // Lưu dạng YYYY-MM-DD khớp với bookingData.date
     allowNull: false,
   },
-  // THAY ĐỔI: Sử dụng slot_time để quản lý ca 1 tiếng
+  // ĐỔI SANG STRING: Lưu trực tiếp chuỗi "03:00 - 04:00", "04:00 - 05:00" gửi từ Frontend
   slot_time: {
-    type: DataTypes.INTEGER, // Lưu số giờ từ 3 đến 21
+    type: DataTypes.STRING(20), 
     allowNull: false,
   },
   address: {
     type: DataTypes.STRING,
-    allowNull: true, // Nếu khách làm tại cửa hàng thì có thể để null
+    allowNull: true,
   },
   price: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
   },
+  deposit: { // THÊM MỚI: Lưu số tiền đặt cọc thực tế (100000)
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: false,
+    defaultValue: 100000.00
+  },
+  remaining_balance: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: true,
+  },
   status: {
-    type: DataTypes.ENUM('paid', 'pending', 'deposited'),
+    type: DataTypes.ENUM('paid', 'pending', 'deposited', 'cancelled'), // Thêm trạng thái huỷ lịch nếu cần
     defaultValue: 'pending',
     allowNull: true,
   },
