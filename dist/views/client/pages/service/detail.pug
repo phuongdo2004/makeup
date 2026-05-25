@@ -22,7 +22,7 @@ block main
         .space-y-6
           div
             label.uppercase.font-black.tracking-widest.text-neutral-400.block.mb-2(class='text-[10px]') Địa điểm
-            p.text-sm.font-bold.leading-relaxed Thị trấn Lim, Huyện Tiên Du, Bắc Ninh
+            p.text-sm.font-bold.leading-relaxed 100 Hai Bà Trưng, Thị trấn Lim, Huyện Tiên Du, Bắc Ninh
 
       .mt-12
         h4.text-sm.font-black.uppercase.mb-6.flex.items-center.gap-2(class='tracking-[0.2em]')
@@ -36,11 +36,10 @@ block main
             | #{(service.price * 1).toLocaleString()} đ
 
       .mt-10
-        h4.text-sm.font-black.uppercase.mb-4(class='tracking-[0.2em]') Tiện ích đi kèm
+        h4.text-sm.font-black.uppercase.mb-4(class='tracking-[0.2em]') Tiện ích đi kèm 
         .flex.flex-wrap.gap-3
           span.bg-neutral-100.px-4.py-2.rounded-full.text-xs.font-bold.flex.items-center
-            i.fa-solid.fa-house-chimney.mr-2(class='text-[#D2B48C]')
-            | #{service.description}
+            | #{service.amenities}
 
       button.w-full.mt-12.py-5.bg-black.font-bold.rounded-2xl.transition-all.uppercase.text-sm.shadow-xl(onclick='openBookingModal()' class='text-[#D2B48C] hover:bg-[#D2B48C] hover:text-black tracking-[0.2em]')
         | Đặt lịch ngay
@@ -104,38 +103,6 @@ block main
         button.flex-1.py-4.bg-white.border.border-neutral-200.rounded-2xl.font-bold.text-xs.uppercase(onclick='closeBookingModal()') Hủy bỏ
         button.py-4.bg-black.rounded-2xl.font-black.text-xs.uppercase(onclick='openConfirmModal()' class='flex-[2] text-[#D2B48C]') Xác nhận đặt lịch
 
-  //- MODAL 2: XÁC NHẬN THÔNG TIN (Đã đổi thành Tiền đặt cọc)
-  //- #confirmModal.fixed.inset-0.hidden.items-center.justify-center.p-4(class='z-[110] bg-black/60 backdrop-blur-sm')
-  //-   .bg-white.w-full.max-w-xl.shadow-2xl.overflow-hidden.relative.border(class='rounded-[40px] border-black/10' onclick='event.stopPropagation()')
-  //-     .p-6.border-b.border-neutral-100.flex.justify-between.items-center
-  //-       h3.font-bold.text-lg.text-black.serif-font.italic Xác nhận thông tin
-  //-       button.text-2xl(onclick='closeConfirmModal()') ×
-  //-     .p-8
-  //-       .space-y-4
-  //-         .flex.justify-between.pb-2.border-b.border-dashed
-  //-           span.text-neutral-400 Dịch vụ:
-  //-           span.font-bold.text-black #{service.name}
-  //-         .flex.justify-between.pb-2.border-b.border-dashed
-  //-           span.text-neutral-400 Chuyên viên:
-  //-           span#selectedArtistDisplay.font-bold.text-black --
-  //-         .flex.justify-between.pb-2.border-b.border-dashed
-  //-           span.text-neutral-400 Ngày:
-  //-           span#selectedDateDisplay.font-bold --/--/2026
-  //-         .flex.justify-between.pb-2.border-b.border-dashed
-  //-           span.text-neutral-400 Giờ:
-  //-           span#displayTimeConfirm.font-bold --:--
-  //-         .flex.justify-between.pb-2.border-b.border-dashed
-  //-           span.text-neutral-400 Địa điểm:
-  //-           span.font-bold Thị trấn Lim, Huyện Tiên Du, Bắc Ninh
-  //-         .flex.justify-between.pb-2.border-b.border-dashed
-  //-           span.text-neutral-400 Tổng giá dịch vụ:
-  //-           span.font-bold.text-neutral-600 #{(service.price * 1).toLocaleString()} đ
-  //-         .flex.justify-between.pt-4
-  //-           span.text-neutral-400 Tiền đặt cọc:
-  //-           span.text-xl.font-black.text-red-600 100.000 đ
-  //-     .p-6.bg-neutral-50.flex.gap-4
-  //-       button.flex-1.py-4.bg-white.border.rounded-2xl.font-bold(onclick='closeConfirmModal()') Quay lại
-  //-       button.py-4.bg-black.rounded-2xl.font-black(onclick='goToPaymentPage()' class='flex-[2] text-[#D2B48C]') Thanh toán
   //- MODAL 2: XÁC NHẬN THÔNG TIN
   #confirmModal.fixed.inset-0.hidden.items-center.justify-center.p-4(class='z-[110] bg-black/60 backdrop-blur-sm')
     .bg-white.w-full.max-w-xl.shadow-2xl.overflow-hidden.relative.border(class='rounded-[40px] border-black/10' onclick='event.stopPropagation()')

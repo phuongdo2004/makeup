@@ -22,7 +22,7 @@ const Service = sequelize.define("Service", {
   duration: {
     type: DataTypes.INTEGER,
     allowNull: true,
-    defaultValue: 60
+    defaultValue: 120
   },
   amenities: {
     type: DataTypes.TEXT("long"), 

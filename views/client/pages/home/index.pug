@@ -29,12 +29,6 @@ block main
           p(class="text-white/70 leading-relaxed mb-8 italic")
             | Susannie không chỉ là một Makeup Artist, chúng tôi là người kể câu chuyện của bạn thông qua cọ vẽ. Với 10 năm kinh nghiệm trong lĩnh vực Bridal và High-end Makeup.
           .grid.grid-cols-2.gap-8(class="border-t border-white/10 pt-8")
-            //- div
-            //-   p(class="text-3xl font-bold text-[#D2B48C]") 1.500+
-            //-   p(class="text-[10px] uppercase tracking-widest text-white/50") Khách hàng hài lòng
-            //- div
-            //-   p(class="text-3xl font-bold text-[#D2B48C]") Global
-            //-   p(class="text-[10px] uppercase tracking-widest text-white/50") Chứng chỉ quốc tế
 
     section.py-24.px-6
       .container.mx-auto
@@ -42,27 +36,15 @@ block main
           div
             h3.text-4xl.serif-font.italic.text-black Dịch vụ nổi bật
             p.text-sm.text-neutral-500.mt-2 Được chọn lọc dựa trên phong cách yêu thích của khách hàng
-          //- .flex.gap-2
-          //-   span(class="px-4 py-2 bg-black text-[#D2B48C] rounded-lg text-xs font-bold shadow-md") 1
-          //-   span(class="px-4 py-2 bg-white text-black rounded-lg text-xs font-bold border border-black/10 hover:bg-neutral-50 cursor-pointer") 2
 
         .grid.gap-8(class="grid-cols-1 md:grid-cols-2 lg:grid-cols-3")
           each service in services
             .service-card.bg-white.rounded-3xl.overflow-hidden.flex.flex-col.h-full
-              .relative.h-72.overflow-hidden
-                //- Nút Trái tim yêu thích (Mới thêm)
-                button.absolute.top-4.left-4.z-20.w-10.h-10.flex.items-center.justify-center.rounded-full.backdrop-blur-md.transition-all.group(
-                  class='bg-black/20 hover:bg-white text-white hover:text-red-500 shadow-lg'
-                  data-id=service.id
-                  onclick='toggleFavorite(this)'
-                )
-                  //- Kiểm tra nếu id này nằm trong danh sách yêu thích của customer thì để fa-solid đỏ luôn
-                  if customer && customer.favorites && customer.favorites.includes(service.id)
-
-                    i.fa-solid.fa-heart.text-lg.text-red-500
-                  else
-                    i.fa-regular.fa-heart.text-lg
-                img.w-full.h-full.object-cover(src=service.images)
+              .relative.h-72.overflow-hidden.bg-neutral-950.flex.items-center.justify-center
+                //- Lớp ảnh nền mờ phía sau tạo chiều sâu cho ảnh dọc/ngang trống biên
+                img.absolute.inset-0.w-full.h-full.object-cover.blur-md.opacity-30(src=service.images)
+                //- Lớp ảnh chính hiển thị trọn vẹn 100% không mất góc
+                img.relative.z-10.max-w-full.max-h-full.object-contain(src=service.images)
               .p-8.flex.flex-col.flex-grow
                 h3.text-xl.font-bold.text-black.uppercase.mb-2 #{service.name}
                 p.text-xs.text-neutral-400.mb-6.flex.items-center.italic
@@ -80,36 +62,6 @@ block main
                     | #{(service.price * 1).toLocaleString()} đ
                 a(href=`/service/detail/${service.id}` class="w-full inline-block text-center py-4 bg-black text-[#D2B48C] rounded-xl text-[11px] font-bold uppercase tracking-widest hover:bg-[#D2B48C] hover:text-black transition-all")
                   | Xem chi tiết & Đặt lịch
-
-    section.py-24.bg-white
-      .container.mx-auto.px-6.text-center
-        p(class="text-[#D2B48C] text-xs font-bold uppercase tracking-widest mb-2") Đánh Giá
-        h3.text-4xl.serif-font.italic.text-black.mb-4 Khách Hàng Nói Gì Về Chúng Tôi?
-        p.text-neutral-500.max-w-2xl.mx-auto.mb-16.text-sm Những phản hồi thực tế từ các khách hàng đã trải nghiệm dịch vụ tại hệ thống của chúng tôi.
-        
-        .grid.gap-8.text-left(class="grid-cols-1 md:grid-cols-3")
-          if feedbacks && feedbacks.length > 0
-            each feedback in feedbacks
-              .p-8.border.border-neutral-100.rounded-3xl.relative.shadow-sm(class="bg-[#FAF9F6]")
-                .absolute.left-8.p-2.rounded-lg(class="-top-4 bg-black text-[#D2B48C]")
-                  i.fa-solid.fa-quote-left
-                .flex.items-center.gap-4.mb-6
-                  - const custInfo = feedback.customer || {}
-                  img.w-12.h-12.rounded-full.object-cover(src=custInfo.avatar || `https://i.pravatar.cc/150?u=${feedback.customer_id}` || `https://i.pravatar.cc/150?u=default`)
-                  div
-                    h5.font-bold.text-sm= custInfo.fullName || 'Khách hàng ẩn danh'
-                    p(class="text-[10px] text-neutral-400 uppercase tracking-tighter") Khách hàng
-                p(class="text-xs text-neutral-600 leading-relaxed mb-6 italic") "#{feedback.content}"
-                .flex.text-yellow-500(class="text-[10px] gap-1")
-                  - const stars = Math.round(feedback.rating || 5)
-                  each star in [1,2,3,4,5]
-                    if star <= stars
-                      i.fa-solid.fa-star
-                    else
-                      i.fa-regular.fa-star
-          else
-            .col-span-3.text-center.py-8
-              p.text-neutral-500 Chưa có phản hồi từ khách hàng. Hãy là người đầu tiên!
 
     script.
       async function toggleFavorite(btn) {

@@ -25,7 +25,11 @@ export const detail = async (req, res) => {
     // 3. THÊM MỚI: Lấy danh sách nhân viên/chuyên viên hoạt động từ CSDL để đưa lên Form đặt lịch
     // Bạn có thể lọc thêm điều kiện theo trạng thái nếu có (ví dụ: status: "active")
     const artists = await Artist.findAll({
-        attributes: ['id', 'name', 'avatar', 'experience'], // Lấy các trường hiển thị trên giao diện Pug
+        where: {
+            status: "active" // Thêm điều kiện lọc trạng thái hoạt động ở đây
+        },
+        attributes: ['id', 'name', 'avatar',
+            'experience'], // Lấy các trường hiển thị trên giao diện Pug
         raw: true
     });
     // Xử lý ảnh đại diện của Artist nếu lưu dạng mảng JSON (giống cách xử lý ảnh Customer)
@@ -39,94 +43,13 @@ export const detail = async (req, res) => {
             }
         }
     }
-    // 4. LẤY BÌNH LUẬN THEO KIỂU THỦ CÔNG (Giữ nguyên)
-    const rawReviews = await Comment.findAll({
-        where: { service_id: id },
-        order: [['created_at', 'DESC']],
-        raw: true
-    });
-    const reviews = [];
-    for (const review of rawReviews) {
-        const customer = await Customer.findOne({
-            where: { customer_id: review.customer_id },
-            attributes: ['fullName', 'avatar'],
-            raw: true
-        });
-        if (customer && typeof customer.avatar === 'string') {
-            try {
-                customer.avatar = (JSON.parse(customer.avatar))[0];
-            }
-            catch (e) {
-                customer.avatar = [customer.avatar];
-            }
-        }
-        reviews.push({
-            ...review,
-            customer_name: customer ? customer.fullName : "Khách hàng",
-            customer_avatar: customer ? customer.avatar : null
-        });
-    }
+    console.log(service);
     // 5. Render ra giao diện (Đã bổ sung biến artists)
     res.render("client/pages/service/detail.pug", {
         service: service,
-        reviews: reviews,
         artists: artists // Gửi danh sách nhân viên sang phía giao diện Pug nhận dữ liệu tuần hoàn
     });
 };
-// export const detail = async(req: Request, res: Response) => {
-//   const id = req.params.id;
-//   // 1. Tìm dịch vụ (Giữ nguyên)
-//   const service = await Service.findOne({ where: { id: id } });
-//   if (!service) return res.redirect("/services");
-//   // 2. Xử lý mảng ảnh (Giữ nguyên)
-//   if ((service as any).images) {
-//     try {
-//       const allImages = JSON.parse((service as any).images);
-//       (service as any).allImages = allImages;
-//       (service as any).images = allImages[0];
-//     } catch (e) {
-//       (service as any).allImages = [(service as any).images];
-//     }
-//   }
-//   // 4. LẤY BÌNH LUẬN THEO KIỂU THỦ CÔNG (Không dùng include)
-//   // Lấy tất cả comment của dịch vụ này
-//   const rawReviews = await Comment.findAll({
-//     where: { service_id: id },
-//     order: [['created_at', 'DESC']],
-//     raw: true // Lấy dữ liệu thuần túy cho dễ xử lý
-//   });
-//   // Tạo một mảng mới để chứa comment đã có thông tin khách hàng
-//   const reviews = [];
-//   for (const review of rawReviews) {
-//     // Tìm khách hàng tương ứng với mỗi comment
-//     const customer = await Customer.findOne({
-//       where: { customer_id: (review as any).customer_id },
-//       attributes: ['fullName', 'avatar'],
-//       raw: true
-//     });
-//  if (typeof (customer as any).avatar === 'string') {
-//       // Nếu là chuỗi JSON mảng thì parse, nếu là chuỗi thường thì bọc vào mảng
-//       try {
-//         (customer as any).avatar = (JSON.parse((customer as any).avatar))[0];
-//       } catch (e) {
-//         (customer as any).avatar = [(customer as any).avatar];
-//       }
-//     }
-//     // Gộp thông tin khách vào object review
-//     reviews.push({
-//       ...review,
-//       customer_name: customer ? (customer as any).fullName : "Khách hàng",
-//       customer_avatar: customer ? (customer as any).avatar : null
-//     });
-//   }
-//   // 5. Render ra giao diện
-//   res.render("client/pages/service/detail.pug", {
-//     service: service,
-//     reviews: reviews // Giờ reviews đã có thêm customer_name và customer_avatar
-//   // ,existingBookings: JSON.stringify(existingBookings) // Chuyển sang JSON để Script ở Frontend đọc được
-//   });
-// }
-// detail service end
 export const index = async (req, res) => {
     const pagination = await pagi(req, res);
     const services = await Service.findAll({

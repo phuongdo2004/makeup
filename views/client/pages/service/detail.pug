@@ -22,7 +22,7 @@ block main
         .space-y-6
           div
             label.uppercase.font-black.tracking-widest.text-neutral-400.block.mb-2(class='text-[10px]') Địa điểm
-            p.text-sm.font-bold.leading-relaxed Thị trấn Lim, Huyện Tiên Du, Bắc Ninh
+            p.text-sm.font-bold.leading-relaxed 100 Hai Bà Trưng, Thị trấn Lim, Huyện Tiên Du, Bắc Ninh
 
       .mt-12
         h4.text-sm.font-black.uppercase.mb-6.flex.items-center.gap-2(class='tracking-[0.2em]')
@@ -36,11 +36,10 @@ block main
             | #{(service.price * 1).toLocaleString()} đ
 
       .mt-10
-        h4.text-sm.font-black.uppercase.mb-4(class='tracking-[0.2em]') Tiện ích đi kèm
+        h4.text-sm.font-black.uppercase.mb-4(class='tracking-[0.2em]') Tiện ích đi kèm 
         .flex.flex-wrap.gap-3
           span.bg-neutral-100.px-4.py-2.rounded-full.text-xs.font-bold.flex.items-center
-            i.fa-solid.fa-house-chimney.mr-2(class='text-[#D2B48C]')
-            | #{service.description}
+            | #{service.amenities}
 
       button.w-full.mt-12.py-5.bg-black.font-bold.rounded-2xl.transition-all.uppercase.text-sm.shadow-xl(onclick='openBookingModal()' class='text-[#D2B48C] hover:bg-[#D2B48C] hover:text-black tracking-[0.2em]')
         | Đặt lịch ngay
@@ -63,7 +62,7 @@ block main
           .swiper-button-prev(class='!text-[#D2B48C]')
           .swiper-pagination
 
-  //- MODAL 1: ĐẶT LỊCH DỊCH VỤ (Đã tích hợp vùng chọn Chuyên viên)
+  //#- MODAL 1: ĐẶT LỊCH DỊCH VỤ
   #bookingModal.fixed.inset-0.hidden.items-center.justify-center.p-4(class='z-[100] bg-black/60 backdrop-blur-sm' onclick='closeBookingModal()')
     .bg-white.w-full.max-w-2xl.shadow-2xl.overflow-hidden.relative.border(class='rounded-[40px] border-black/10' onclick='event.stopPropagation()')
       .p-6.border-b.border-neutral-100.flex.justify-between.items-center.bg-black(class='text-[#D2B48C]')
@@ -71,7 +70,7 @@ block main
         button.text-2xl(onclick='closeBookingModal()') ×
       
       .p-8.overflow-y-auto(class='max-h-[70vh] custom-scrollbar')
-        //- BƯỚC 1: Chọn Nhân viên (Artists đẩy từ controller qua)
+        //- BƯỚC 1: Chọn Nhân viên
         .mb-8
           label.uppercase.font-black.text-neutral-400.block.mb-4(class='text-[11px] tracking-[0.2em]') 1. CHỌN CHUYÊN VIÊN
           .grid.grid-cols-2.gap-4(class='sm:grid-cols-3' id='artistList')
@@ -90,12 +89,12 @@ block main
             else
               p.text-sm.text-neutral-500.col-span-full Chuyên viên hiện không có sẵn.
 
-        //- BƯỚC 2: Chọn Ngày (Giới hạn tối đa 7 ngày)
+        //- BƯỚC 2: Chọn Ngày
         #dateSection.mb-8.hidden.border-t.pt-8
           label.uppercase.font-black.text-neutral-400.block.mb-4(class='text-[11px] tracking-[0.2em]') 2. CHỌN NGÀY LÀM VIỆC
           #dateList.flex.gap-3.overflow-x-auto.pb-4.no-scrollbar
 
-        //- BƯỚC 3: Chọn Khung Giờ (Ca 1 tiếng từ 3h sáng đến 9h tối)
+        //- BƯỚC 3: Chọn Khung Giờ
         #timeSection.mb-8.hidden.border-t.pt-8
           label.uppercase.font-black.text-neutral-400.block.mb-4(class='text-[11px] tracking-[0.2em]') 3. CHỌN KHUNG GIỜ CÒN TRỐNG
           #timeList.grid.grid-cols-2.gap-3(class='sm:grid-cols-3 md:grid-cols-4')
@@ -104,39 +103,7 @@ block main
         button.flex-1.py-4.bg-white.border.border-neutral-200.rounded-2xl.font-bold.text-xs.uppercase(onclick='closeBookingModal()') Hủy bỏ
         button.py-4.bg-black.rounded-2xl.font-black.text-xs.uppercase(onclick='openConfirmModal()' class='flex-[2] text-[#D2B48C]') Xác nhận đặt lịch
 
-  //- MODAL 2: XÁC NHẬN THÔNG TIN (Đã đổi thành Tiền đặt cọc)
-  //- #confirmModal.fixed.inset-0.hidden.items-center.justify-center.p-4(class='z-[110] bg-black/60 backdrop-blur-sm')
-  //-   .bg-white.w-full.max-w-xl.shadow-2xl.overflow-hidden.relative.border(class='rounded-[40px] border-black/10' onclick='event.stopPropagation()')
-  //-     .p-6.border-b.border-neutral-100.flex.justify-between.items-center
-  //-       h3.font-bold.text-lg.text-black.serif-font.italic Xác nhận thông tin
-  //-       button.text-2xl(onclick='closeConfirmModal()') ×
-  //-     .p-8
-  //-       .space-y-4
-  //-         .flex.justify-between.pb-2.border-b.border-dashed
-  //-           span.text-neutral-400 Dịch vụ:
-  //-           span.font-bold.text-black #{service.name}
-  //-         .flex.justify-between.pb-2.border-b.border-dashed
-  //-           span.text-neutral-400 Chuyên viên:
-  //-           span#selectedArtistDisplay.font-bold.text-black --
-  //-         .flex.justify-between.pb-2.border-b.border-dashed
-  //-           span.text-neutral-400 Ngày:
-  //-           span#selectedDateDisplay.font-bold --/--/2026
-  //-         .flex.justify-between.pb-2.border-b.border-dashed
-  //-           span.text-neutral-400 Giờ:
-  //-           span#displayTimeConfirm.font-bold --:--
-  //-         .flex.justify-between.pb-2.border-b.border-dashed
-  //-           span.text-neutral-400 Địa điểm:
-  //-           span.font-bold Thị trấn Lim, Huyện Tiên Du, Bắc Ninh
-  //-         .flex.justify-between.pb-2.border-b.border-dashed
-  //-           span.text-neutral-400 Tổng giá dịch vụ:
-  //-           span.font-bold.text-neutral-600 #{(service.price * 1).toLocaleString()} đ
-  //-         .flex.justify-between.pt-4
-  //-           span.text-neutral-400 Tiền đặt cọc:
-  //-           span.text-xl.font-black.text-red-600 100.000 đ
-  //-     .p-6.bg-neutral-50.flex.gap-4
-  //-       button.flex-1.py-4.bg-white.border.rounded-2xl.font-bold(onclick='closeConfirmModal()') Quay lại
-  //-       button.py-4.bg-black.rounded-2xl.font-black(onclick='goToPaymentPage()' class='flex-[2] text-[#D2B48C]') Thanh toán
-  //- MODAL 2: XÁC NHẬN THÔNG TIN
+  //#- MODAL 2: XÁC NHẬN THÔNG TIN
   #confirmModal.fixed.inset-0.hidden.items-center.justify-center.p-4(class='z-[110] bg-black/60 backdrop-blur-sm')
     .bg-white.w-full.max-w-xl.shadow-2xl.overflow-hidden.relative.border(class='rounded-[40px] border-black/10' onclick='event.stopPropagation()')
       .p-6.border-b.border-neutral-100.flex.justify-between.items-center
@@ -166,7 +133,6 @@ block main
             span.text-neutral-400 Tiền đặt cọc:
             span.font-bold.text-black 100.000 đ
           
-          //- THÊM MỚI: Hiển thị số tiền còn nợ thực tế
           .flex.justify-between.pt-4
             span.text-neutral-400 Số tiền còn nợ (Trả sau):
             span.text-xl.font-black.text-red-600 #{((service.price * 1) - 100000).toLocaleString()} đ
@@ -181,7 +147,6 @@ block main
     .date-item.selected { background-color: black; color: #D2B48C; }
     .time-item.selected { background-color: #D2B48C; color: black; border-color: #D2B48C; }
 
-  //- THƯ VIỆN & CẤU HÌNH SWIPER JS CHẠY TỰ ĐỘNG CÂN ĐỐI
   script(src='https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js')
   link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css')
   script.
@@ -202,7 +167,6 @@ block main
       });
     });
 
-    // Đối tượng lưu trữ trạng thái đặt lịch toàn cục
     let bookingData = { artistId: '', artistName: '', date: '', time: '' };
 
     function openBookingModal() {
@@ -217,7 +181,6 @@ block main
       modal.classList.add('hidden');
     }
 
-    // Xử lý chọn nhân viên
     function selectArtist(element) {
       document.querySelectorAll('.artist-item').forEach(el => el.classList.remove('selected'));
       element.classList.add('selected');
@@ -228,13 +191,11 @@ block main
       document.getElementById('dateSection').classList.remove('hidden');
       renderDays();
 
-      // Reset lại vùng hiển thị giờ khi đổi nhân viên
       document.getElementById('timeSection').classList.add('hidden');
       bookingData.date = '';
       bookingData.time = '';
     }
 
-    // Tự động sinh danh sách 7 ngày
     function renderDays() {
       const dateList = document.getElementById('dateList');
       dateList.innerHTML = '';
@@ -261,18 +222,14 @@ block main
           dayBtn.classList.add('selected');
           bookingData.date = fullDateValue;
           
-          // Khi chọn ngày, ẩn phần chọn giờ cũ đi để đợi tải dữ liệu mới
           document.getElementById('timeSection').classList.add('hidden');
           
-          // SỬA TẠI ĐÂY: Đổi từ /services/ sang /service/ cho đúng route chuẩn của em
           try {
             const response = await fetch(`/service/check-busy?id_artist=${bookingData.artistId}&booking_date=${bookingData.date}`);
             const result = await response.json();
             
             if (result.success) {
               document.getElementById('timeSection').classList.remove('hidden');
-              //- renderTimeSlots(result.busySlots); // Gọi hàm đổ giờ bận
-              // Kiểm tra xem ngày đang chọn có phải là hôm nay không (i === 0 chính là hôm nay)
               const isToday = (i === 0); 
               renderTimeSlots(result.busySlots, isToday);
             } else {
@@ -286,73 +243,33 @@ block main
       }
     }
 
-    // Tự động phân chia khung giờ và vô hiệu hóa (disable) ca bận
-    //- function renderTimeSlots(busySlots = []) {
-    //-   const timeList = document.getElementById('timeList');
-    //-   timeList.innerHTML = '';
-    //-   bookingData.time = ''; // Reset khung giờ đã chọn trước đó
-
-    //-   for (let hour = 3; hour <= 20; hour++) {
-    //-     const startTime = `${String(hour).padStart(2, '0')}:00`;
-    //-     const endTime = `${String(hour + 1).padStart(2, '0')}:00`;
-    //-     const slotDisplay = `${startTime} - ${endTime}`;
-
-    //-     // Kiểm tra xem ca này có nằm trong danh sách bận không
-    //-     const isBusy = busySlots.includes(slotDisplay);
-
-    //-     const timeBtn = document.createElement('div');
-        
-    //-     if (isBusy) {
-    //-       // Giao diện cho ca đã bị khóa/bận
-    //-       timeBtn.className = 'time-item p-3 border border-neutral-200 bg-neutral-100 text-neutral-400 rounded-xl text-center cursor-not-allowed font-bold text-xs line-through opacity-60';
-    //-       timeBtn.innerText = `${slotDisplay} (Bận)`;
-    //-     } else {
-    //-       // Giao diện cho ca còn trống
-    //-       timeBtn.className = 'time-item p-3 border border-neutral-200 rounded-xl text-center cursor-pointer font-bold text-xs transition-all hover:border-black text-black';
-    //-       timeBtn.innerText = slotDisplay;
-          
-    //-       timeBtn.onclick = function() {
-    //-         document.querySelectorAll('.time-item').forEach(el => el.classList.remove('selected'));
-    //-         timeBtn.classList.add('selected');
-    //-         bookingData.time = slotDisplay;
-    //-       };
-    //-     }
-        
-    //-     timeList.appendChild(timeBtn);
-    //-   }
-    //- }
-    // Tự động phân chia khung giờ, ẩn ca quá khứ nếu là hôm nay và vô hiệu hóa ca bận
+    // 🌟 ĐÃ SỬA: Thay đổi các ca makeup cách nhau 2 tiếng
     function renderTimeSlots(busySlots = [], isToday = false) {
       const timeList = document.getElementById('timeList');
       timeList.innerHTML = '';
-      bookingData.time = ''; // Reset khung giờ đã chọn trước đó
+      bookingData.time = ''; 
 
-      // Lấy giờ hiện tại của hệ thống
       const currentHour = new Date().getHours();
 
-      for (let hour = 3; hour <= 20; hour++) {
-        // LÓGIC CHECK GIỜ QUÁ KHỨ: 
-        // Nếu là ngày hôm nay và `hour` nhỏ hơn giờ hiện tại thì bỏ qua không hiển thị
-        // (Ví dụ: 11h20 thì currentHour = 11 -> ca 11h (11:00-12:00) sẽ bị ẩn, tính từ 12h)
-        if (isToday && hour < currentHour) {
+      // Vòng lặp tăng 2 đơn vị (hour += 2) để tạo khoảng cách 2 tiếng
+      for (let hour = 3; hour <= 21; hour += 2) {
+        
+        // Nếu chọn ngày hôm nay, ẩn các ca có giờ bắt đầu nhỏ hơn hoặc bằng giờ hiện tại
+        if (isToday && hour <= currentHour) {
           continue;
         }
 
         const startTime = `${String(hour).padStart(2, '0')}:00`;
-        const endTime = `${String(hour + 1).padStart(2, '0')}:00`;
+        const endTime = `${String(hour + 2).padStart(2, '0')}:00`; // Kết thúc sau 2 tiếng
         const slotDisplay = `${startTime} - ${endTime}`;
 
-        // Kiểm tra xem ca này có nằm trong danh sách bận không
         const isBusy = busySlots.includes(slotDisplay);
-
         const timeBtn = document.createElement('div');
         
         if (isBusy) {
-          // Giao diện cho ca đã bị khóa/bận
           timeBtn.className = 'time-item p-3 border border-neutral-200 bg-neutral-100 text-neutral-400 rounded-xl text-center cursor-not-allowed font-bold text-xs line-through opacity-60';
           timeBtn.innerText = `${slotDisplay} (Bận)`;
         } else {
-          // Giao diện cho ca còn trống
           timeBtn.className = 'time-item p-3 border border-neutral-200 rounded-xl text-center cursor-pointer font-bold text-xs transition-all hover:border-black text-black';
           timeBtn.innerText = slotDisplay;
           
@@ -366,6 +283,7 @@ block main
         timeList.appendChild(timeBtn);
       }
     }
+
     function openConfirmModal() {
       if (!bookingData.artistId || !bookingData.date || !bookingData.time) {
         alert('Vui lòng hoàn thành đủ 3 bước chọn: Chuyên viên, Ngày hẹn và Giờ ca làm việc nhé!');
