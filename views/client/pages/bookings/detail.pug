@@ -5,7 +5,8 @@ block main
   +alert(3000)
   
   //- Container chính: Căn giữa và giới hạn độ rộng để tạo cảm giác sang trọng
-  main.flex-1.max-w-4xl.mx-auto(class="p-6 md:p-10")
+  //- Đã thêm pb-16 để đảm bảo dòng chữ dưới cùng không bao giờ bị che khuất hay dính lề đáy
+  main.flex-1.max-w-4xl.mx-auto.pb-16(class="p-6 md:p-10")
     
     //- Điều hướng quay lại
     div(class="mb-8")
@@ -40,21 +41,27 @@ block main
         //- ID lịch đặt hiển thị to
         .text-right
           p.text-xs.font-black.text-neutral-400.uppercase.tracking-widest Mã lịch đặt
-          p.text-xl.font-black.text-neutral-800(class="opacity-50") ##{booking.id.substring(0, 8).toUpperCase()}
+          p.text-xl.font-black.text-neutral-800(class="opacity-50") ##{booking.id ? booking.id.substring(0, 8).toUpperCase() : 'ĐANG CẬP NHẬT'}
 
       //- PHẦN 2: Nội dung chi tiết (Chia 2 cột trên màn hình lớn)
       .p-8.grid.grid-cols-1.gap-12(class="md:p-12 md:grid-cols-2")
         
-        //- Cột trái: Thời gian & Địa điểm
+        //- Cột trái: Thời gian & Địa điểm & Chuyên viên
         .space-y-8
           div
             h3.text-xs.font-black.text-neutral-400.uppercase.tracking-widest.mb-4(class="flex items-center gap-2")
               i.fa-solid.fa-clock-rotate-left
-              | Thời gian cuộc hẹn
-            .bg-neutral-50.rounded-2xl.p-5
+              | Thông tin cuộc hẹn
+            .bg-neutral-50.rounded-2xl.p-5.space-y-3
               p.text-lg.font-bold.text-neutral-800
                 | #{booking.booking_date ? new Date(booking.booking_date).toLocaleDateString('vi-VN', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'}) : '--/--/----'}
-              p.text-3xl.font-black(class="text-[#FF2D55] mt-1") #{booking.slot_time}
+              p.text-3xl.font-black(class="text-[#FF2D55]") #{booking.slot_time}
+              
+              //- ĐÃ SỬA LỖI HTML: Viết chuẩn cú pháp Pug thụt lề để không bị lỗi render thẻ
+              .pt-3.border-t.border-neutral-200.flex.items-center.gap-2.text-sm.text-neutral-600
+                i.fa-solid.fa-user-tie.text-neutral-400
+                span Chuyên viên: 
+                span.font-bold.text-neutral-800 #{artistName}
 
           div
             h3.text-xs.font-black.text-neutral-400.uppercase.tracking-widest.mb-4(class="flex items-center gap-2")
@@ -64,7 +71,7 @@ block main
               if booking.address
                 | #{booking.address}
               else
-                | Thực hiện trực tiếp tại Susannie Makeup (Địa chỉ mặc định)
+                | Thực hiện trực tiếp tại Studio (Địa chỉ mặc định)
 
         //- Cột phải: Tài chính & Thanh toán
         div
@@ -75,22 +82,21 @@ block main
           .space-y-4
             .flex.justify-between.items-center
               span.text-neutral-500 Tổng giá trị dịch vụ
-              span.text-lg.font-bold.text-neutral-800 #{Number(booking.price).toLocaleString('vi-VN')} đ
+              span.text-lg.font-bold.text-neutral-800 #{booking.price ? Number(booking.price).toLocaleString('vi-VN') : '0'} đ
             
             .flex.justify-between.items-center
               span.text-neutral-500 Số tiền đã đặt cọc
-              span.text-lg.font-bold.text-green-600 - #{Number(booking.deposit).toLocaleString('vi-VN')} đ
+              span.text-lg.font-bold.text-green-600 - #{booking.deposit ? Number(booking.deposit).toLocaleString('vi-VN') : '0'} đ
             
             .pt-4.border-t.border-dashed.border-neutral-200.flex.justify-between.items-center
               div
                 span.text-sm.font-black.text-neutral-800 Còn lại cần thanh toán
                 p.text-xs.text-neutral-400 (Tại cửa hàng sau khi làm xong)
               span.text-3xl.font-black(class="text-[#FF2D55]")
-                | #{Number(booking.remaining_balance).toLocaleString('vi-VN')} đ
+                | #{booking.remaining_balance ? Number(booking.remaining_balance).toLocaleString('vi-VN') : '0'} đ
 
-    //- PHẦN 3: Chân trang & Hỗ trợ
-    .mt-8.flex.flex-col.items-center.gap-6(class="md:flex-row md:justify-between")
-      div
-        p.text-sm.text-neutral-400 Lịch hẹn này được tạo vào lúc: 
-          span.font-bold #{new Date(booking.created_at).toLocaleString('vi-VN')}
-      
+    //- PHẦN 3: Chân trang (Đặt ra ngoài Card, thêm class để chống tràn lề)
+    .mt-8.pt-4.flex.flex-col.items-center.justify-between.gap-4.w-full(class="md:flex-row")
+      p.text-sm.text-neutral-400.block.w-full.text-left
+        | Lịch hẹn này được tạo vào lúc: 
+        span.font-bold.text-neutral-600 #{booking.created_at ? new Date(booking.created_at).toLocaleString('vi-VN') : '--/--/---- --:--'}

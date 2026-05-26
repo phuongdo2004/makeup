@@ -38,8 +38,8 @@ block main
                   else
                     span.status-pill.bg-neutral-100.text-neutral-600.font-bold.text-sm Đã hủy
 
-              //- Khối 2: Chi tiết dịch vụ & Thời gian
-              .grid.grid-cols-1.gap-6.mb-6(class="md:grid-cols-3")
+              //- Khối 2: Chi tiết dịch vụ & Thời gian (Đã nâng lên md:grid-cols-4 để chứa thêm cột)
+              .grid.grid-cols-1.gap-6.mb-6(class="md:grid-cols-4")
                 div
                   span.block.text-xs.font-black.text-neutral-400.uppercase.tracking-widest.mb-1 Khung giờ hẹn
                   p.text-base.font-bold.text-neutral-800.flex.items-center.gap-2
@@ -47,33 +47,40 @@ block main
                     | #{booking.slot_time}
                 
                 div
-                  span.block.text-xs.font-black.text-neutral-400.uppercase.tracking-widest.mb-1 Địa điểm làm việc
-                  p.text-sm.font-medium.text-neutral-600.line-clamp-2(title=booking.address)
-                    i.fa-solid.fa-location-dot.text-neutral-400.mr-1
-                    | #{booking.address}
-                
-                div
                   span.block.text-xs.font-black.text-neutral-400.uppercase.tracking-widest.mb-1 Tên khách hàng
                   p.text-base.font-bold.text-neutral-800.flex.items-center.gap-2
                     i.fa-solid.fa-user.text-neutral-400
                     | #{Customer.fullName}
+
+                //- PHẦN THÊM MỚI: Hiển thị tên Chuyên viên thực hiện cuộc hẹn
+                div
+                  span.block.text-xs.font-black.text-neutral-400.uppercase.tracking-widest.mb-1 Chuyên viên
+                  p.text-base.font-bold.text-neutral-800.flex.items-center.gap-2
+                    i.fa-solid.fa-user-tie.text-neutral-400
+                    | #{booking.artist_name}
+                
+                div
+                  span.block.text-xs.font-black.text-neutral-400.uppercase.tracking-widest.mb-1 Địa điểm làm việc
+                  p.text-sm.font-medium.text-neutral-600.line-clamp-2(title=booking.address)
+                    i.fa-solid.fa-location-dot.text-neutral-400.mr-1
+                    | #{booking.address}
 
               //- Khối 3: Chi tiết tài chính
               .bg-neutral-50.rounded-xl.p-5.grid.grid-cols-3.gap-4.text-center
                 div
                   span.block.font-black.text-neutral-400.uppercase.tracking-wider.mb-1(class="text-[11px]") Tổng chi phí
                   p.text-base.font-black.text-neutral-800
-                    | #{Number(booking.price).toLocaleString('vi-VN')} đ
+                    | #{booking.price ? Number(booking.price).toLocaleString('vi-VN') : '0'} đ
                 
                 div
                   span.block.font-black.text-neutral-400.uppercase.tracking-wider.mb-1(class="text-[11px]") Đã đặt cọc
                   p.text-base.font-bold.text-green-600
-                    | - #{Number(booking.deposit).toLocaleString('vi-VN')} đ
+                    | - #{booking.deposit ? Number(booking.deposit).toLocaleString('vi-VN') : '0'} đ
                 
                 div
                   span.block.font-black.text-neutral-400.uppercase.tracking-wider.mb-1(class="text-[11px]") Còn lại
                   p.text-base.font-black(class="text-[#FF2D55]")
-                    | #{Number(booking.remaining_balance).toLocaleString('vi-VN')} đ
+                    | #{booking.remaining_balance ? Number(booking.remaining_balance).toLocaleString('vi-VN') : '0'} đ
 
               //- Khối 4: Nút tương tác nhanh
               .flex.justify-end.gap-3.mt-4.pt-4.border-t.border-neutral-50
@@ -82,16 +89,6 @@ block main
                   class="px-5 py-2.5 text-neutral-600 bg-neutral-100 hover:bg-neutral-200"
                 )
                   | Xem chi tiết
-                
-                if booking.status === 'deposited' || booking.status === 'pending'
-                  a.rounded-full.font-bold.text-xs.uppercase.tracking-widest.text-white.transition-all(
-                    href="https://zalo.me/your_salon_phone" 
-                    target="_blank"
-                    class="px-5 py-2.5 bg-[#FF2D55] hover:bg-[#ff4f70]"
-                  )
-                    //- ĐÃ SỬA: Đưa .mr-1.5 vào trong cặp ngoặc đơn để không lỗi biên dịch
-                    i.fa-solid.fa-comment-dots(class="mr-1.5")
-                    | Liên hệ Hỗ trợ
     else
       //- Trạng thái trống khi chưa có lịch đặt
       .text-center.py-16.bg-white.rounded-2xl.border.border-neutral-100.p-8

@@ -7,13 +7,16 @@ block main
     .grid.grid-cols-1.gap-10(class='md:grid-cols-2 lg:grid-cols-3')
       each service in services
         .service-card.bg-white.rounded-3xl.overflow-hidden.flex.flex-col.h-full
-          .relative.h-72.overflow-hidden
-            img.w-full.h-full.object-cover(src=service.images)
+          .relative.h-72.overflow-hidden.bg-neutral-950.flex.items-center.justify-center
+            //- Lớp ảnh nền mờ phía sau tạo chiều sâu cho ảnh dọc/ngang trống biên
+            img.absolute.inset-0.w-full.h-full.object-cover.blur-md.opacity-30(src=service.images)
+            //- Lớp ảnh chính hiển thị trọn vẹn 100% không mất góc
+            img.relative.z-10.max-w-full.max-h-full.object-contain(src=service.images)
           .p-8.flex.flex-col.flex-grow
             h3.text-xl.font-bold.text-black.uppercase.mb-2 #{service.name}
             p.text-xs.text-neutral-400.mb-6.flex.items-center.italic
               i.fa-solid.fa-location-dot.mr-2(class='text-[#D2B48C]')
-              |  Thị trấn Lim, Huyện Tiên Du, Bắc Ninh
+              |  100 Hai Bà Trưng, Thị trấn Lim, Huyện Tiên Du, Bắc Ninh
             .flex.justify-between.items-center.py-4.border-y.border-neutral-50.mb-6
               //- Nhóm bên trái: Icon + Thời lượng (Đã bọc lại để không bị vỡ layout)
               .flex.items-center.gap-2

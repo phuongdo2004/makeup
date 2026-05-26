@@ -76,6 +76,13 @@ block main
             div
               p.text-neutral-400.uppercase.tracking-widest(class="text-[10px] font-bold") Trạng thái hiện tại
               span(class=`status-pill ${booking.statusClass} px-3 py-1 rounded-full text-[10px] font-bold uppercase`) #{booking.statusLabel}
+            
+            //- PHẦN THÊM MỚI: Hiển thị tên chuyên viên Makeup dựa trên artistName từ Controller gửi qua
+            div
+              p.text-neutral-400.uppercase.tracking-widest(class="text-[10px] font-bold") Chuyên viên thực hiện
+              p.text-sm.font-bold.text-neutral-800
+                i.fa-solid.fa-user-tie.text-neutral-400.mr-2
+                | #{booking.artistName}
 
         .card.p-8.bg-white.rounded-2xl.shadow-sm
           h3.text-lg.font-bold.mb-6.serif-font.italic Thời gian & Địa điểm
@@ -103,7 +110,7 @@ block main
           h3.text-lg.font-bold.mb-8.serif-font.italic Tổng kết chi phí
           
           .space-y-4.border-b.border-neutral-800.pb-6
-            //- 1. Tổng giá dịch vụ
+            //- 1.  Tổng giá dịch vụ
             .flex.justify-between
               span.text-neutral-400.text-xs Tổng giá dịch vụ
               span.text-xs.font-bold #{booking.priceDisplay}đ

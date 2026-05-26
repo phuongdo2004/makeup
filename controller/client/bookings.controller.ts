@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Booking from "../../model/booking.model.js";
+import Artist from "../../model/artist.model.js"; // Import trực tiếp model Artist
 
 /**
  * [GET] /bookings/history
@@ -7,7 +8,6 @@ import Booking from "../../model/booking.model.js";
  */
 export const history = async (req: Request, res: Response): Promise<void> => {
   try {
-    // 1. Lấy trực tiếp thông tin khách hàng từ res.locals đã được middleware bóc tách sẵn
     const currentCustomer = res.locals.Customer;
 
     if (!currentCustomer || !currentCustomer.customer_id) {
@@ -15,18 +15,31 @@ export const history = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // 2. Dùng await lấy danh sách lịch đặt theo đúng id_customer của người này
+    // 1. Lấy danh sách lịch đặt thuần
     const bookings = await Booking.findAll({
       where: {
         id_customer: currentCustomer.customer_id,
-        is_deleted: 0 // Chỉ lấy những lịch hẹn chưa bị xóa ẩn
+        is_deleted: 0 
       },
       order: [["booking_date", "DESC"], ["slot_time", "DESC"]],
-      raw: true // Chuyển thành object thuần để đẩy sang Pug cho mượt
-    });
+      raw: true 
+    }) as any[];
 
-    // 3. Render giao diện và truyền mảng bookings sang file Pug
-    // Lưu ý: Ở file Pug, em có thể dùng thẳng #{Customer.fullName} để hiển thị tên mà không cần qua vòng lặp.
+    // 2. Chạy vòng lặp bổ sung tên chuyên viên cho từng booking (Cách thủ công đơn giản)
+    for (const booking of bookings) {
+      if ((booking as any).id_artist) {
+        const artist = await Artist.findOne({
+          where: { id: (booking as any).id_artist },
+          attributes: ["name"],
+          raw: true
+        });
+        // Gán trực tiếp thuộc tính artist_name vào object booking hiện tại
+        (booking as any).artist_name = artist ? (artist as any).name : "Chưa phân bổ";
+      } else {
+        (booking as any).artist_name = "Chưa phân bổ";
+      }
+    }
+
     res.render("client/pages/bookings/history.pug", {
       pageTitle: "Lịch sử đặt lịch",
       bookings: bookings 
@@ -52,27 +65,39 @@ export const getBookingDetail = async (req: Request, res: Response): Promise<voi
       return;
     }
 
-    // 1. Tìm lịch đặt dựa vào ID trên URL và phải thuộc về khách hàng đang đăng nhập
+    // 1. Tìm lịch đặt của khách hàng
     const booking = await Booking.findOne({
       where: {
         id: bookingId,
         id_customer: currentCustomer.customer_id,
-        is_deleted: 0 // Lịch hẹn chưa bị xóa ẩn
+        is_deleted: 0 
       },
-      raw: true // Lấy object thuần để truyền sang giao diện cho nhẹ
+      raw: true 
     });
 
-    // 2. Nếu không tìm thấy lịch hẹn hoặc lịch hẹn của người khác
     if (!booking) {
       req.flash("error", "Không tìm thấy thông tin lịch hẹn hoặc em không có quyền xem!");
       res.redirect("/bookings/history");
       return;
     }
 
-    // 3. Render giao diện chi tiết lịch đặt
+    // 2. Tìm tên của chuyên viên dựa vào id_artist lấy được từ booking trên
+    let artistName = "Chưa phân bổ";
+    if ((booking as any).id_artist) {
+      const artist = await Artist.findOne({
+        where: { id: (booking as any).id_artist },
+        attributes: ["name"],
+        raw: true
+      });
+      if (artist) {
+        artistName = (artist as any).name;
+      }
+    }
+
     res.render("client/pages/bookings/detail", {
       pageTitle: `Chi tiết lịch hẹn`,
-      booking: booking
+      booking: booking,
+      artistName: artistName // Truyền trực tiếp chuỗi tên thợ sang view
     });
 
   } catch (error) {

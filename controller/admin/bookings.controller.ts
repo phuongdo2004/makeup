@@ -188,14 +188,14 @@ import Booking from "../../model/booking.model.js";
 import Customer from "../../model/customer.model.js";
 import Service from "../../model/service.model.js";
 import { system } from "../../config/system.js";
-
+import Artist from "../../model/artist.model.js"; // <-- NHỚ IMPORT MODEL ARTIST VÀO ĐÂY  
 // [GET] /admin/bookings
 export const index = async (req: Request, res: Response) => {
   const limit = 4;
   const page = parseInt(req.query.page as string) || 1;
   const offset = (page - 1) * limit;
 
-  const countBookings = await Booking.count(); 
+  const countBookings = await Booking.count({ where: { is_deleted: 0 } });
   const totalPage = Math.ceil(countBookings / limit);
 
   const pagination = {
@@ -257,9 +257,73 @@ export const index = async (req: Request, res: Response) => {
 };
 
 // [GET] /admin/bookings/detail/:id
+// export const detail = async (req: Request, res: Response) => {
+//   try {
+//     const id = req.params.id as string; // Thêm "as string" ở đây để sửa lỗi TS
+
+//     const booking = await Booking.findOne({
+//       where: { id: id, is_deleted: 0 },
+//       raw: true
+//     }) as any;
+
+//     if (!booking) {
+//       req.flash("error", "Không tìm thấy lịch đặt!");
+//       return res.redirect("back");
+//     }
+
+//     const customer = await Customer.findOne({
+//       where: { customer_id: booking.id_customer },
+//       raw: true
+//     }) as any;
+
+//     const service = await Service.findOne({
+//       where: { id: booking.id_service },
+//       raw: true
+//     }) as any;
+
+//     const statusMap: any = {
+//       'pending': { label: 'Chờ xác nhận', class: 'bg-yellow-100 text-yellow-700' },
+//       'paid': { label: 'Đã thanh toán', class: 'bg-green-100 text-green-700' },
+//       'deposited': { label: 'Đã đặt cọc', class: 'bg-blue-100 text-blue-700' },
+//       'cancelled': { label: 'Đã hủy lịch', class: 'bg-red-100 text-red-700' }
+//     };
+
+//     // Tính toán số tiền đã trả tạm thời dựa vào trạng thái
+//     let paidAmount = Number(booking.deposit || 0);
+//     if (booking.status === "paid") {
+//       paidAmount = Number(booking.price || 0);
+//     }
+
+//     const displayData = {
+//       ...booking,
+//       customerName: customer ? customer.fullName : "N/A",
+//       customerPhone: customer ? customer.phone : "N/A",
+//       serviceName: service ? service.name : "N/A",
+//       statusLabel: statusMap[booking.status]?.label || booking.status,
+//       statusClass: statusMap[booking.status]?.class || 'bg-gray-100',
+      
+//       // Định dạng chuỗi số tiền gửi qua giao diện Pug
+//       priceDisplay: Number(booking.price || 0).toLocaleString('vi-VN'),
+//       depositDisplay: Number(booking.deposit || 0).toLocaleString('vi-VN'),
+//       paidDisplay: paidAmount.toLocaleString('vi-VN'),
+//       remainingDisplay: Number(booking.remaining_balance || 0).toLocaleString('vi-VN')
+//     };
+
+//     res.render("admin/pages/bookings/detail.pug", {
+//       booking: displayData
+//     });
+
+//   } catch (error) {
+//     console.error("Error in booking detail:", error);
+//     req.flash("error", "Đã xảy ra lỗi hệ thống!");
+//     res.redirect("back");
+//   }
+// };
+
+// [GET] /admin/bookings/detail/:id
 export const detail = async (req: Request, res: Response) => {
   try {
-    const id = req.params.id as string; // Thêm "as string" ở đây để sửa lỗi TS
+    const id = req.params.id as string; 
 
     const booking = await Booking.findOne({
       where: { id: id, is_deleted: 0 },
@@ -271,13 +335,22 @@ export const detail = async (req: Request, res: Response) => {
       return res.redirect("back");
     }
 
+    // 1. Tìm thông tin khách hàng
     const customer = await Customer.findOne({
       where: { customer_id: booking.id_customer },
       raw: true
     }) as any;
 
+    // 2. Tìm thông tin dịch vụ
     const service = await Service.findOne({
       where: { id: booking.id_service },
+      raw: true
+    }) as any;
+
+    // 3. PHẦN THÊM MỚI: Tìm thông tin chuyên viên dựa trên id_artist từ lịch đặt
+    const artist = await Artist.findOne({
+      where: { id: booking.id_artist },
+      attributes: ["name"], // Chỉ lấy cột name cho nhẹ
       raw: true
     }) as any;
 
@@ -299,6 +372,10 @@ export const detail = async (req: Request, res: Response) => {
       customerName: customer ? customer.fullName : "N/A",
       customerPhone: customer ? customer.phone : "N/A",
       serviceName: service ? service.name : "N/A",
+      
+      // Gán tên chuyên viên vào dữ liệu hiển thị (Nếu không tìm thấy thợ thì hiện N/A)
+      artistName: artist ? artist.name : "N/A", 
+
       statusLabel: statusMap[booking.status]?.label || booking.status,
       statusClass: statusMap[booking.status]?.class || 'bg-gray-100',
       
@@ -319,7 +396,6 @@ export const detail = async (req: Request, res: Response) => {
     res.redirect("back");
   }
 };
-
 // [POST/PATCH] /admin/bookings/cancel/:id
 export const cancel = async (req: Request, res: Response) => {
   const id = req.params.id as string; // Thêm "as string" sửa lỗi TS
