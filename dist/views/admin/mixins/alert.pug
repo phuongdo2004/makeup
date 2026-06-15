@@ -21,11 +21,11 @@ mixin alert(time)
           .toast-close &times;
           .toast-progress
       -if(message.error2)
-        #toast-delete.toast.toast-delete.active
+        #toast-error2.toast.toast-error2.active
           .toast-icon
-            i.fas.fa-trash-alt
+            i.fas.fa-exclamation-circle.text-red-500
           .toast-content
-            span.toast-title Error
+            span.toast-title Lỗi
             span.toast-message #{message.error2}.
           .toast-close &times;
           .toast-progress

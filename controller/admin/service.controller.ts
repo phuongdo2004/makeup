@@ -6,6 +6,102 @@ import { Op } from "sequelize";
 import { pagi } from "../../helpers/pagination.helper.js";
 import Booking from "../../model/booking.model.js"; // NHỚ IMPORT MODEL BOOKING VÀO ĐÂY
 
+
+// [GET] /admin/services
+export const index = async (req: Request, res: Response) => {
+    try {
+       const keyword = req.query.keyword as string || "";
+        const whereCondition: any = { is_deleted: 0 };
+        if (keyword) {
+            whereCondition.name = { [Op.like]: `%${keyword}%` };
+        }
+
+        // Truyền whereCondition vào đây
+        const pagination = await pagi(req, res, whereCondition);
+        
+        const services = await Service.findAll({
+            where: whereCondition,
+            limit: pagination.limitItem,
+            offset: pagination.skip,
+            raw: true
+        });
+
+        const processedServices = services.map(service => {
+            let imageDisplay = "";
+            if ((service as any).images) {
+                try {
+                    const imgs = JSON.parse((service as any).images);
+                    imageDisplay = Array.isArray(imgs) ? imgs[0] : imgs;
+                } catch (e) {
+                    imageDisplay = (service as any).images; 
+                }
+            }
+
+            return {
+                ...service,
+                images: imageDisplay,
+                address: "Susannie Studio"
+            };
+        });
+
+        res.render("admin/pages/service/index.pug", {
+            services: processedServices,
+            pagination: pagination,
+            keyword: keyword,
+            totalService: pagination.count,
+            message: req.flash()
+        });
+    } catch (error) {
+        console.error("Lỗi trang quản lý dịch vụ:", error);
+        res.status(500).send("Lỗi hệ thống.");
+    }
+};
+// [GET] /admin/services
+// export const index = async (req: Request, res: Response) => {
+//     try {
+//         const pagination = await pagi(req, res);
+        
+//         // Chỉ lấy các trường hiện có trong Database sau khi em đã chạy SQL xóa cột
+//         const services = await Service.findAll({
+//             where: { is_deleted: 0 },
+//             limit: (await pagination).limitItem,
+//             offset: (await pagination).skip,
+//             raw: true
+//         });
+
+//         // Xử lý dữ liệu an toàn để hiển thị ra danh sách
+//         const processedServices = services.map(service => {
+//             // 1. Xử lý ảnh an toàn (Lấy tấm đầu tiên)
+//             let imageDisplay = "";
+//             if ((service as any).images) {
+//                 try {
+//                     const imgs = JSON.parse((service as any).images);
+//                     imageDisplay = Array.isArray(imgs) ? imgs[0] : imgs;
+//                 } catch (e) {
+//                     // Nếu không phải JSON (ví dụ link trực tiếp), dùng luôn link đó
+//                     imageDisplay = (service as any).images; 
+//                 }
+//             }
+
+//             // 2. Trả về object sạch, không còn rating hay artist_id
+//             return {
+//                 ...service,
+//                 images: imageDisplay,
+//                 address: "Susannie Studio" // Fix cứng vì đã xóa bảng Artist/artist_id
+//             };
+//         });
+
+//         res.render("admin/pages/service/index.pug", {
+//             services: processedServices,
+//             pagination: pagination,
+//             totalService: pagination.count,
+//             message: req.flash()
+//         });
+//     } catch (error) {
+//         console.error("Lỗi trang quản lý dịch vụ:", error);
+//         res.status(500).send("Lỗi hệ thống: Dữ liệu bảng Service không khớp.");
+//     }
+// };
 export const deleted = async (req: Request, res: Response) => {
   try {
     console.log("gdfugiosf");
@@ -53,52 +149,6 @@ export const deleted = async (req: Request, res: Response) => {
     req.flash("error2", "Có lỗi xảy ra ở hệ thống, không thể xóa dịch vụ!");
     res.redirect(`/${system.prefixAdmin}/service`);
   }
-};
-// [GET] /admin/services
-export const index = async (req: Request, res: Response) => {
-    try {
-        const pagination = await pagi(req, res);
-        
-        // Chỉ lấy các trường hiện có trong Database sau khi em đã chạy SQL xóa cột
-        const services = await Service.findAll({
-            where: { is_deleted: 0 },
-            limit: (await pagination).limitItem,
-            offset: (await pagination).skip,
-            raw: true
-        });
-
-        // Xử lý dữ liệu an toàn để hiển thị ra danh sách
-        const processedServices = services.map(service => {
-            // 1. Xử lý ảnh an toàn (Lấy tấm đầu tiên)
-            let imageDisplay = "";
-            if ((service as any).images) {
-                try {
-                    const imgs = JSON.parse((service as any).images);
-                    imageDisplay = Array.isArray(imgs) ? imgs[0] : imgs;
-                } catch (e) {
-                    // Nếu không phải JSON (ví dụ link trực tiếp), dùng luôn link đó
-                    imageDisplay = (service as any).images; 
-                }
-            }
-
-            // 2. Trả về object sạch, không còn rating hay artist_id
-            return {
-                ...service,
-                images: imageDisplay,
-                address: "Susannie Studio" // Fix cứng vì đã xóa bảng Artist/artist_id
-            };
-        });
-
-        res.render("admin/pages/service/index.pug", {
-            services: processedServices,
-            pagination: pagination,
-            totalService: pagination.count,
-            message: req.flash()
-        });
-    } catch (error) {
-        console.error("Lỗi trang quản lý dịch vụ:", error);
-        res.status(500).send("Lỗi hệ thống: Dữ liệu bảng Service không khớp.");
-    }
 };
 // [GET] /admin/service/create
 export const create = async (req: Request, res: Response) => {
