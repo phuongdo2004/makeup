@@ -20,6 +20,15 @@ mixin alert(time)
             span.toast-message #{message.error}.
           .toast-close &times;
           .toast-progress
+      -if(message.error2)
+        #toast-delete.toast.toast-delete.active
+          .toast-icon
+            i.fas.fa-trash-alt
+          .toast-content
+            span.toast-title Error
+            span.toast-message #{message.error2}.
+          .toast-close &times;
+          .toast-progress
 
 
       -if(message.warning)

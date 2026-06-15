@@ -1,3 +1,33 @@
+// function showToast(message) {
+//   const container = document.getElementById('toast-container');
+//   const toast = document.getElementById('toast-success'); // Hoặc tạo mới element
+//   // console.log(toast);
+//   // Hiển thị toast
+//   if(toast){
+//     console.log(toast);
+//       toast.classList.add('show'); 
+  
+//   // Sau 3 giây thì bắt đầu ẩn
+//   setTimeout(() => {
+//     toast.style.opacity = '0';
+//     toast.style.transform = 'translateX(20px)';
+    
+//     // Đợi hiệu ứng transition chạy xong (khoảng 300ms) rồi xóa hẳn
+//     toast.addEventListener('transitionend', () => {
+//       toast.remove(); 
+//     });
+//   }, 3000);
+  
+// // Logic cho nút đóng (x)
+// document.querySelector('.toast-close').addEventListener('click', (e) => {
+//     const toast = e.target.closest('.toast');
+//     toast.remove();
+// });
+// }
+// }
+// showToast('success');
+// showToast('waring');
+// showToast('delete');
 
 const uploadImage = document.querySelector("[upload-image]");
 if (uploadImage) {
@@ -69,6 +99,8 @@ function showToast(message) {
   const container = document.getElementById('toast-container');
   const toast = document.getElementById('toast-success'); // Hoặc tạo mới element
   if(toast){
+    console.log(toast);
+    console.log("cos");
     // Hiển thị toast
   toast.classList.add('show'); 
   
@@ -91,11 +123,46 @@ document.querySelector('.toast-close').addEventListener('click', (e) => {
 }
 
 }
+function initToasts() {
+  // 1. Lấy tất cả các toast đang hiển thị trên giao diện (bất kể loại nào)
+  const toasts = document.querySelectorAll('.toast');
 
+  toasts.forEach((toast) => {
+    // Đảm bảo toast có class active để hiển thị (vì Pug của em đã có sẵn class .active)
+    toast.classList.add('active');
+
+    // 2. Tự động ẩn sau 3 giây (3000ms)
+    setTimeout(() => {
+      if (toast) {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(20px)';
+        toast.style.transition = 'all 0.3s ease';
+
+        // Đợi hiệu ứng transition chạy xong rồi xóa hẳn khỏi DOM
+        toast.addEventListener('transitionend', () => {
+          toast.remove();
+        });
+      }
+    }, 3000);
+
+    // 3. Xử lý sự kiện khi click vào nút đóng (x) của RIÊNG toast đó
+    const closeBtn = toast.querySelector('.toast-close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        toast.remove();
+      });
+    }
+  });
+}
+
+// Gọi hàm chạy ngay khi trang web được tải xong
+document.addEventListener('DOMContentLoaded', () => {
+  initToasts();
+});
   showToast('success');
 showToast('waring');
 showToast('delete');
-
+showToast('error');
 // toast end 
 // deleted start
 // Xử lý Xóa mềm (Soft Delete)

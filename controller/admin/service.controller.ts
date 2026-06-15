@@ -2,8 +2,58 @@ import { Request, Response } from "express";
 import { system } from "../../config/system.js";
 import Service from "../../model/service.model.js";
 import Artist from "../../model/artist.model.js";
+import { Op } from "sequelize";
 import { pagi } from "../../helpers/pagination.helper.js";
+import Booking from "../../model/booking.model.js"; // NHỚ IMPORT MODEL BOOKING VÀO ĐÂY
 
+export const deleted = async (req: Request, res: Response) => {
+  try {
+    console.log("gdfugiosf");
+
+    const id = req.params.id;
+
+    if (!id) {
+      req.flash("error2", "ID dịch vụ không hợp lệ!");
+      return res.redirect(`/${system.prefixAdmin}/service`);
+    }
+
+    // ================= LOGIC KIỂM TRA LỊCH ĐẶT CHƯA HOÀN THÀNH =================
+    // Tìm đơn đặt dịch vụ này đang ở trạng thái 'pending' (Chờ xác nhận) hoặc 'deposited' (Đã đặt cọc)
+    const activeBooking = await Booking.findOne({
+      where: {
+        id_service: id, // Kiểm tra xem khóa ngoại liên kết dịch vụ là id_service hay service_id nha em
+        is_deleted: 0,
+        status: {
+          [Op.in]: ["pending", "deposited"] // Các trạng thái lịch đặt chưa hoàn tất thanh toán
+        }
+      },
+      raw: true
+    });
+    console.log("activeBooking khi xóa dịch vụ:", activeBooking);
+
+    // Nếu tồn tại lịch hẹn chưa hoàn tất, chặn không cho xóa và phát thông báo lỗi
+    if (activeBooking) {
+        console.log("Không thể xóa dịch vụ vì còn lịch đặt chưa hoàn tất:", activeBooking);
+      req.flash("error2", "Không thể xóa dịch vụ này vì hiện đang có lịch hẹn của khách hàng chưa hoàn tất");
+      return res.redirect(`/${system.prefixAdmin}/service`);
+    }
+    // ===========================================================================
+
+    // Nếu không vướng lịch đặt nào, tiến hành xóa mềm dịch vụ
+    await Service.update(
+      { is_deleted: 1 }, 
+      { where: { id: id } }
+    );
+
+    req.flash("success", "Đã xóa dịch vụ thành công!");
+    res.redirect(`/${system.prefixAdmin}/service`); 
+
+  } catch (error) {
+    console.error("Lỗi khi xử lý xóa dịch vụ:", error);
+    req.flash("error2", "Có lỗi xảy ra ở hệ thống, không thể xóa dịch vụ!");
+    res.redirect(`/${system.prefixAdmin}/service`);
+  }
+};
 // [GET] /admin/services
 export const index = async (req: Request, res: Response) => {
     try {
@@ -43,6 +93,7 @@ export const index = async (req: Request, res: Response) => {
             services: processedServices,
             pagination: pagination,
             totalService: pagination.count,
+            message: req.flash()
         });
     } catch (error) {
         console.error("Lỗi trang quản lý dịch vụ:", error);
@@ -359,23 +410,23 @@ export const editPost = async (req: Request, res: Response) => {
   }
 };
 // [PATCH] /admin/service/delete/:id
-export const deleted = async(req: Request, res: Response) => {
-    try {
-        const id = req.params.id;
+// export const deleted = async(req: Request, res: Response) => {
+//     try {
+//         const id = req.params.id;
 
-        // Cập nhật trạng thái xóa
-        await Service.update(
-            { is_deleted: 1 }, 
-            { where: { id: id } }
-        );
+//         // Cập nhật trạng thái xóa
+//         await Service.update(
+//             { is_deleted: 1 }, 
+//             { where: { id: id } }
+//         );
 
-        req.flash("success", "Đã xóa dịch vụ thành công!");
+//         req.flash("success", "Đã xóa dịch vụ thành công!");
         
-        // CHỈNH TẠI ĐÂY: Quay về trang danh sách thay vì quay lại trang detail đã mất
-        res.redirect(`/${system.prefixAdmin}/service`); 
+//         // CHỈNH TẠI ĐÂY: Quay về trang danh sách thay vì quay lại trang detail đã mất
+//         res.redirect(`/${system.prefixAdmin}/service`); 
 
-    } catch (error) {
-        console.error("Lỗi khi xóa:", error);
-        res.redirect(`/${system.prefixAdmin}/service`);
-    }
-}
+//     } catch (error) {
+//         console.error("Lỗi khi xóa:", error);
+//         res.redirect(`/${system.prefixAdmin}/service`);
+//     }
+// }

@@ -20,6 +20,15 @@ mixin alert(time)
             span.toast-message #{message.error}.
           .toast-close &times;
           .toast-progress
+      -if(message.error2)
+        #toast-error2.toast.toast-error2.active
+          .toast-icon
+            i.fas.fa-exclamation-circle.text-red-500
+          .toast-content
+            span.toast-title Lỗi
+            span.toast-message #{message.error2}.
+          .toast-close &times;
+          .toast-progress
 
 
       -if(message.warning)

@@ -22,13 +22,6 @@ block main
             name="status" 
             class="bg-transparent text-xs font-bold uppercase tracking-widest px-4 py-2 outline-none cursor-pointer"
           )
-            //- Vô hiệu hóa 'Chờ xác nhận' nếu trạng thái hiện tại đã là 'deposited' hoặc 'paid'
-            option(
-              value="pending" 
-              selected=(booking.status === 'pending')
-              disabled=(booking.status === 'deposited' || booking.status === 'paid')
-            ) ⏳ Chờ xác nhận
-            
             //- Vô hiệu hóa 'Đã đặt cọc' nếu trạng thái hiện tại đã là 'paid'
             option(
               value="deposited" 
@@ -45,14 +38,6 @@ block main
             type="submit"
             class="px-6 py-2 bg-black rounded-full text-[10px] font-bold uppercase tracking-widest hover:opacity-80 transition-all cursor-pointer text-[#D2B48C]"
           ) Cập nhật
-
-        //- Nút Hủy nhanh (Chỉ hiện nếu chưa bị hủy và chưa hoàn thành)
-        if booking.status !== 'cancelled' && booking.status !== 'paid'
-          button.px-6.py-3.bg-red-50.text-red-600.rounded-full.text-xs.font-bold.uppercase.tracking-widest(
-            class="hover:bg-red-500 hover:text-white transition-all cursor-pointer"
-            button-cancel-booking
-            data-id=booking.id
-          ) Hủy lịch
 
     //- Form ẩn để gửi lệnh Hủy
     form(

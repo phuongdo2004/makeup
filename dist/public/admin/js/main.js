@@ -1,3 +1,33 @@
+// function showToast(message) {
+//   const container = document.getElementById('toast-container');
+//   const toast = document.getElementById('toast-success'); // Hoặc tạo mới element
+//   // console.log(toast);
+//   // Hiển thị toast
+//   if(toast){
+//     console.log(toast);
+//       toast.classList.add('show'); 
+  
+//   // Sau 3 giây thì bắt đầu ẩn
+//   setTimeout(() => {
+//     toast.style.opacity = '0';
+//     toast.style.transform = 'translateX(20px)';
+    
+//     // Đợi hiệu ứng transition chạy xong (khoảng 300ms) rồi xóa hẳn
+//     toast.addEventListener('transitionend', () => {
+//       toast.remove(); 
+//     });
+//   }, 3000);
+  
+// // Logic cho nút đóng (x)
+// document.querySelector('.toast-close').addEventListener('click', (e) => {
+//     const toast = e.target.closest('.toast');
+//     toast.remove();
+// });
+// }
+// }
+// showToast('success');
+// showToast('waring');
+// showToast('delete');
 
 const uploadImage = document.querySelector("[upload-image]");
 if (uploadImage) {

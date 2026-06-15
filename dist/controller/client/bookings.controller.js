@@ -37,12 +37,48 @@ export const history = async (req, res) => {
         }
         res.render("client/pages/bookings/history.pug", {
             pageTitle: "Lịch sử đặt lịch",
-            bookings: bookings
+            bookings: bookings,
+            message: req.flash()
         });
     }
     catch (error) {
         console.error("Lỗi khi lấy lịch sử đặt lịch:", error);
         res.redirect("/");
+    }
+};
+export const cancelBooking = async (req, res) => {
+    try {
+        const id = req.params.id;
+        if (!id) {
+            req.flash("error2", "Mã lịch đặt không hợp lệ!");
+            return res.redirect("/bookings/history");
+        }
+        // 1. Tìm đơn đặt lịch còn hoạt động của khách hàng
+        const booking = await Booking.findOne({
+            where: {
+                id: id,
+                is_deleted: 0
+            }
+        });
+        if (!booking) {
+            req.flash("error2", "Không tìm thấy lịch hẹn hoặc lịch hẹn này đã bị xóa trước đó!");
+            return res.redirect("/bookings/history");
+        }
+        // 2. Bảo mật logic 22Client: Nếu đã làm xong và thanh toán 'paid' thì không cho khách tự xóa nữa
+        if (booking.status === "paid") {
+            req.flash("error2", "Lịch hẹn đã được thanh toán hoàn tất tại salon, không thể hủy bỏ!");
+            return res.redirect(`/bookings/detail/${id}`);
+        }
+        // 3. Tiến hành XÓA MỀM (Cập nhật is_deleted = 1)
+        await Booking.update({ is_deleted: 1 }, { where: { id: id } });
+        req.flash("success", "Bạn đã hủy lịch hẹn thành công!");
+        // Sau khi xóa mềm thành công, đơn này sẽ biến mất khỏi danh sách lịch sử
+        res.redirect("/bookings/history");
+    }
+    catch (error) {
+        console.error("Lỗi tại client controller cancelBooking:", error);
+        req.flash("error2", "Hệ thống gặp sự cố, vui lòng thử lại sau!");
+        res.redirect("/bookings/history");
     }
 };
 /**
